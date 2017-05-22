@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "897840151448",
+    "firebase_url": "https://accelerometer-cdc37.firebaseio.com",
+    "project_id": "accelerometer-cdc37",
+    "storage_bucket": "accelerometer-cdc37.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:897840151448:android:9fe0289fd9e0f521",
+        "android_client_info": {
+          "package_name": "com.example.mond.accelerometer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "897840151448-tjlpo225dr2so3f8tjmgknnd6t84b012.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.mond.accelerometer",
+            "certificate_hash": "bc4eb9e105fc18eda833cc0fcef76a951916fff0"
+          }
+        },
+        {
+          "client_id": "897840151448-kggetcr47r7ecqnr6ajsvnslb9r2duuo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCyxPwfstusAH6WaS8ENjD9FYZe7ha2mgo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "897840151448-kggetcr47r7ecqnr6ajsvnslb9r2duuo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Accelerometer</string>
+    <string name="emailpassword_title_text">...</string>
+    <string name="sign_in">Sign in</string>
+    <string name="create_account">Create account</string>
+
+    <string name="hint_email">Hint email</string>
+    <string name="hint_password">Hint password</string>
+
+    <string name="sign_out">Sign out</string>
+    <string name="verify_email">Verify email</string>
+
+    <string name="signed_out">Signet out</string>
+
+    <string name="auth_filed">Auth filed</string>
+</resources>
