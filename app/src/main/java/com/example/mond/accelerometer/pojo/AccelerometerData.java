@@ -1,4 +1,4 @@
-package com.example.mond.accelerometer;
+package com.example.mond.accelerometer.pojo;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
