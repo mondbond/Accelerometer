@@ -3,12 +3,16 @@ package com.example.mond.accelerometer;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.net.Uri;
 import android.os.IBinder;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 
 import com.example.mond.accelerometer.pojo.UserInfo;
 import com.google.firebase.database.DataSnapshot;
@@ -17,7 +21,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class ListActivity extends AppCompatActivity {
+public class ListActivity extends AppCompatActivity implements ListFragment.OnFragmentInteractionListener{
 
     private final String TAG = "LIST_ACTIVITY";
 
@@ -35,6 +39,10 @@ public class ListActivity extends AppCompatActivity {
     private Button mStopButton;
 
     private String mEmail;
+
+
+    private ListFragment mListFragment;
+    private FrameLayout mListFragmentContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,11 +91,24 @@ public class ListActivity extends AppCompatActivity {
             }
         });
 
+        mListFragment = ListFragment.newInstance();
+
+        mListFragmentContainer= (FrameLayout) findViewById(R.id.list_fragment_container);
+
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+
+        ft.replace( R.id.list_fragment_container, mListFragment);
+        ft.commit();
+
+        Log.d("ADAPTER", " 3");
+
+
         mDbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 UserInfo value = dataSnapshot.getValue(UserInfo.class);
-
+                setAccelerometerDataToFragment(value);
             }
 
             @Override
@@ -107,5 +128,15 @@ public class ListActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         unbindService(mServiceConnection);
+    }
+
+    private void setAccelerometerDataToFragment(UserInfo userInfo){
+        Log.d("ADAPTER", " 2");
+        mListFragment.setNewAccelerometerValues(userInfo);
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }

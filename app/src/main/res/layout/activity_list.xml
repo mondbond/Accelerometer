@@ -11,83 +11,41 @@
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="150dp">-->
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <Button
-                android:id="@+id/activity_list_start_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Start"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"/>
-
-            <Button
-                android:id="@+id/activity_list_stop_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Stop"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"/>
-        </RelativeLayout>
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="61dp"
-        android:text="period in sec"/>
+        android:layout_alignParentTop="true">
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
-        android:text="work time"
-        android:layout_below="@+id/editText"
-        android:layout_toLeftOf="@+id/editText"
-        android:layout_toStartOf="@+id/editText"/>
+        <Button
+            android:id="@+id/activity_list_start_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:text="Start" />
 
-    <EditText
-        android:id="@+id/editText"
-        android:layout_width="50dp"
-        android:layout_height="40dp"
-        android:layout_alignTop="@+id/textView"
-        android:layout_marginLeft="32dp"
-        android:layout_marginStart="32dp"
-        android:layout_toRightOf="@+id/textView"
-        android:ems="10"
-        android:inputType="number"
-        android:text="4"
-        android:textSize="20sp"/>
+        <Button
+            android:id="@+id/activity_list_stop_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:text="Stop" />
+    </RelativeLayout>
 
-    <EditText
-        android:id="@+id/editText2"
-        android:layout_width="50dp"
-        android:layout_height="40dp"
-        android:layout_alignLeft="@+id/editText"
-        android:layout_alignStart="@+id/editText"
-        android:layout_alignTop="@+id/textView2"
-        android:ems="10"
-        android:inputType="number"
-        android:textSize="20sp"/>
     <!--</android.support.v7.widget.CardView>-->
-    
-    <!--<FrameLayout-->
-        <!--android:id="@+id/list_fragment_container"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_alignParentTop="true"-->
-        <!--android:layout_alignParentLeft="true"-->
-        <!--android:layout_alignParentStart="true">-->
 
-    <!--</FrameLayout>-->
+    <FrameLayout
+        android:id="@+id/list_fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/relativeLayout"></FrameLayout>
+
 </RelativeLayout>
