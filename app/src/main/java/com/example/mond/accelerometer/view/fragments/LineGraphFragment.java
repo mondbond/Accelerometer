@@ -1,6 +1,7 @@
 package com.example.mond.accelerometer.view.fragments;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,6 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.mond.accelerometer.R;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -29,6 +37,12 @@ public class LineGraphFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+
+    private LineChart mGraph;
+    private List<Entry> mXEntries;
+
+    private LineDataSet mXLine;
+    private LineData mLineData;
     private OnFragmentInteractionListener mListener;
 
     public LineGraphFragment() {
@@ -49,13 +63,34 @@ public class LineGraphFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_line_graph, container, false);
+        View v = inflater.inflate(R.layout.fragment_line_graph, container, false);
+        mGraph = (LineChart) v.findViewById(R.id.graph_fragment_graph);
+        mXEntries = new ArrayList<>();
+        mXEntries.add(new Entry(0, 1));
+        mXEntries.add(new Entry(1, 5));
+        mXEntries.add(new Entry(2, 7));
+        mXEntries.add(new Entry(3, 10));
+        mXEntries.add(new Entry(4, 15));
+        mXEntries.add(new Entry(5, 1));
+        mXEntries.add(new Entry(6, 5));
+        mXEntries.add(new Entry(7, 8));
+        mXEntries.add(new Entry(8, 3));
+        mXEntries.add(new Entry(9, 20));
+
+        mXLine = new LineDataSet(mXEntries, "X");
+        mXLine.setColor(Color.RED);
+
+        mLineData = new LineData(mXLine);
+        mGraph.setData(mLineData);
+
+        return  v;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -74,6 +109,12 @@ public class LineGraphFragment extends Fragment {
 //            throw new RuntimeException(context.toString()
 //                    + " must implement OnFragmentInteractionListener");
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mGraph.invalidate();
     }
 
     @Override
