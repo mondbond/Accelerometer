@@ -1,27 +1,25 @@
-package com.example.mond.accelerometer;
+package com.example.mond.accelerometer.view.fragments;
 
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.mond.accelerometer.pojo.UserInfo;
+import com.example.mond.accelerometer.R;
+
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ListFragment.OnFragmentInteractionListener} interface
+ * {@link LineGraphFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link ListFragment#newInstance} factory method to
+ * Use the {@link LineGraphFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ListFragment extends Fragment implements AccelerationDataAdapter.OnInteractionListener{
+public class LineGraphFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -33,37 +31,31 @@ public class ListFragment extends Fragment implements AccelerationDataAdapter.On
 
     private OnFragmentInteractionListener mListener;
 
+    public LineGraphFragment() {
+        // Required empty public constructor
+    }
 
-    private RecyclerView mRecycler;
-    private AccelerationDataAdapter mAdapter;
-
-    public static ListFragment newInstance() {
-        ListFragment fragment = new ListFragment();
+    public static LineGraphFragment newInstance() {
+        LineGraphFragment fragment = new LineGraphFragment();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Log.d("ADAPTER", " 1");
-
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_list, container, false);
-
-        Log.d("ADAPTER", " 10");
-
-        mAdapter = new AccelerationDataAdapter(null, this, getActivity());
-        mRecycler = (RecyclerView) v.findViewById(R.id.accelerometer_data_recycler);
-        mRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecycler.setAdapter(mAdapter);
-
-        return  v;
+        return inflater.inflate(R.layout.fragment_line_graph, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -79,8 +71,8 @@ public class ListFragment extends Fragment implements AccelerationDataAdapter.On
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+//            throw new RuntimeException(context.toString()
+//                    + " must implement OnFragmentInteractionListener");
         }
     }
 
@@ -88,20 +80,6 @@ public class ListFragment extends Fragment implements AccelerationDataAdapter.On
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-
-    @Override
-    public void onItemClick(long studentId) {
-
-    }
-
-    public void setNewAccelerometerValues(UserInfo userInfo){
-        Log.d("ADAPTER", " 0");
-
-        if(mAdapter!= null) {
-            Log.d("ADAPTER", " != null");
-            mAdapter.setNewSessionValue(userInfo.getSessionList());
-        }
     }
 
     /**

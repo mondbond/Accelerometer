@@ -8,14 +8,13 @@ import java.util.List;
 import java.util.Map;
 
 @IgnoreExtraProperties
-public class UserInfo {
+public class Account {
 
     private List<Session> mSessionList;
 
-    public UserInfo() {
-    }
+    public Account() {}
 
-    public UserInfo(List<Session> sessionList) {
+    public Account(List<Session> sessionList) {
         mSessionList = sessionList;
     }
 
@@ -31,7 +30,7 @@ public class UserInfo {
         return mSessionList;
     }
 
-    public void setSessionList(List<Session> sessionList) {
+    public void setmSessionList(List<Session> sessionList) {
         mSessionList = sessionList;
     }
 }

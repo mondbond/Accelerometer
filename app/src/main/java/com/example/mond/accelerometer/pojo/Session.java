@@ -3,6 +3,7 @@ package com.example.mond.accelerometer.pojo;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,10 @@ public class Session {
     public Session(String time, List<AccelerometerData> data) {
         mTime = time;
         mData = data;
+    }
+
+    public Session() {
+        mData = new ArrayList<>();
     }
 
     @Exclude
@@ -45,5 +50,9 @@ public class Session {
 
     public void setData(List<AccelerometerData> data) {
         mData = data;
+    }
+
+    public void addData(AccelerometerData accelerometerData){
+        mData.add(accelerometerData);
     }
 }

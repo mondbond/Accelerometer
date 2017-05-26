@@ -1,4 +1,4 @@
-package com.example.mond.accelerometer;
+package com.example.mond.accelerometer.view.adapter;
 
 
 import android.content.Context;
@@ -6,15 +6,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.mond.accelerometer.pojo.AccelerometerData;
+import com.example.mond.accelerometer.R;
 import com.example.mond.accelerometer.pojo.Session;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class AccelerationDataAdapter extends RecyclerView.Adapter<AccelerationDataAdapter.ViewHolder> {
@@ -52,7 +49,7 @@ public class AccelerationDataAdapter extends RecyclerView.Adapter<AccelerationDa
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         View view = holder.itemView;
 
         holder.session.setText(mSessions.get(position).getTime());
@@ -60,6 +57,7 @@ public class AccelerationDataAdapter extends RecyclerView.Adapter<AccelerationDa
         TextView x = new TextView(mContext);
         x.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
+
 
         TextView y = new TextView(mContext);
         y.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -69,19 +67,39 @@ public class AccelerationDataAdapter extends RecyclerView.Adapter<AccelerationDa
         z.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
 
+        holder.dataContainer.removeAllViews();
+
         for (int i = 0; i != mSessions.get(position).getData().size(); ++i) {
+
+            x = new TextView(mContext);
+            y = new TextView(mContext);
+            z = new TextView(mContext);
+
             x.setText(String.valueOf(mSessions.get(position).getData().get(i).getX()));
+            x.setPadding(0, 20, 0, 0);
             y.setText(String.valueOf(mSessions.get(position).getData().get(i).getY()));
             z.setText(String.valueOf(mSessions.get(position).getData().get(i).getZ()));
+
             holder.dataContainer.addView(x);
             holder.dataContainer.addView(y);
             holder.dataContainer.addView(z);
         }
 
+        holder.session.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(holder.dataContainer.getVisibility() == View.VISIBLE) {
+                    holder.dataContainer.setVisibility(View.GONE);
+                }else {
+                    holder.dataContainer.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                mListener.onItemClick(mStudents.get(position).getId());
             }
         });
     }
@@ -99,19 +117,8 @@ public class AccelerationDataAdapter extends RecyclerView.Adapter<AccelerationDa
         void onItemClick(long studentId);
     }
 
-    public List<Session> getSessions() {
-        return mSessions;
-    }
-
     public void setSessions(List<Session> mSessions) {
         this.mSessions = mSessions;
-    }
-
-    public void setNewSessionValue(List<Session> sessions){
-        if(mSessions == null){
-            mSessions = new ArrayList<>();
-        }
-        mSessions.addAll(sessions);
         notifyDataSetChanged();
     }
 }

@@ -1,27 +1,39 @@
-package com.example.mond.accelerometer;
+package com.example.mond.accelerometer.view.activities;
 
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.IBinder;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 
-import com.example.mond.accelerometer.pojo.UserInfo;
+import com.example.mond.accelerometer.view.fragments.ListFragment;
+import com.example.mond.accelerometer.R;
+import com.example.mond.accelerometer.pojo.AccelerometerData;
+import com.example.mond.accelerometer.pojo.Session;
+import com.example.mond.accelerometer.service.AccelerationService;
+import com.example.mond.accelerometer.view.fragments.LineGraphFragment;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class ListActivity extends AppCompatActivity implements ListFragment.OnFragmentInteractionListener{
+import java.util.ArrayList;
+import java.util.List;
+
+public class ListActivity extends AppCompatActivity implements ListFragment.OnFragmentInteractionListener {
+
+    private final String LIST_FRAGMENT_NAME = "LIST";
+    private final String GRAPH_FRAGMENT_NAME = "GRAPH";
 
     private final String TAG = "LIST_ACTIVITY";
 
@@ -40,14 +52,38 @@ public class ListActivity extends AppCompatActivity implements ListFragment.OnFr
 
     private String mEmail;
 
-
     private ListFragment mListFragment;
-    private FrameLayout mListFragmentContainer;
+    private LineGraphFragment mGraphFragment;
+
+
+    private List<Session> mSessions = new ArrayList<>();
+
+    private ViewPager mPager;
+    private SectionsPagerAdapter mPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+
+        mPager = (ViewPager) findViewById(R.id.list_activity_view_pager);
+        mPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        mPager.setAdapter(mPagerAdapter);
+
+        mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         Bundle bundle = getIntent().getExtras();
         mEmail = bundle.getString(EMAIL_EXTRA);
@@ -58,13 +94,13 @@ public class ListActivity extends AppCompatActivity implements ListFragment.OnFr
         mStartButton = (Button) findViewById(R.id.activity_list_start_btn);
         mStopButton = (Button) findViewById(R.id.activity_list_stop_btn);
 
-//        mServiceIntent = new Intent("com.example.mond.accelerometer.AccelerationService");
         mServiceIntent = new Intent(this, AccelerationService.class);
 
         mServiceConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 Log.d(TAG, "MainActivity onServiceConnected");
+
                 AccelerationService.LocalBinder localBinder = (AccelerationService.LocalBinder) service;
                 mAccelerationService = localBinder.getService();
                 mIsBinded = true;
@@ -91,24 +127,24 @@ public class ListActivity extends AppCompatActivity implements ListFragment.OnFr
             }
         });
 
-        mListFragment = ListFragment.newInstance();
-
-        mListFragmentContainer= (FrameLayout) findViewById(R.id.list_fragment_container);
-
-        FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-
-        ft.replace( R.id.list_fragment_container, mListFragment);
-        ft.commit();
-
-        Log.d("ADAPTER", " 3");
-
-
         mDbRef.addValueEventListener(new ValueEventListener() {
+
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                UserInfo value = dataSnapshot.getValue(UserInfo.class);
-                setAccelerometerDataToFragment(value);
+
+                for(DataSnapshot data : dataSnapshot.getChildren()){
+
+                    Session session = new Session();
+                    session.setTime(data.getKey());
+
+                    for(DataSnapshot data1 : data.getChildren()){
+                        AccelerometerData accelerometerData = data1.getValue(AccelerometerData.class);
+                        session.addData(accelerometerData);
+                    }
+
+                    mSessions.add(session);
+                }
+                setAccelerometerDataToFragment(mSessions);
             }
 
             @Override
@@ -130,13 +166,41 @@ public class ListActivity extends AppCompatActivity implements ListFragment.OnFr
         unbindService(mServiceConnection);
     }
 
-    private void setAccelerometerDataToFragment(UserInfo userInfo){
-        Log.d("ADAPTER", " 2");
-        mListFragment.setNewAccelerometerValues(userInfo);
+    private void setAccelerometerDataToFragment(List<Session> sessions){
+        mListFragment.setNewAccelerometerValues(sessions);
     }
 
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+        public SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            if(mListFragment == null || mGraphFragment == null) {
+                mListFragment = ListFragment.newInstance();
+                mGraphFragment = LineGraphFragment.newInstance();
+            }
+
+            switch (position) {
+                case 0:
+                    return mListFragment;
+                case 1:
+                    return mGraphFragment;
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return 2;
+        }
     }
 }

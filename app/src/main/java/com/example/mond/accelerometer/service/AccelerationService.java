@@ -1,6 +1,5 @@
-package com.example.mond.accelerometer;
+package com.example.mond.accelerometer.service;
 
-import android.app.Application;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.Context;
@@ -13,6 +12,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.example.mond.accelerometer.pojo.AccelerometerData;
+import com.example.mond.accelerometer.util.Util;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -22,16 +22,9 @@ public class AccelerationService extends IntentService implements SensorEventLis
 
     private final String TAG ="SERVICE";
 
-    private final IBinder mBinder = new LocalBinder();
+    public static final String START_ACCELEROMETER = "com.example.mond.accelerometer.action.START";
+    public static final String STOP_ACCELEROMETER = "com.example.mond.accelerometer.action.STOP";
 
-    public static final String ACCELEROMETER_ACTION = "accelerometerAction";
-
-    // TODO: Rename actions, choose action names that describe tasks that this
-    // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
-    public static final String START_ACCELEROMETER = "com.example.mond.accelerometer.action.FOO";
-    public static final String STOP_ACCELEROMETER = "com.example.mond.accelerometer.action.BAZ";
-
-    // TODO: Rename parameters
     private static final String ACCELEROMETER_BREAK_IN_SEC = "accelerometerBreakInSec";
     private static final String WORK_TIME_IN_SEC = "workTimeInSec";
 
@@ -59,7 +52,6 @@ public class AccelerationService extends IntentService implements SensorEventLis
     public void onCreate() {
         super.onCreate();
 
-        Log.d(TAG, "onCreate");
 
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
@@ -73,7 +65,6 @@ public class AccelerationService extends IntentService implements SensorEventLis
         mSession = Util.currenTimeStampToDate(null);
     }
 
-    // TODO: Customize helper method
     public static void startActionFoo(Context context, String param1, String param2) {
         Intent intent = new Intent(context, AccelerationService.class);
         intent.setAction(START_ACCELEROMETER);
@@ -82,7 +73,6 @@ public class AccelerationService extends IntentService implements SensorEventLis
         context.startService(intent);
     }
 
-    // TODO: Customize helper method
     public static void startActionBaz(Context context, String param1, String param2) {
         Intent intent = new Intent(context, AccelerationService.class);
         intent.setAction(STOP_ACCELEROMETER);
@@ -125,7 +115,6 @@ public class AccelerationService extends IntentService implements SensorEventLis
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-//        Log.d(TAG, "boolean = " + String.valueOf(mIsDataSaving));
         if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER && mIsDataSaving){
             ax = event.values[0];
             ay = event.values[1];
@@ -148,35 +137,23 @@ public class AccelerationService extends IntentService implements SensorEventLis
     public void onAccuracyChanged(Sensor sensor, int accuracy) {}
 
     public IBinder onBind(Intent intent) {
-        Log.d(TAG, "MyService onBind");
         return mLocalBinder;
     }
 
     public void onRebind(Intent intent) {
         super.onRebind(intent);
-        Log.d(TAG, "MyService onRebind");
     }
 
     public boolean onUnbind(Intent intent) {
-        Log.d(TAG, "MyService onUnbind");
         return super.onUnbind(intent);
-    }
-
-
-    public boolean isDataSaving() {
-        return mIsDataSaving;
     }
 
     public void setIsDataSaving(boolean dataSaving) {
         mIsDataSaving = dataSaving;
     }
 
-
-
-
     public class LocalBinder extends Binder {
-        AccelerationService getService() {
-            // Return this instance of LocalService so clients can call public methods
+        public AccelerationService getService() {
             return AccelerationService.this;
         }
     }

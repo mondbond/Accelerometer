@@ -1,4 +1,4 @@
-package com.example.mond.accelerometer;
+package com.example.mond.accelerometer.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
