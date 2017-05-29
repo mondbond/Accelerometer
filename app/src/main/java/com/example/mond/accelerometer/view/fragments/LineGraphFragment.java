@@ -1,11 +1,8 @@
 package com.example.mond.accelerometer.view.fragments;
 
-import android.content.Context;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,15 +19,6 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import java.util.ArrayList;
 import java.util.List;
 
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link LineGraphFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link LineGraphFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class LineGraphFragment extends Fragment {
 
     private LineChart mGraph;
@@ -42,8 +30,6 @@ public class LineGraphFragment extends Fragment {
     private LineDataSet mYLine;
     private LineDataSet mZLine;
     private LineData mLineData;
-
-    private OnFragmentInteractionListener mListener;
 
     public static LineGraphFragment newInstance() {
         LineGraphFragment fragment = new LineGraphFragment();
@@ -67,30 +53,9 @@ public class LineGraphFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         mGraph.invalidate();
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
     }
 
     public void setAccelerometerDatas(List<AccelerometerData> accelerometerDatas) {
