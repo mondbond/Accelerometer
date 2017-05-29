@@ -3,6 +3,7 @@ package com.example.mond.accelerometer.view.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.mond.accelerometer.R;
+import com.example.mond.accelerometer.pojo.AccelerometerData;
 import com.example.mond.accelerometer.pojo.Session;
 
 import java.util.List;
@@ -18,10 +20,10 @@ public class AccelerationDataAdapter extends RecyclerView.Adapter<AccelerationDa
 
     private List<Session> mSessions;
     private Context mContext;
-    private OnInteractionListener mListener;
+    private AdapterListener mListener;
 
 
-    public AccelerationDataAdapter(List<Session> sessions, OnInteractionListener listener, Context context) {
+    public AccelerationDataAdapter(List<Session> sessions, AdapterListener listener, Context context) {
         this.mSessions = sessions;
         this.mListener = listener;
         this.mContext = context;
@@ -49,7 +51,7 @@ public class AccelerationDataAdapter extends RecyclerView.Adapter<AccelerationDa
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         View view = holder.itemView;
 
         holder.session.setText(mSessions.get(position).getTime());
@@ -97,6 +99,13 @@ public class AccelerationDataAdapter extends RecyclerView.Adapter<AccelerationDa
             }
         });
 
+        holder.dataContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onItemClick(mSessions.get(position).getData());
+             }
+        });
+
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -113,12 +122,12 @@ public class AccelerationDataAdapter extends RecyclerView.Adapter<AccelerationDa
         }
     }
 
-    public interface OnInteractionListener {
-        void onItemClick(long studentId);
-    }
-
     public void setSessions(List<Session> mSessions) {
         this.mSessions = mSessions;
         notifyDataSetChanged();
+    }
+
+    public interface AdapterListener {
+        void onItemClick(List<AccelerometerData> accelerationDatas);
     }
 }

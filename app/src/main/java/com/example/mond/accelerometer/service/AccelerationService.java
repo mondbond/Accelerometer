@@ -43,6 +43,10 @@ public class AccelerationService extends IntentService implements SensorEventLis
 
     private boolean mIsDataSaving;
 
+    private int mActionTime;
+    private int mIntervalTime;
+    private long mActionStartTime;
+
     private LocalBinder mLocalBinder = new LocalBinder();
 
     public AccelerationService() {
@@ -52,12 +56,9 @@ public class AccelerationService extends IntentService implements SensorEventLis
     public void onCreate() {
         super.onCreate();
 
-
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                 SensorManager.SENSOR_DELAY_NORMAL);
-
-        mEmail = "vanya0794@gmailcom";
 
         mDatabase = FirebaseDatabase.getInstance();
         mDbRef = mDatabase.getReference("/");
@@ -83,32 +84,37 @@ public class AccelerationService extends IntentService implements SensorEventLis
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        if (intent != null) {
-            final String action = intent.getAction();
-            if (START_ACCELEROMETER.equals(action)) {
-                final String param1 = intent.getStringExtra(ACCELEROMETER_BREAK_IN_SEC);
-                final String param2 = intent.getStringExtra(WORK_TIME_IN_SEC);
-                handleStartAccelerometerAction();
-            } else if (STOP_ACCELEROMETER.equals(action)) {
-                final String param1 = intent.getStringExtra(ACCELEROMETER_BREAK_IN_SEC);
-                final String param2 = intent.getStringExtra(WORK_TIME_IN_SEC);
-                handleStopAccelerometerAction();
-            }
-        }
+//        if (intent != null) {
+//            final String action = intent.getAction();
+//            if (START_ACCELEROMETER.equals(action)) {
+//                final String param1 = intent.getStringExtra(ACCELEROMETER_BREAK_IN_SEC);
+//                final String param2 = intent.getStringExtra(WORK_TIME_IN_SEC);
+//                handleStartAccelerometerAction();
+//            } else if (STOP_ACCELEROMETER.equals(action)) {
+//                final String param1 = intent.getStringExtra(ACCELEROMETER_BREAK_IN_SEC);
+//                final String param2 = intent.getStringExtra(WORK_TIME_IN_SEC);
+//                handleStopAccelerometerAction();
+//            }
+//        }
     }
 
-    /**
-     * Handle action Foo in the provided background thread with the provided
-     * parameters.
-     */
-    public void handleStartAccelerometerAction() {
+    public void handleStartAccelerometerAction(int intervalTime, int actionTime) {
+        if(intervalTime == 0 ) {
+            mIntervalTime = 1000;
+        }else {
+            mIntervalTime = intervalTime * 1000;
+        }
+
+        if(actionTime == 0 ) {
+            mActionTime = 1000;
+        }else {
+            mActionTime = actionTime * 1000;
+        }
+
+        mActionStartTime = System.currentTimeMillis();
         setIsDataSaving(true);
     }
 
-    /**
-     * Handle action Baz in the provided background thread with the provided
-     * parameters.
-     */
     public void handleStopAccelerometerAction() {
         setIsDataSaving(false);
     }
@@ -125,11 +131,13 @@ public class AccelerationService extends IntentService implements SensorEventLis
     }
 
     public void saveDataToFirebase(double x, double y, double z){
-        if((System.currentTimeMillis() - mLastTimeSave) >= 3000) {
+        if ((System.currentTimeMillis() - mLastTimeSave) >= mIntervalTime) {
             mAccelerometerData = new AccelerometerData(x, y, z);
             Map<String, Object> map = mAccelerometerData.toMap();
             mDbRef.child(mEmail).child(mSession).child(Util.currenTimeStampToDate(null)).setValue(map);
             mLastTimeSave = System.currentTimeMillis();
+        }else if((System.currentTimeMillis() - mActionStartTime) >= mActionTime) {
+            handleStopAccelerometerAction();
         }
     }
 
@@ -150,6 +158,10 @@ public class AccelerationService extends IntentService implements SensorEventLis
 
     public void setIsDataSaving(boolean dataSaving) {
         mIsDataSaving = dataSaving;
+    }
+
+    public void setEmail(String email) {
+        mEmail = email;
     }
 
     public class LocalBinder extends Binder {

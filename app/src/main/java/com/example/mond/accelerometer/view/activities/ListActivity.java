@@ -3,7 +3,6 @@ package com.example.mond.accelerometer.view.activities;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.net.Uri;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import com.example.mond.accelerometer.view.fragments.ListFragment;
 import com.example.mond.accelerometer.R;
@@ -39,7 +39,7 @@ public class ListActivity extends AppCompatActivity implements ListFragment.OnFr
 
     public static final String EMAIL_EXTRA = "email";
 
-    private AccelerationService mAccelerationService;
+    private AccelerationService mAccelerometerService;
     private boolean mIsBinded;
     private ServiceConnection mServiceConnection;
     private Intent mServiceIntent;
@@ -61,32 +61,25 @@ public class ListActivity extends AppCompatActivity implements ListFragment.OnFr
     private ViewPager mPager;
     private SectionsPagerAdapter mPagerAdapter;
 
+    private EditText mIntervalValue;
+    private EditText mActionTimeValue;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
+        mIntervalValue = (EditText) findViewById(R.id.activity_list_interval_value);
+        mActionTimeValue = (EditText) findViewById(R.id.activity_list_time_value);
+
         mPager = (ViewPager) findViewById(R.id.list_activity_view_pager);
         mPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
 
-        mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-
         Bundle bundle = getIntent().getExtras();
         mEmail = bundle.getString(EMAIL_EXTRA);
+
+        Log.d("EMAIL", mEmail);
 
         mDatabase = FirebaseDatabase.getInstance();
         mDbRef = mDatabase.getReference().child(mEmail);
@@ -100,9 +93,9 @@ public class ListActivity extends AppCompatActivity implements ListFragment.OnFr
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 Log.d(TAG, "MainActivity onServiceConnected");
-
                 AccelerationService.LocalBinder localBinder = (AccelerationService.LocalBinder) service;
-                mAccelerationService = localBinder.getService();
+                mAccelerometerService = localBinder.getService();
+                mAccelerometerService.setEmail(mEmail);
                 mIsBinded = true;
             }
 
@@ -116,14 +109,17 @@ public class ListActivity extends AppCompatActivity implements ListFragment.OnFr
         mStartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAccelerationService.handleStartAccelerometerAction();
+
+                mAccelerometerService.handleStartAccelerometerAction(
+                        Integer.parseInt(mIntervalValue.getText().toString()),
+                        Integer.parseInt(mActionTimeValue.getText().toString()));
             }
         });
 
         mStopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAccelerationService.handleStopAccelerometerAction();
+                mAccelerometerService.handleStopAccelerometerAction();
             }
         });
 
@@ -131,6 +127,10 @@ public class ListActivity extends AppCompatActivity implements ListFragment.OnFr
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
+                if(mSessions != null){
+                    mSessions.clear();
+                }
 
                 for(DataSnapshot data : dataSnapshot.getChildren()){
 
@@ -171,8 +171,8 @@ public class ListActivity extends AppCompatActivity implements ListFragment.OnFr
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
-
+    public void setSessionAcccelerometerData(List<AccelerometerData> accelerometerDatas) {
+        mGraphFragment.setAccelerometerDatas(accelerometerDatas);
     }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {

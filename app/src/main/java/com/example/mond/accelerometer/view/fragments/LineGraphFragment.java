@@ -5,15 +5,19 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.mond.accelerometer.R;
+import com.example.mond.accelerometer.pojo.AccelerometerData;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,26 +32,20 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class LineGraphFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
+    private List<AccelerometerData> mAccelerometerDatas;
 
     private LineChart mGraph;
     private List<Entry> mXEntries;
+    private List<Entry> mYEntries;
+    private List<Entry> mZEntries;
 
     private LineDataSet mXLine;
+    private LineDataSet mYLine;
+    private LineDataSet mZLine;
     private LineData mLineData;
-    private OnFragmentInteractionListener mListener;
 
-    public LineGraphFragment() {
-        // Required empty public constructor
-    }
+    private OnFragmentInteractionListener mListener;
 
     public static LineGraphFragment newInstance() {
         LineGraphFragment fragment = new LineGraphFragment();
@@ -59,11 +57,6 @@ public class LineGraphFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
     }
 
     @Override
@@ -72,32 +65,8 @@ public class LineGraphFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_line_graph, container, false);
         mGraph = (LineChart) v.findViewById(R.id.graph_fragment_graph);
-        mXEntries = new ArrayList<>();
-        mXEntries.add(new Entry(0, 1));
-        mXEntries.add(new Entry(1, 5));
-        mXEntries.add(new Entry(2, 7));
-        mXEntries.add(new Entry(3, 10));
-        mXEntries.add(new Entry(4, 15));
-        mXEntries.add(new Entry(5, 1));
-        mXEntries.add(new Entry(6, 5));
-        mXEntries.add(new Entry(7, 8));
-        mXEntries.add(new Entry(8, 3));
-        mXEntries.add(new Entry(9, 20));
-
-        mXLine = new LineDataSet(mXEntries, "X");
-        mXLine.setColor(Color.RED);
-
-        mLineData = new LineData(mXLine);
-        mGraph.setData(mLineData);
 
         return  v;
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
 
     @Override
@@ -123,18 +92,54 @@ public class LineGraphFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void setAccelerometerDatas(List<AccelerometerData> accelerometerDatas) {
+        mAccelerometerDatas = accelerometerDatas;
+        setNewAccelerometerData(accelerometerDatas);
+    }
+
+    private void setNewAccelerometerData(List<AccelerometerData> accelerometerDatas){
+
+        if(mXEntries == null || mZEntries == null || mYEntries == null  ){
+            mXEntries = new ArrayList<>();
+            mYEntries = new ArrayList<>();
+            mZEntries = new ArrayList<>();
+        }else {
+            mXEntries.clear();
+            mYEntries.clear();
+            mZEntries.clear();
+        }
+
+
+        for(int i = 0; i != accelerometerDatas.size(); i++){
+            mXEntries.add(new Entry(i, ((float) accelerometerDatas.get(i).getX())));
+            mYEntries.add(new Entry(i, ((float) accelerometerDatas.get(i).getY())));
+            mZEntries.add(new Entry(i, ((float) accelerometerDatas.get(i).getZ())));
+        }
+
+        mXLine = new LineDataSet(mXEntries, "X");
+        mXLine.setColor(Color.RED);
+
+        mYLine = new LineDataSet(mYEntries, "Y");
+        mYLine.setColor(Color.BLUE);
+        mYLine.setAxisDependency(YAxis.AxisDependency.LEFT);
+
+        mZLine = new LineDataSet(mZEntries, "Z");
+        mZLine.setColor(Color.GREEN);
+        mZLine.setAxisDependency(YAxis.AxisDependency.LEFT);
+
+        List<ILineDataSet> dataSets = new ArrayList<>();
+
+        dataSets.add(mXLine);
+        dataSets.add(mYLine);
+        dataSets.add(mZLine);
+
+        mLineData = new LineData(dataSets);
+
+        mGraph.setData(mLineData);
+        mGraph.invalidate();
     }
 }

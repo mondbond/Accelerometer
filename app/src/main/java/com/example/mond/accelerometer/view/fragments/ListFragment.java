@@ -1,7 +1,6 @@
 package com.example.mond.accelerometer.view.fragments;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,12 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.mond.accelerometer.R;
+import com.example.mond.accelerometer.pojo.AccelerometerData;
 import com.example.mond.accelerometer.pojo.Session;
 import com.example.mond.accelerometer.view.adapter.AccelerationDataAdapter;
 
 import java.util.List;
 
-public class ListFragment extends Fragment implements AccelerationDataAdapter.OnInteractionListener{
+public class ListFragment extends Fragment implements AccelerationDataAdapter.AdapterListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -73,18 +73,17 @@ public class ListFragment extends Fragment implements AccelerationDataAdapter.On
     }
 
     @Override
-    public void onItemClick(long studentId) {
-
+    public void onItemClick(List<AccelerometerData> accelerometerDatas) {
+        mListener.setSessionAcccelerometerData(accelerometerDatas);
     }
 
     public void setNewAccelerometerValues(List<Session> sessions){
-
         if(mAdapter!= null) {
             mAdapter.setSessions(sessions);
         }
     }
 
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
+        void setSessionAcccelerometerData(List<AccelerometerData> accelerometerDatas);
     }
 }
