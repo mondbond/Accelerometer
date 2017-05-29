@@ -21,6 +21,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Date;
+import java.util.TimeZone;
+
 public class LoginActivity extends AppCompatActivity {
 
     private final String TAG = "MAIN_ACTIVITY";
@@ -38,6 +41,10 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        TimeZone tz = TimeZone.getDefault();
+
+        Log.d("AAAAAAAAAAAAAAA", tz.toString());
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -89,49 +96,55 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void createAccount(String email, String pswd){
-//        TODO: make validate
-        mAuth.createUserWithEmailAndPassword(email, pswd)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
-                        if (!task.isSuccessful()) {
-                            Toast.makeText(LoginActivity.this, "failed",
-                                    Toast.LENGTH_SHORT).show();
-                        }else {
-                            Toast.makeText(LoginActivity.this, "good",
-                                    Toast.LENGTH_SHORT).show();
+        if(!email.equals("") && !pswd.equals("")) {
+            mAuth.createUserWithEmailAndPassword(email, pswd)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
+                            if (!task.isSuccessful()) {
+                                Toast.makeText(LoginActivity.this, "failed",
+                                        Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(LoginActivity.this, "good",
+                                        Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
-                });
+                    });
+        }else {
+            Toast.makeText(LoginActivity.this, "All fields shouldn't be empty", Toast.LENGTH_SHORT).show();
+        }
     }
 
-    public void signIn(final String email, String pswd){
-//        TODO: make validate
-        mAuth.signInWithEmailAndPassword(email, pswd)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "signInWithEmail:failed", task.getException());
-                            Toast.makeText(LoginActivity.this, "failed",
-                                    Toast.LENGTH_SHORT).show();
-                        }else {
-                            Toast.makeText(LoginActivity.this, "good",
-                                    Toast.LENGTH_SHORT).show();
+    public void signIn(final String email, String pswd) {
+            if (!email.equals("") && !pswd.equals("")){
+                mAuth.signInWithEmailAndPassword(email, pswd)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
+                            if (!task.isSuccessful()) {
+                                Log.w(TAG, "signInWithEmail:failed", task.getException());
+                                Toast.makeText(LoginActivity.this, "failed",
+                                        Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(LoginActivity.this, "good",
+                                        Toast.LENGTH_SHORT).show();
 
-                            Intent intent;
-                            if(LoginActivity.this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
-                                intent = new Intent(LoginActivity.this, LandListActivity.class);
-                            }else {
-                                intent = new Intent(LoginActivity.this, ListActivity.class);
+                                Intent intent;
+                                if (LoginActivity.this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                                    intent = new Intent(LoginActivity.this, LandListActivity.class);
+                                } else {
+                                    intent = new Intent(LoginActivity.this, ListActivity.class);
+                                }
+
+                                intent.putExtra(ListActivity.EMAIL_EXTRA, Util.clearDots(email));
+                                startActivity(intent);
                             }
-
-                            intent.putExtra(ListActivity.EMAIL_EXTRA,  Util.clearDots(email));
-                            startActivity(intent);
                         }
-                    }
-                });
+                    });
+        }else {
+            Toast.makeText(LoginActivity.this, "All fields shouldn't be empty", Toast.LENGTH_SHORT).show();
+        }
     }
 }

@@ -21,12 +21,12 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.example.mond.accelerometer.service.AccelerometerService;
 import com.example.mond.accelerometer.util.Util;
 import com.example.mond.accelerometer.view.fragments.ListFragment;
 import com.example.mond.accelerometer.R;
 import com.example.mond.accelerometer.pojo.AccelerometerData;
 import com.example.mond.accelerometer.pojo.Session;
-import com.example.mond.accelerometer.service.AccelerationService;
 import com.example.mond.accelerometer.view.fragments.LineGraphFragment;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -39,14 +39,9 @@ import java.util.List;
 
 public class ListActivity extends AppCompatActivity implements ListFragment.OnFragmentInteractionListener, TimePickerDialog.OnTimeSetListener {
 
-    private final String LIST_FRAGMENT_NAME = "LIST";
-    private final String GRAPH_FRAGMENT_NAME = "GRAPH";
-
-    private final String TAG = "LIST_ACTIVITY";
-
     public static final String EMAIL_EXTRA = "email";
 
-    private AccelerationService mAccelerometerService;
+    private AccelerometerService mAccelerometerService;
     private boolean mIsBinded;
     private ServiceConnection mServiceConnection;
     private Intent mServiceIntent;
@@ -124,13 +119,12 @@ public class ListActivity extends AppCompatActivity implements ListFragment.OnFr
         mStartButton = (Button) findViewById(R.id.activity_list_start_btn);
         mStopButton = (Button) findViewById(R.id.activity_list_stop_btn);
 
-        mServiceIntent = new Intent(this, AccelerationService.class);
+        mServiceIntent = new Intent(this, AccelerometerService.class);
 
         mServiceConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
-                Log.d(TAG, "MainActivity onServiceConnected");
-                AccelerationService.LocalBinder localBinder = (AccelerationService.LocalBinder) service;
+                AccelerometerService.LocalBinder localBinder = (AccelerometerService.LocalBinder) service;
                 mAccelerometerService = localBinder.getService();
                 mAccelerometerService.setEmail(mEmail);
                 mIsBinded = true;
@@ -138,7 +132,6 @@ public class ListActivity extends AppCompatActivity implements ListFragment.OnFr
 
             @Override
             public void onServiceDisconnected(ComponentName name) {
-                Log.d(TAG, "MainActivity onServiceDISnnected");
                 mIsBinded = false;
             }
         };
@@ -164,7 +157,7 @@ public class ListActivity extends AppCompatActivity implements ListFragment.OnFr
                     mAccelerometerService.setWorkAtTime(false, 0);
                 }
 
-                mAccelerometerService.handleStartAccelerometerAction(interval, sessionTime);
+                mAccelerometerService.startAccelerometerAction(interval, sessionTime);
             }
         });
 
@@ -200,9 +193,7 @@ public class ListActivity extends AppCompatActivity implements ListFragment.OnFr
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.d(TAG, "cenceled is" + databaseError.getMessage());
-            }
+            public void onCancelled(DatabaseError databaseError) {}
         });
     }
 

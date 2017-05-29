@@ -33,8 +33,6 @@ import java.util.List;
  */
 public class LineGraphFragment extends Fragment {
 
-    private List<AccelerometerData> mAccelerometerDatas;
-
     private LineChart mGraph;
     private List<Entry> mXEntries;
     private List<Entry> mYEntries;
@@ -62,7 +60,6 @@ public class LineGraphFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_line_graph, container, false);
         mGraph = (LineChart) v.findViewById(R.id.graph_fragment_graph);
 
@@ -97,7 +94,6 @@ public class LineGraphFragment extends Fragment {
     }
 
     public void setAccelerometerDatas(List<AccelerometerData> accelerometerDatas) {
-        mAccelerometerDatas = accelerometerDatas;
         setNewAccelerometerData(accelerometerDatas);
     }
 

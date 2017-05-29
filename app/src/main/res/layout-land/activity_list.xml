@@ -27,9 +27,9 @@
                 android:id="@+id/activity_list_is_time_execution"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignEnd="@+id/activity_list_time_execution_value"
-                android:layout_alignRight="@+id/activity_list_time_execution_value"
-                android:layout_below="@+id/activity_list_time_value"/>
+                android:layout_below="@+id/activity_list_time_value"
+                android:layout_toRightOf="@+id/activity_list_time_execution_btn"
+                android:layout_toEndOf="@+id/activity_list_time_execution_btn"/>
 
             <TextView
                 android:id="@+id/activity_list_time_execution_text"
@@ -39,7 +39,7 @@
                 android:layout_alignBottom="@+id/activity_list_is_time_execution"
                 android:layout_toLeftOf="@+id/activity_list_is_time_execution"
                 android:layout_toStartOf="@+id/activity_list_is_time_execution"
-                android:text="Execute on time : "/>
+                android:text="@string/execute_on_time"/>
 
             <Button
                 android:id="@+id/activity_list_time_execution_btn"
@@ -63,7 +63,7 @@
                 android:layout_marginStart="27dp"
                 android:layout_toEndOf="@+id/activity_list_time_execution_btn"
                 android:layout_toRightOf="@+id/activity_list_time_execution_btn"
-                android:text="ddsfdsf"/>
+                />
 
             <EditText
                 android:id="@+id/activity_list_interval_value"
@@ -83,8 +83,8 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:text="TextView"
-                tools:text="@string/interval"/>
+                android:text="@string/interval"
+                />
 
             <Button
                 android:id="@+id/activity_list_start_btn"
@@ -113,8 +113,8 @@
                 android:layout_marginRight="10dp"
                 android:layout_toLeftOf="@+id/activity_list_time_value"
                 android:layout_toStartOf="@+id/activity_list_time_value"
-                android:text="TextView"
-                tools:text="@string/time"/>
+                android:text="@string/time"
+                />
 
             <EditText
                 android:id="@+id/activity_list_time_value"

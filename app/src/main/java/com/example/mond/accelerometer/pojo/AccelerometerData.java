@@ -1,5 +1,6 @@
 package com.example.mond.accelerometer.pojo;
 
+import com.example.mond.accelerometer.util.Util;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
@@ -18,7 +19,7 @@ public class AccelerometerData {
     public AccelerometerData() {}
 
     public AccelerometerData(double x, double y, double z) {
-        this.id = System.currentTimeMillis();
+        this.id = Util.getLocalTimeStamp();
         this.x = x;
         this.y = y;
         this.z = z;

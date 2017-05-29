@@ -3,7 +3,6 @@ package com.example.mond.accelerometer.view.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +12,7 @@ import android.widget.TextView;
 import com.example.mond.accelerometer.R;
 import com.example.mond.accelerometer.pojo.AccelerometerData;
 import com.example.mond.accelerometer.pojo.Session;
+import com.example.mond.accelerometer.util.Util;
 
 import java.util.List;
 
@@ -33,6 +33,12 @@ public class AccelerationDataAdapter extends RecyclerView.Adapter<AccelerationDa
 
         TextView session;
         LinearLayout dataContainer;
+
+        TextView time;
+
+        TextView x;
+        TextView y;
+        TextView z;
 
         ViewHolder(View v) {
             super(v);
@@ -56,35 +62,44 @@ public class AccelerationDataAdapter extends RecyclerView.Adapter<AccelerationDa
 
         holder.session.setText(mSessions.get(position).getTime());
 
-        TextView x = new TextView(mContext);
-        x.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+        holder.time = new TextView(mContext);
+        holder.time.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+
+        holder.x = new TextView(mContext);
+        holder.x.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
 
 
-        TextView y = new TextView(mContext);
-        y.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+        holder.y = new TextView(mContext);
+        holder.y.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
 
-        TextView z = new TextView(mContext);
-        z.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+        holder.z = new TextView(mContext);
+        holder.z.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
 
         holder.dataContainer.removeAllViews();
 
         for (int i = 0; i != mSessions.get(position).getData().size(); ++i) {
 
-            x = new TextView(mContext);
-            y = new TextView(mContext);
-            z = new TextView(mContext);
 
-            x.setText(String.valueOf(mSessions.get(position).getData().get(i).getX()));
-            x.setPadding(0, 20, 0, 0);
-            y.setText(String.valueOf(mSessions.get(position).getData().get(i).getY()));
-            z.setText(String.valueOf(mSessions.get(position).getData().get(i).getZ()));
+            holder.time = new TextView(mContext);
+            holder.x = new TextView(mContext);
+            holder.y = new TextView(mContext);
+            holder.z = new TextView(mContext);
 
-            holder.dataContainer.addView(x);
-            holder.dataContainer.addView(y);
-            holder.dataContainer.addView(z);
+            holder.time.setText(Util.makeTimeStampToDate(mSessions.get(position).getData().get(i).getId()));
+            holder.time.setPadding(0, 20, 0, 10);
+
+            holder.x.setText(String.valueOf(mSessions.get(position).getData().get(i).getX()));
+            holder.y.setText(String.valueOf(mSessions.get(position).getData().get(i).getY()));
+            holder.z.setText(String.valueOf(mSessions.get(position).getData().get(i).getZ()));
+
+            holder.dataContainer.addView(holder.time);
+            holder.dataContainer.addView(holder.x);
+            holder.dataContainer.addView(holder.y);
+            holder.dataContainer.addView(holder.z);
         }
 
         holder.session.setOnClickListener(new View.OnClickListener() {
