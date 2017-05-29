@@ -21,7 +21,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.util.Date;
 import java.util.TimeZone;
 
 public class LoginActivity extends AppCompatActivity {
@@ -41,10 +40,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        TimeZone tz = TimeZone.getDefault();
-
-        Log.d("AAAAAAAAAAAAAAA", tz.toString());
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -112,7 +107,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     });
         }else {
-            Toast.makeText(LoginActivity.this, "All fields shouldn't be empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, "Fields shouldn't be empty", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -131,20 +126,14 @@ public class LoginActivity extends AppCompatActivity {
                                 Toast.makeText(LoginActivity.this, "good",
                                         Toast.LENGTH_SHORT).show();
 
-                                Intent intent;
-                                if (LoginActivity.this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                                    intent = new Intent(LoginActivity.this, LandListActivity.class);
-                                } else {
-                                    intent = new Intent(LoginActivity.this, ListActivity.class);
-                                }
-
+                                Intent intent = new Intent(LoginActivity.this, ListActivity.class);
                                 intent.putExtra(ListActivity.EMAIL_EXTRA, Util.clearDots(email));
                                 startActivity(intent);
                             }
                         }
                     });
         }else {
-            Toast.makeText(LoginActivity.this, "All fields shouldn't be empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, "Fields shouldn't be empty", Toast.LENGTH_SHORT).show();
         }
     }
 }

@@ -4,10 +4,12 @@ import android.app.TimePickerDialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.Configuration;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -104,14 +106,8 @@ public class ListActivity extends AppCompatActivity implements ListFragment.OnFr
 
         mTimeExecutionValue = (TextView) findViewById(R.id.activity_list_time_execution_value);
 
-        mPager = (ViewPager) findViewById(R.id.list_activity_view_pager);
-        mPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        mPager.setAdapter(mPagerAdapter);
-
         Bundle bundle = getIntent().getExtras();
         mEmail = bundle.getString(EMAIL_EXTRA);
-
-        Log.d("EMAIL", mEmail);
 
         mDatabase = FirebaseDatabase.getInstance();
         mDbRef = mDatabase.getReference().child(mEmail);
@@ -195,6 +191,26 @@ public class ListActivity extends AppCompatActivity implements ListFragment.OnFr
             @Override
             public void onCancelled(DatabaseError databaseError) {}
         });
+
+        if(mGraphFragment == null){
+            mGraphFragment = LineGraphFragment.newInstance();
+        }
+
+        if(mListFragment == null){
+            mListFragment = ListFragment.newInstance();
+        }
+
+        if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+            FragmentManager fm = getSupportFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.activity_list_list_fragment_container, mListFragment);
+            ft.replace(R.id.activity_list_graph_fragment_container, mGraphFragment);
+            ft.commit();
+        }else {
+            mPager = (ViewPager) findViewById(R.id.list_activity_view_pager);
+            mPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+            mPager.setAdapter(mPagerAdapter);
+        }
     }
 
     @Override
@@ -221,7 +237,7 @@ public class ListActivity extends AppCompatActivity implements ListFragment.OnFr
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         if(Util.isOutOfTime(hourOfDay, minute)) {
-            Toast.makeText(this, "Your time is out of time", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Out of time", Toast.LENGTH_SHORT).show();
         }else {
             mDayTimeExecuting = Util.getTimeOfDayInMl(hourOfDay, minute);
             mTimeExecutionValue.setText(String.valueOf(hourOfDay) + " : " + String.valueOf(minute));

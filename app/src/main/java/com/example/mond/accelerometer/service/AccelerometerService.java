@@ -8,6 +8,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Binder;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.example.mond.accelerometer.pojo.AccelerometerData;
 import com.example.mond.accelerometer.util.Util;
@@ -55,6 +56,8 @@ public class AccelerometerService extends IntentService implements SensorEventLi
 
         mDatabase = FirebaseDatabase.getInstance();
         mDbRef = mDatabase.getReference("/");
+
+        Log.d("CREATE", "-");
     }
 
     @Override
@@ -131,7 +134,15 @@ public class AccelerometerService extends IntentService implements SensorEventLi
     }
 
     public boolean onUnbind(Intent intent) {
+        Log.d("UNBIND", "-");
         return super.onUnbind(intent);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        Log.d("CREATE", "-");
     }
 
     public void setIsDataSaving(boolean dataSaving) {
