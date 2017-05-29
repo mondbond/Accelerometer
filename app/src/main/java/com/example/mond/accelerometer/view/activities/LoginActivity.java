@@ -1,6 +1,9 @@
 package com.example.mond.accelerometer.view.activities;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -118,7 +121,13 @@ public class LoginActivity extends AppCompatActivity {
                             Toast.makeText(LoginActivity.this, "good",
                                     Toast.LENGTH_SHORT).show();
 
-                            Intent intent = new Intent(LoginActivity.this, ListActivity.class);
+                            Intent intent;
+                            if(LoginActivity.this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+                                intent = new Intent(LoginActivity.this, LandListActivity.class);
+                            }else {
+                                intent = new Intent(LoginActivity.this, ListActivity.class);
+                            }
+
                             intent.putExtra(ListActivity.EMAIL_EXTRA,  Util.clearDots(email));
                             startActivity(intent);
                         }

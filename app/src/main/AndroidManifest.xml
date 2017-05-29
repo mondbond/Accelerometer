@@ -25,6 +25,8 @@
             android:exported="false">
         </service>
 
+        <activity android:name=".view.activities.LandListActivity">
+        </activity>
     </application>
 
 </manifest>
