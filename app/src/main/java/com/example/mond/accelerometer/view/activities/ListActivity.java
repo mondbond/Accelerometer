@@ -1,5 +1,6 @@
 package com.example.mond.accelerometer.view.activities;
 
+import android.app.TimePickerDialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -13,8 +14,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.TextView;
+import android.widget.TimePicker;
+import android.widget.Toast;
 
+import com.example.mond.accelerometer.util.Util;
 import com.example.mond.accelerometer.view.fragments.ListFragment;
 import com.example.mond.accelerometer.R;
 import com.example.mond.accelerometer.pojo.AccelerometerData;
@@ -30,7 +37,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListActivity extends AppCompatActivity implements ListFragment.OnFragmentInteractionListener {
+public class ListActivity extends AppCompatActivity implements ListFragment.OnFragmentInteractionListener, TimePickerDialog.OnTimeSetListener {
 
     private final String LIST_FRAGMENT_NAME = "LIST";
     private final String GRAPH_FRAGMENT_NAME = "GRAPH";
@@ -55,7 +62,6 @@ public class ListActivity extends AppCompatActivity implements ListFragment.OnFr
     private ListFragment mListFragment;
     private LineGraphFragment mGraphFragment;
 
-
     private List<Session> mSessions = new ArrayList<>();
 
     private ViewPager mPager;
@@ -63,6 +69,13 @@ public class ListActivity extends AppCompatActivity implements ListFragment.OnFr
 
     private EditText mIntervalValue;
     private EditText mActionTimeValue;
+    private Button mTimeExecutionSetterBtn;
+    private TextView mTimeExecutionValue;
+
+    private RadioButton mIsExecutingOnTime;
+    private int mDayTimeExecuting;
+
+    private TimePickerDialog mTimePickerDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +84,30 @@ public class ListActivity extends AppCompatActivity implements ListFragment.OnFr
 
         mIntervalValue = (EditText) findViewById(R.id.activity_list_interval_value);
         mActionTimeValue = (EditText) findViewById(R.id.activity_list_time_value);
+
+        mIsExecutingOnTime = (RadioButton) findViewById(R.id.activity_list_is_time_execution);
+        mIsExecutingOnTime.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(mTimeExecutionValue.getText().toString().equals("")){
+                    buttonView.setChecked(false);
+                    Toast.makeText(ListActivity.this, "Set your time first", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        mTimeExecutionSetterBtn = (Button) findViewById(R.id.activity_list_time_execution_btn);
+        mTimeExecutionSetterBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mTimePickerDialog == null){
+                    mTimePickerDialog = new TimePickerDialog(ListActivity.this, ListActivity.this, 0, 0, true);
+                }
+                mTimePickerDialog.show();
+            }
+        });
+
+        mTimeExecutionValue = (TextView) findViewById(R.id.activity_list_time_execution_value);
 
         mPager = (ViewPager) findViewById(R.id.list_activity_view_pager);
         mPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -110,9 +147,24 @@ public class ListActivity extends AppCompatActivity implements ListFragment.OnFr
             @Override
             public void onClick(View v) {
 
-                mAccelerometerService.handleStartAccelerometerAction(
-                        Integer.parseInt(mIntervalValue.getText().toString()),
-                        Integer.parseInt(mActionTimeValue.getText().toString()));
+                int interval = 0;
+                int sessionTime = 0;
+
+                if(!mIntervalValue.getText().toString().equals("")){
+                    interval = Integer.parseInt(mIntervalValue.getText().toString());
+                }
+
+                if(!mActionTimeValue.getText().toString().equals("")){
+                    sessionTime = Integer.parseInt(mActionTimeValue.getText().toString());
+                }
+
+                if(mIsExecutingOnTime.isChecked()){
+                    mAccelerometerService.setWorkAtTime(true, mDayTimeExecuting);
+                }else {
+                    mAccelerometerService.setWorkAtTime(false, 0);
+                }
+
+                mAccelerometerService.handleStartAccelerometerAction(interval, sessionTime);
             }
         });
 
@@ -173,6 +225,16 @@ public class ListActivity extends AppCompatActivity implements ListFragment.OnFr
     @Override
     public void setSessionAcccelerometerData(List<AccelerometerData> accelerometerDatas) {
         mGraphFragment.setAccelerometerDatas(accelerometerDatas);
+    }
+
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        if(Util.isOutOfTime(hourOfDay, minute)) {
+            Toast.makeText(this, "Your time is out of time", Toast.LENGTH_SHORT).show();
+        }else {
+            mDayTimeExecuting = Util.getTimeOfDayInMl(hourOfDay, minute);
+            mTimeExecutionValue.setText(String.valueOf(hourOfDay) + " : " + String.valueOf(minute));
+        }
     }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {

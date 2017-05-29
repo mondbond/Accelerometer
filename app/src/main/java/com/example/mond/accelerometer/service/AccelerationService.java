@@ -47,6 +47,9 @@ public class AccelerationService extends IntentService implements SensorEventLis
     private int mIntervalTime;
     private long mActionStartTime;
 
+    private boolean mIsWorkAtTime;
+    private int mDayStartTime;
+
     private LocalBinder mLocalBinder = new LocalBinder();
 
     public AccelerationService() {
@@ -106,12 +109,13 @@ public class AccelerationService extends IntentService implements SensorEventLis
         }
 
         if(actionTime == 0 ) {
-            mActionTime = 1000;
+            mActionTime = 0;
         }else {
             mActionTime = actionTime * 1000;
         }
 
         mActionStartTime = System.currentTimeMillis();
+        Log.d("STARTTTTTTTTTTTTTTTT", "start");
         setIsDataSaving(true);
     }
 
@@ -121,7 +125,20 @@ public class AccelerationService extends IntentService implements SensorEventLis
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER && mIsDataSaving){
+
+//        Log.d("IS ", String.valueOf(mIsWorkAtTime) +String.valueOf(Util.isTimeToStart(mDayStartTime)) +  "/ " + String.valueOf(System.currentTimeMillis() % 86400000) + " / " + String.valueOf(mDayStartTime));
+
+        if (mIsWorkAtTime) {
+            if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER && mIsDataSaving && Util.isTimeToStart(mDayStartTime)) {
+                Log.d("1", "-----");
+                ax = event.values[0];
+                ay = event.values[1];
+                az = event.values[2];
+
+                saveDataToFirebase(ax, ay, az);
+            }
+        } else if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER && mIsDataSaving) {
+            Log.d("2", "-----");
             ax = event.values[0];
             ay = event.values[1];
             az = event.values[2];
@@ -130,15 +147,21 @@ public class AccelerationService extends IntentService implements SensorEventLis
         }
     }
 
+
     public void saveDataToFirebase(double x, double y, double z){
         if ((System.currentTimeMillis() - mLastTimeSave) >= mIntervalTime) {
             mAccelerometerData = new AccelerometerData(x, y, z);
             Map<String, Object> map = mAccelerometerData.toMap();
             mDbRef.child(mEmail).child(mSession).child(Util.currenTimeStampToDate(null)).setValue(map);
             mLastTimeSave = System.currentTimeMillis();
-        }else if((System.currentTimeMillis() - mActionStartTime) >= mActionTime) {
+        }else if(mActionTime != 0 && (System.currentTimeMillis() - mActionStartTime) >= mActionTime) {
             handleStopAccelerometerAction();
         }
+    }
+
+    public void setWorkAtTime(boolean isWorkAtTime, int ml){
+        mIsWorkAtTime = isWorkAtTime;
+        mDayStartTime = ml;
     }
 
     @Override
