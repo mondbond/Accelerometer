@@ -63,6 +63,7 @@ public class AccelerometerService extends IntentService implements SensorEventLi
     protected void onHandleIntent(Intent intent) {}
 
     public void startAccelerometerAction(int intervalTime, int actionTime) {
+        // TODO: 30/05/17 don't understand what you are doing here. The code should be understandable for other people
         if(intervalTime == 0 ) {
             mIntervalTime = 1000;
         }else {
@@ -96,6 +97,7 @@ public class AccelerometerService extends IntentService implements SensorEventLi
         }
     }
 
+    // TODO: 30/05/17 check what? Check or check and do some actions?
     public void checkEventBeforeSave(SensorEvent event){
         if ((Util.getLocalTimeStamp() - mLastTimeSave) >= mIntervalTime) {
             saveEventToFirebase(event);
@@ -112,6 +114,7 @@ public class AccelerometerService extends IntentService implements SensorEventLi
         mAccelerometerData = new AccelerometerData(ax, ay, az);
         Map<String, Object> map = mAccelerometerData.toMap();
         mDbRef.child(mEmail).child(mSession).child(Util.makeTimeStampToDate(Util.getLocalTimeStamp())).setValue(map);
+
         mLastTimeSave = Util.getLocalTimeStamp();
     }
 

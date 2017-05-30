@@ -56,7 +56,8 @@ public class AccelerationDataAdapter extends RecyclerView.Adapter<AccelerationDa
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-
+        // TODO: 30/05/17 WTF IS THIS????
+        // RTFM!!!
         holder.session.setText(mSessions.get(position).getTime());
 
         for (int i = 0; i != mSessions.get(position).getData().size(); ++i) {

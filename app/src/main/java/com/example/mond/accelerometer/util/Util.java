@@ -1,11 +1,13 @@
 package com.example.mond.accelerometer.util;
 
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
 public class Util {
 
+//todo use converter class TimeUnit.DAYS.toHours(23);
     private static final int ML_IN_DAY = 86400000;
     private static final int ML_IN_HOUR = 3600000;
     private static final int ML_IN_MINUTE = 60000;

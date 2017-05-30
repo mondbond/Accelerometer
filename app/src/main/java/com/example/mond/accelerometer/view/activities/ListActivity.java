@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.Configuration;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,7 +13,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -22,13 +22,13 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.example.mond.accelerometer.service.AccelerometerService;
-import com.example.mond.accelerometer.util.Util;
-import com.example.mond.accelerometer.view.fragments.ListFragment;
 import com.example.mond.accelerometer.R;
 import com.example.mond.accelerometer.pojo.AccelerometerData;
 import com.example.mond.accelerometer.pojo.Session;
+import com.example.mond.accelerometer.service.AccelerometerService;
+import com.example.mond.accelerometer.util.Util;
 import com.example.mond.accelerometer.view.fragments.LineGraphFragment;
+import com.example.mond.accelerometer.view.fragments.ListFragment;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -75,6 +75,7 @@ public class ListActivity extends AppCompatActivity implements ListFragment.OnFr
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // TODO: 30/05/17 single method should fit screen height!
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
@@ -87,6 +88,7 @@ public class ListActivity extends AppCompatActivity implements ListFragment.OnFr
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(mTimeExecutionValue.getText().toString().equals("")){
                     buttonView.setChecked(false);
+                    // TODO: 30/05/17 HARDCODE
                     Toast.makeText(ListActivity.this, "Set your time first", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -243,6 +245,7 @@ public class ListActivity extends AppCompatActivity implements ListFragment.OnFr
         }
     }
 
+    // TODO: 30/05/17 why not separated package?
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
