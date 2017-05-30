@@ -1,6 +1,5 @@
 package com.example.mond.accelerometer.view.adapter;
 
-
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -58,32 +57,10 @@ public class AccelerationDataAdapter extends RecyclerView.Adapter<AccelerationDa
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        View view = holder.itemView;
 
         holder.session.setText(mSessions.get(position).getTime());
 
-        holder.time = new TextView(mContext);
-        holder.time.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT));
-
-        holder.x = new TextView(mContext);
-        holder.x.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT));
-
-
-        holder.y = new TextView(mContext);
-        holder.y.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT));
-
-        holder.z = new TextView(mContext);
-        holder.z.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT));
-
-        holder.dataContainer.removeAllViews();
-
         for (int i = 0; i != mSessions.get(position).getData().size(); ++i) {
-
-
             holder.time = new TextView(mContext);
             holder.x = new TextView(mContext);
             holder.y = new TextView(mContext);
@@ -105,7 +82,6 @@ public class AccelerationDataAdapter extends RecyclerView.Adapter<AccelerationDa
         holder.session.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if(holder.dataContainer.getVisibility() == View.VISIBLE) {
                     holder.dataContainer.setVisibility(View.GONE);
                 }else {
@@ -119,12 +95,6 @@ public class AccelerationDataAdapter extends RecyclerView.Adapter<AccelerationDa
             public void onClick(View v) {
                 mListener.onItemClick(mSessions.get(position).getData());
              }
-        });
-
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-            }
         });
     }
 

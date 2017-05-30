@@ -13,12 +13,11 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -69,7 +68,7 @@ public class ListActivity extends AppCompatActivity implements ListFragment.OnFr
     private Button mTimeExecutionSetterBtn;
     private TextView mTimeExecutionValue;
 
-    private RadioButton mIsExecutingOnTime;
+    private CheckBox mIsExecutingOnTime;
     private int mDayTimeExecuting;
 
     private TimePickerDialog mTimePickerDialog;
@@ -82,7 +81,7 @@ public class ListActivity extends AppCompatActivity implements ListFragment.OnFr
         mIntervalValue = (EditText) findViewById(R.id.activity_list_interval_value);
         mActionTimeValue = (EditText) findViewById(R.id.activity_list_time_value);
 
-        mIsExecutingOnTime = (RadioButton) findViewById(R.id.activity_list_is_time_execution);
+        mIsExecutingOnTime = (CheckBox) findViewById(R.id.activity_list_is_time_execution);
         mIsExecutingOnTime.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
