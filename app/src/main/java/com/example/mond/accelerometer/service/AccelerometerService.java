@@ -18,6 +18,8 @@ import java.util.Map;
 
 public class AccelerometerService extends IntentService implements SensorEventListener {
 
+    private final String FIREBASE_ROOT = "/";
+
     private FirebaseDatabase mDatabase;
     private DatabaseReference mDbRef;
 
@@ -54,7 +56,7 @@ public class AccelerometerService extends IntentService implements SensorEventLi
                 SensorManager.SENSOR_DELAY_NORMAL);
 
         mDatabase = FirebaseDatabase.getInstance();
-        mDbRef = mDatabase.getReference("/");
+        mDbRef = mDatabase.getReference(FIREBASE_ROOT);
     }
 
     @Override

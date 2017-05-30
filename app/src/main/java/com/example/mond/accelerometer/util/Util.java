@@ -17,7 +17,7 @@ public class Util {
     private static SimpleDateFormat mDateFormat;
 
     public static String clearDots(String string){
-        return string.replaceAll("\\." ,"");
+        return string.replaceAll("\\." ,",");
     }
 
     public static String makeTimeStampToDate(long timestamp){

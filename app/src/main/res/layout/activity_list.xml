@@ -27,21 +27,23 @@
                 android:id="@+id/activity_list_is_time_execution"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="14dp"
-                android:layout_marginStart="14dp"
                 android:layout_alignBaseline="@+id/activity_list_time_execution_text"
                 android:layout_alignBottom="@+id/activity_list_time_execution_text"
-                android:layout_alignLeft="@+id/activity_list_stop_btn"
-                android:layout_alignStart="@+id/activity_list_stop_btn"/>
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="14dp"
+                android:layout_marginEnd="14dp"/>
 
             <TextView
                 android:id="@+id/activity_list_time_execution_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="Execute on time : "
+                android:layout_marginLeft="17dp"
+                android:layout_marginStart="17dp"
                 android:layout_alignBottom="@+id/activity_list_time_value"
                 android:layout_alignLeft="@+id/activity_list_time_execution_btn"
-                android:layout_alignStart="@+id/activity_list_time_execution_btn"
-                android:text="Execute on time : "/>
+                android:layout_alignStart="@+id/activity_list_time_execution_btn"/>
 
             <Button
                 android:id="@+id/activity_list_time_execution_btn"

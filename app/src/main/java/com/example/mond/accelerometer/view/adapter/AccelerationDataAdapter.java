@@ -21,7 +21,6 @@ public class AccelerationDataAdapter extends RecyclerView.Adapter<AccelerationDa
     private Context mContext;
     private AdapterListener mListener;
 
-
     public AccelerationDataAdapter(List<Session> sessions, AdapterListener listener, Context context) {
         this.mSessions = sessions;
         this.mListener = listener;

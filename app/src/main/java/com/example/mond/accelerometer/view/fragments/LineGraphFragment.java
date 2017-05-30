@@ -33,8 +33,6 @@ public class LineGraphFragment extends Fragment {
 
     public static LineGraphFragment newInstance() {
         LineGraphFragment fragment = new LineGraphFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
         return fragment;
     }
 
