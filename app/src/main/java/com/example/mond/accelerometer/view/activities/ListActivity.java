@@ -1,34 +1,23 @@
 package com.example.mond.accelerometer.view.activities;
 
-import android.app.TimePickerDialog;
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.support.v4.app.Fragment;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.example.mond.accelerometer.R;
 import com.example.mond.accelerometer.pojo.AccelerometerData;
 import com.example.mond.accelerometer.pojo.Session;
-import com.example.mond.accelerometer.service.AccelerometerService;
-import com.example.mond.accelerometer.util.Util;
-import com.example.mond.accelerometer.view.fragments.LineGraphFragment;
-import com.example.mond.accelerometer.view.fragments.ListFragment;
+import com.example.mond.accelerometer.view.fragments.AccelerometerDialogFragment;
+import com.example.mond.accelerometer.view.fragments.SessionFragment;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -38,40 +27,24 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListActivity extends AppCompatActivity implements ListFragment.OnFragmentInteractionListener, TimePickerDialog.OnTimeSetListener {
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
-    public static final String EMAIL_EXTRA = "email";
+public class ListActivity extends AppCompatActivity implements SessionFragment.OnFragmentInteractionListener {
 
-    private AccelerometerService mAccelerometerService;
-    private boolean mIsBinded;
-    private ServiceConnection mServiceConnection;
-    private Intent mServiceIntent;
+    public static final String UID = "email";
+    public static final String ACCELEROMETER_DIALOG_FRAGMENT_TAG = "accelerometerDialogFragmentTag";
 
     private FirebaseDatabase mDatabase;
     private DatabaseReference mDbRef;
-
-    private Button mStartButton;
-    private Button mStopButton;
-
-    private String mEmail;
-
-    private ListFragment mListFragment;
-    private LineGraphFragment mGraphFragment;
-
+    private String mUID;
     private List<Session> mSessions = new ArrayList<>();
+    private AccelerometerDialogFragment mAccelerometerDialogFragment;
+    private SessionFragment mSessionFragment;
 
-    private ViewPager mPager;
-    private SectionsPagerAdapter mPagerAdapter;
+    private FirebaseAuth mAuth;
 
-    private EditText mIntervalValue;
-    private EditText mActionTimeValue;
-    private Button mTimeExecutionSetterBtn;
-    private TextView mTimeExecutionValue;
-
-    private CheckBox mIsExecutingOnTime;
-    private int mDayTimeExecuting;
-
-    private TimePickerDialog mTimePickerDialog;
+    @BindView(R.id.fab) FloatingActionButton mFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,91 +52,36 @@ public class ListActivity extends AppCompatActivity implements ListFragment.OnFr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
-        mIntervalValue = (EditText) findViewById(R.id.activity_list_interval_value);
-        mActionTimeValue = (EditText) findViewById(R.id.activity_list_time_value);
+        ButterKnife.bind(this);
 
-        mIsExecutingOnTime = (CheckBox) findViewById(R.id.activity_list_is_time_execution);
-        mIsExecutingOnTime.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+        mAuth = FirebaseAuth.getInstance();
+
+        if(mSessionFragment == null){
+            mSessionFragment = SessionFragment.newInstance();
+        }
+
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.sessionListContainer, mSessionFragment);
+        ft.commit();
+
+        mFab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(mTimeExecutionValue.getText().toString().equals("")){
-                    buttonView.setChecked(false);
-                    // TODO: 30/05/17 HARDCODE
-                    Toast.makeText(ListActivity.this, "Set your time first", Toast.LENGTH_SHORT).show();
+            public void onClick(View view) {
+                if(mAccelerometerDialogFragment == null){
+                    mAccelerometerDialogFragment = AccelerometerDialogFragment.newInstance(mUID);
                 }
+
+                mAccelerometerDialogFragment.show(getSupportFragmentManager(), ACCELEROMETER_DIALOG_FRAGMENT_TAG);
             }
         });
-
-        mTimeExecutionSetterBtn = (Button) findViewById(R.id.activity_list_time_execution_btn);
-        mTimeExecutionSetterBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(mTimePickerDialog == null){
-                    mTimePickerDialog = new TimePickerDialog(ListActivity.this, ListActivity.this, 0, 0, true);
-                }
-                mTimePickerDialog.show();
-            }
-        });
-
-        mTimeExecutionValue = (TextView) findViewById(R.id.activity_list_time_execution_value);
 
         Bundle bundle = getIntent().getExtras();
-        mEmail = bundle.getString(EMAIL_EXTRA);
+        mUID = bundle.getString(UID);
 
         mDatabase = FirebaseDatabase.getInstance();
-        mDbRef = mDatabase.getReference().child(mEmail);
-
-        mStartButton = (Button) findViewById(R.id.activity_list_start_btn);
-        mStopButton = (Button) findViewById(R.id.activity_list_stop_btn);
-
-        mServiceIntent = new Intent(this, AccelerometerService.class);
-
-        mServiceConnection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                AccelerometerService.LocalBinder localBinder = (AccelerometerService.LocalBinder) service;
-                mAccelerometerService = localBinder.getService();
-                mAccelerometerService.setEmail(mEmail);
-                mIsBinded = true;
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-                mIsBinded = false;
-            }
-        };
-
-        mStartButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                int interval = 0;
-                int sessionTime = 0;
-
-                if(!mIntervalValue.getText().toString().equals("")){
-                    interval = Integer.parseInt(mIntervalValue.getText().toString());
-                }
-
-                if(!mActionTimeValue.getText().toString().equals("")){
-                    sessionTime = Integer.parseInt(mActionTimeValue.getText().toString());
-                }
-
-                if(mIsExecutingOnTime.isChecked()){
-                    mAccelerometerService.setWorkAtTime(true, mDayTimeExecuting);
-                }else {
-                    mAccelerometerService.setWorkAtTime(false, 0);
-                }
-
-                mAccelerometerService.startAccelerometerAction(interval, sessionTime);
-            }
-        });
-
-        mStopButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mAccelerometerService.handleStopAccelerometerAction();
-            }
-        });
+        mDbRef = mDatabase.getReference().child(mUID);
 
         mDbRef.addValueEventListener(new ValueEventListener() {
 
@@ -175,103 +93,56 @@ public class ListActivity extends AppCompatActivity implements ListFragment.OnFr
                 }
 
                 for(DataSnapshot data : dataSnapshot.getChildren()){
-
                     Session session = new Session();
                     session.setTime(data.getKey());
-
                     for(DataSnapshot data1 : data.getChildren()){
                         AccelerometerData accelerometerData = data1.getValue(AccelerometerData.class);
                         session.addData(accelerometerData);
                     }
-
                     mSessions.add(session);
                 }
-                setAccelerometerDataToFragment(mSessions);
+
+                mSessionFragment.setNewAccelerometerValues(mSessions);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {}
         });
-
-        if(mGraphFragment == null){
-            mGraphFragment = LineGraphFragment.newInstance();
-        }
-
-        if(mListFragment == null){
-            mListFragment = ListFragment.newInstance();
-        }
-
-        if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
-            FragmentManager fm = getSupportFragmentManager();
-            FragmentTransaction ft = fm.beginTransaction();
-            ft.replace(R.id.activity_list_list_fragment_container, mListFragment);
-            ft.replace(R.id.activity_list_graph_fragment_container, mGraphFragment);
-            ft.commit();
-        }else {
-            mPager = (ViewPager) findViewById(R.id.list_activity_view_pager);
-            mPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-            mPager.setAdapter(mPagerAdapter);
-        }
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        bindService(mServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+    public void setSessionAcccelerometerData(Session accelerometerDatas) {
+
+        Intent detailSessionIntent = new Intent(this, DetailSessionActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(DetailSessionActivity.SESSION_DATA, accelerometerDatas);
+        bundle.putString(DetailSessionActivity.UID, mUID);
+        detailSessionIntent.putExtras(bundle);
+
+        startActivity(detailSessionIntent);
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        unbindService(mServiceConnection);
-    }
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.log_out){
 
-    private void setAccelerometerDataToFragment(List<Session> sessions){
-        mListFragment.setNewAccelerometerValues(sessions);
+            FirebaseAuth.getInstance().signOut();
+
+            Intent logOutIntent = new Intent(this, LoginActivity.class);
+            logOutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(logOutIntent);
+
+            finish();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void setSessionAcccelerometerData(List<AccelerometerData> accelerometerDatas) {
-        mGraphFragment.setAccelerometerDatas(accelerometerDatas);
-    }
+    public boolean onCreateOptionsMenu(Menu menu) {
 
-    @Override
-    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        if(Util.isOutOfTime(hourOfDay, minute)) {
-            Toast.makeText(this, "Out of time", Toast.LENGTH_SHORT).show();
-        }else {
-            mDayTimeExecuting = Util.getTimeOfDayInMl(hourOfDay, minute);
-            mTimeExecutionValue.setText(String.valueOf(hourOfDay) + " : " + String.valueOf(minute));
-        }
-    }
-
-    // TODO: 30/05/17 why not separated package?
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            if(mListFragment == null || mGraphFragment == null) {
-                mListFragment = ListFragment.newInstance();
-                mGraphFragment = LineGraphFragment.newInstance();
-            }
-
-            switch (position) {
-                case 0:
-                    return mListFragment;
-                case 1:
-                    return mGraphFragment;
-                default:
-                    return null;
-            }
-        }
-
-        @Override
-        public int getCount() {
-            return 2;
-        }
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.session_activity_menu, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 }

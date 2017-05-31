@@ -12,29 +12,32 @@ import android.view.ViewGroup;
 import com.example.mond.accelerometer.R;
 import com.example.mond.accelerometer.pojo.AccelerometerData;
 import com.example.mond.accelerometer.pojo.Session;
-import com.example.mond.accelerometer.view.adapter.AccelerationDataAdapter;
+import com.example.mond.accelerometer.view.adapter.SessionAdapter;
 
 import java.util.List;
 
-public class ListFragment extends Fragment implements AccelerationDataAdapter.AdapterListener {
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+public class SessionFragment extends Fragment implements SessionAdapter.AdapterListener {
 
     private OnFragmentInteractionListener mListener;
 
-    private RecyclerView mRecycler;
-    private AccelerationDataAdapter mAdapter;
+    @BindView(R.id.accelerometer_data_recycler) RecyclerView mRecycler;
+    private SessionAdapter mAdapter;
 
-    public static ListFragment newInstance() {
-        ListFragment fragment = new ListFragment();
+    public static SessionFragment newInstance() {
+        SessionFragment fragment = new SessionFragment();
         return fragment;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_list, container, false);
+        View v = inflater.inflate(R.layout.fragment_session, container, false);
+        ButterKnife.bind(this, v);
 
-        mAdapter = new AccelerationDataAdapter(null, this, getActivity());
-        mRecycler = (RecyclerView) v.findViewById(R.id.accelerometer_data_recycler);
+        mAdapter = new SessionAdapter(null, this, getActivity());
         mRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecycler.setAdapter(mAdapter);
 
@@ -59,8 +62,8 @@ public class ListFragment extends Fragment implements AccelerationDataAdapter.Ad
     }
 
     @Override
-    public void onItemClick(List<AccelerometerData> accelerometerDatas) {
-        mListener.setSessionAcccelerometerData(accelerometerDatas);
+    public void onItemClick(Session session) {
+        mListener.setSessionAcccelerometerData(session);
     }
 
     public void setNewAccelerometerValues(List<Session> sessions){
@@ -70,6 +73,6 @@ public class ListFragment extends Fragment implements AccelerationDataAdapter.Ad
     }
 
     public interface OnFragmentInteractionListener {
-        void setSessionAcccelerometerData(List<AccelerometerData> accelerometerDatas);
+        void setSessionAcccelerometerData(Session session);
     }
 }

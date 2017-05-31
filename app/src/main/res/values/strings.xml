@@ -4,16 +4,22 @@
     <string name="sign_in">Sign in</string>
     <string name="create_account">Create account</string>
 
-    <string name="hint_email">Hint email</string>
+    <string name="hint_email">Hint UID</string>
     <string name="hint_password">Hint password</string>
 
     <string name="sign_out">Sign out</string>
-    <string name="verify_email">Verify email</string>
+    <string name="verify_email">Verify UID</string>
 
     <string name="signed_out">Signet out</string>
 
     <string name="auth_filed">Auth filed</string>
 
+    <string name="logged">Logged</string>
+    <string name="log_in_filed">Log in error</string>
+    <string name="empty_fields_error">Fields shouldn\'t be empty</string>
+
+    <string name="set_your_time_first_error">Set your time first</string>
+    <string name="out_of_time_error">Out of time</string>
 
     <string name="interval">Interval : </string>
     <string name="time">Time : </string>

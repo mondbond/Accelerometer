@@ -2,7 +2,7 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context="com.example.mond.accelerometer.view.fragments.ListFragment">
+             tools:context="com.example.mond.accelerometer.view.fragments.SessionFragment">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/accelerometer_data_recycler"

@@ -14,9 +14,8 @@ public class review {
      окрема вітка з даними кожної сесії для кожного користувача. userID-sessionID->accelerometerData[]
         сесія стартує, зразу пушиш нову сесію у firebase, і починаєш пушити нові дані у вітку цієї сесії.
 
-
-    // TODO: 30/05/17 add logout option
-    // TODO: 30/05/17 check login samples. User should be logged in after account creation. 
+    // TODO: - 30/05/17 add logout option
+    // TODO: ? 30/05/17 check login samples. User should be logged in after account creation.
     Login & Create Account are different thing, don't try to combine them 
       */
 }
