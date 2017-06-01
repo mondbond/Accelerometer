@@ -51,4 +51,8 @@ public class Util {
     public static long getLocalTimeStamp(){
         return System.currentTimeMillis() + timeZone.getOffset(System.currentTimeMillis());
     }
+
+    public static int secToMl(int sec){
+        return sec * 1000;
+    }
 }

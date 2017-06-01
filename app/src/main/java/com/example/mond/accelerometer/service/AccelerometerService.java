@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import com.example.mond.accelerometer.pojo.AccelerometerData;
 import com.example.mond.accelerometer.util.Util;
@@ -24,18 +25,18 @@ import java.util.Map;
 
 public class AccelerometerService extends Service implements SensorEventListener {
 
+    public static final int MINIMUM_INTERVAL = 1000;
+
     public static final String START_ACTION = "start";
     public static final String STOP_ACTION = "stop";
-
     public static final String BROADCAST_ACTION = "broadcastAction";
-
     public static final String INTERVAL = "interval";
     public static final String SESSION_TIME = "sessionTime";
     public static final String TIME_OF_START = "timeOfStart";
     public static final String IS_DELAY_STARTING = "isDelayStarting";
     public static final String UID = "uid";
 
-    private BroadcastReceiver mBroadcastReciever;
+    private BroadcastReceiver mStopBroadcastReciever;
 
     private final String FIREBASE_ROOT = "/";
 
@@ -48,101 +49,105 @@ public class AccelerometerService extends Service implements SensorEventListener
     private AccelerometerData mAccelerometerData;
 
     private String mUID;
-    private String mSession;
+    private String mSessionId;
 
     private long mLastTimeSave;
 
-    private boolean mIsDataSaving;
+    private boolean mIsRunning;
 
     private int mSessionTime;
-    private int mIntervalTime;
+    private int mIntervalTimeInMl;
     private long mActionStartTime;
 
-    private boolean mIsWorkAtTime;
-    private int mDayStartTime;
+    private boolean mIsDelayMode;
+    private int mStartTime;
 
     private LocalBinder mLocalBinder = new LocalBinder();
 
     public void onCreate() {
         super.onCreate();
-        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        mSensorManager.registerListener(this,
-                mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                SensorManager.SENSOR_DELAY_NORMAL);
-
         mDatabase = FirebaseDatabase.getInstance();
         mDbRef = mDatabase.getReference(FIREBASE_ROOT);
-
-        mBroadcastReciever = new BroadcastReceiver() {
-            public void onReceive(Context context, Intent intent) {
-                mIsDataSaving = false;
-                stopSelf();
-            }
-        };
-
-        IntentFilter intFilt = new IntentFilter(BROADCAST_ACTION);
-        intFilt.addCategory(Intent.CATEGORY_DEFAULT);
-        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReciever, intFilt);
     }
 
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-        if(intent.getAction().equals(START_ACTION) && !mIsDataSaving){
+        if(intent.getAction().equals(START_ACTION) && !mIsRunning){
             Bundle bundle = intent.getExtras();
-
-            mIsWorkAtTime = bundle.getBoolean(IS_DELAY_STARTING);
-            mDayStartTime = bundle.getInt(TIME_OF_START);
+            mIsDelayMode = bundle.getBoolean(IS_DELAY_STARTING);
+            mStartTime = bundle.getInt(TIME_OF_START);
+            mIntervalTimeInMl = bundle.getInt(INTERVAL);
+            mSessionTime = bundle.getInt(SESSION_TIME);
             mUID = bundle.getString(UID);
-            startAccelerometerAction(bundle.getInt(INTERVAL), bundle.getInt(SESSION_TIME));
+
+            initAccelerometerConfig();
+            initSensorListener();
+            initStopBroadcastReceiver();
+            setIsDataSaving(true);
         }
 
         return super.onStartCommand(intent, flags, startId);
     }
 
-    public void startAccelerometerAction(int intervalTime, int actionTime) {
+    public void initAccelerometerConfig() {
         // TODO: 30/05/17 don't understand what you are doing here. The code should be understandable for other people
-        if(intervalTime == 0 ) {
-            mIntervalTime = 1000;
-        }else {
-            mIntervalTime = intervalTime * 1000;
-        }
-
-        if(actionTime == 0 ) {
-            mSessionTime = 0;
-        }else {
-            mSessionTime = actionTime * 1000;
-        }
-
+        mIntervalTimeInMl = Math.max(Util.secToMl(mIntervalTimeInMl), MINIMUM_INTERVAL);
+        mSessionTime = Util.secToMl(mSessionTime);
         mActionStartTime = Util.getLocalTimeStamp();
-        mSession = Util.makeTimeStampToDate(Util.getLocalTimeStamp());
-
-        setIsDataSaving(true);
+        mSessionId = Util.makeTimeStampToDate(Util.getLocalTimeStamp());
     }
 
-    public void handleStopAccelerometerAction() {
-        setIsDataSaving(false);
+    public void initSensorListener(){
+        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        mSensorManager.registerListener(this,
+                mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    public void initStopBroadcastReceiver(){
+        mStopBroadcastReciever = new BroadcastReceiver() {
+            public void onReceive(Context context, Intent intent) {
+                mIsRunning = false;
+                stopSelf();
+            }
+        };
+
+        IntentFilter intentFilter = new IntentFilter(BROADCAST_ACTION);
+        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mStopBroadcastReciever, intentFilter);
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (mIsWorkAtTime) {
-            if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER
-                    && mIsDataSaving && Util.isTimeToStart(mDayStartTime)) {
-                checkEventBeforeSave(event);
-            }
-        } else if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER && mIsDataSaving) {
-            checkEventBeforeSave(event);
+        Log.d("SENSOR CHANGE", "-");
+
+        if (mIsDelayMode && isPassingPeriodAndTypeFilter(event) && Util.isTimeToStart(mStartTime)
+                && isSessionTimeOver()) {
+            saveEventToFirebase(event);
+        } else if (isPassingPeriodAndTypeFilter(event) && !isSessionTimeOver()) {
+            saveEventToFirebase(event);
+        }else if(isSessionTimeOver()){
+            stopSelf();
         }
     }
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
 
-    // TODO: 30/05/17 check what? Check or check and do some actions?
-    public void checkEventBeforeSave(SensorEvent event){
-        if ((Util.getLocalTimeStamp() - mLastTimeSave) >= mIntervalTime) {
-            saveEventToFirebase(event);
-        } else if(mSessionTime != 0
-                && (Util.getLocalTimeStamp() - mActionStartTime) >= mSessionTime) {
-            handleStopAccelerometerAction();
+    public boolean isPassingPeriodAndTypeFilter(SensorEvent event){
+        if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER && mIsRunning
+                && (Util.getLocalTimeStamp() - mLastTimeSave) >= mIntervalTimeInMl){
+            return true;
         }
+
+        return false;
+    }
+
+    public boolean isSessionTimeOver(){
+        if(mSessionTime != 0 && (Util.getLocalTimeStamp() - mActionStartTime) >= mSessionTime){
+            return true;
+        }
+
+        return false;
     }
 
     private void saveEventToFirebase(SensorEvent event){
@@ -152,33 +157,26 @@ public class AccelerometerService extends Service implements SensorEventListener
 
         mAccelerometerData = new AccelerometerData(ax, ay, az);
         Map<String, Object> map = mAccelerometerData.toMap();
-        mDbRef.child(Util.clearDots(mUID)).child(mSession)
+        mDbRef.child(Util.clearDots(mUID)).child(mSessionId)
                 .child(Util.makeTimeStampToDate(Util.getLocalTimeStamp())).setValue(map);
 
         mLastTimeSave = Util.getLocalTimeStamp();
     }
 
-    public void setWorkAtTime (boolean isWorkAtTime, int ml) {
-        mIsWorkAtTime = isWorkAtTime;
-        mDayStartTime = ml;
-    }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mSensorManager.unregisterListener(this);
         LocalBroadcastManager manager = LocalBroadcastManager.getInstance(this);
-        manager.unregisterReceiver(mBroadcastReciever);
+        manager.unregisterReceiver(mStopBroadcastReciever);
     }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
 
     public IBinder onBind(Intent intent) {
         return mLocalBinder;
     }
 
     public void setIsDataSaving(boolean dataSaving) {
-        mIsDataSaving = dataSaving;
+        mIsRunning = dataSaving;
     }
 
     public class LocalBinder extends Binder {
