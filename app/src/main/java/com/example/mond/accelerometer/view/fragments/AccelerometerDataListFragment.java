@@ -9,8 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.mond.accelerometer.R;
-import com.example.mond.accelerometer.pojo.Session;
+import com.example.mond.accelerometer.pojo.AccelerometerData;
 import com.example.mond.accelerometer.view.adapter.AccelerometerDataAdapter;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -19,7 +21,7 @@ public class AccelerometerDataListFragment extends Fragment {
     public static final String SESSION = "session";
     public static final String ACCELEROMETER_LIST_FRAGMENT_TAG = "accelerometerlistTag";
 
-    private Session mSession;
+    private ArrayList<AccelerometerData> accelerometerDatas;
     private AccelerometerDataAdapter mAdapter;
 
     @BindView(R.id.accelerometer_data_fragment_recycler) RecyclerView mRecycler;
@@ -38,7 +40,7 @@ public class AccelerometerDataListFragment extends Fragment {
         setRetainInstance(true);
 
         if (getArguments() != null) {
-            mSession = getArguments().getParcelable(SESSION);
+            accelerometerDatas = getArguments().getParcelable(SESSION);
         }
     }
 
@@ -55,8 +57,8 @@ public class AccelerometerDataListFragment extends Fragment {
         return v;
     }
 
-    public void setNewSessionValue(Session newSession){
-        mSession = newSession;
-        mAdapter.setNewSessionValue(mSession);
+    public void setNewSessionValue(ArrayList<AccelerometerData> accelerometerDatas){
+        this.accelerometerDatas = accelerometerDatas;
+        mAdapter.setNewSessionValue(this.accelerometerDatas);
     }
 }

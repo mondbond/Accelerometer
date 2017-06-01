@@ -2,22 +2,23 @@ package com.example.mond.accelerometer.view.adapter;
 
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.mond.accelerometer.R;
-import com.example.mond.accelerometer.pojo.Session;
+import com.example.mond.accelerometer.pojo.AccelerometerData;
 import com.example.mond.accelerometer.util.Util;
+
+import java.util.ArrayList;
 
 public class AccelerometerDataAdapter extends RecyclerView.Adapter<AccelerometerDataAdapter.ViewHolder> {
 
-    private Session mSession;
+    private ArrayList<AccelerometerData> mAccelerometerDatas;
 
-    public AccelerometerDataAdapter(Session session) {
-        mSession = session;
+    public AccelerometerDataAdapter(ArrayList<AccelerometerData> accelerometerDatas) {
+        accelerometerDatas = accelerometerDatas;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -45,23 +46,23 @@ public class AccelerometerDataAdapter extends RecyclerView.Adapter<Accelerometer
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.time.setText(Util.makeTimeStampToDate(mSession.getData().get(position).getId()));
-        holder.x.setText(String.valueOf(mSession.getData().get(position).getX()));
-        holder.y.setText(String.valueOf(mSession.getData().get(position).getY()));
-        holder.z.setText(String.valueOf(mSession.getData().get(position).getZ()));
+        holder.time.setText(Util.makeTimeStampToDate(mAccelerometerDatas.get(position).getId()));
+        holder.x.setText(String.valueOf(mAccelerometerDatas.get(position).getX()));
+        holder.y.setText(String.valueOf(mAccelerometerDatas.get(position).getY()));
+        holder.z.setText(String.valueOf(mAccelerometerDatas.get(position).getZ()));
     }
 
     @Override
     public int getItemCount() {
-        if (mSession != null) {
-            return mSession.getData().size();
+        if (mAccelerometerDatas != null) {
+            return mAccelerometerDatas.size();
         } else {
             return 0;
         }
     }
 
-    public void setNewSessionValue(Session sessionValue){
-        mSession = sessionValue;
+    public void setNewSessionValue(ArrayList<AccelerometerData> accelerometerDatas){
+        mAccelerometerDatas = accelerometerDatas;
         notifyDataSetChanged();
     }
 }

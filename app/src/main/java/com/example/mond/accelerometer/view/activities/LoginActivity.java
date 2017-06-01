@@ -24,7 +24,6 @@ import butterknife.ButterKnife;
 public class LoginActivity extends AppCompatActivity {
 
     private final String TAG = "MAIN_ACTIVITY";
-
     private FirebaseAuth mAuth;
 
     @BindView(R.id.field_email) TextView mUserEmail;

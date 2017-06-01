@@ -90,7 +90,7 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
 
     public void initFirebaseDb(){
         mDatabase = FirebaseDatabase.getInstance();
-        mDbRef = mDatabase.getReference().child(mUID);
+        mDbRef = mDatabase.getReference().child("sessions").child(mUID);
         mDbRef.addValueEventListener(new ValueEventListener() {
 
             @Override
@@ -100,11 +100,12 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
                 }
                 for(DataSnapshot data : dataSnapshot.getChildren()){
                     Session session = new Session();
-                    session.setTime(data.getKey());
-                    for(DataSnapshot data1 : data.getChildren()){
-                        AccelerometerData accelerometerData = data1.getValue(AccelerometerData.class);
-                        session.addData(accelerometerData);
-                    }
+                    session.setSessionId(Long.parseLong((String) data.child("sessionId").getValue()));
+//                    session.setSessionInterval(Integer.getInteger((String) data.child("sessionIntervalInfo").getValue()));
+//                    for(DataSnapshot data1 : data.getChildren()){
+//                        AccelerometerData accelerometerData = data1.getValue(AccelerometerData.class);
+//                        session.addData(accelerometerData);
+//                    }
                     mSessions.add(session);
                 }
                 mSessionFragment.setNewAccelerometerValues(mSessions);

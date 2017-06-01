@@ -17,6 +17,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 public class DetailSessionActivity extends AppCompatActivity {
 
     public final static String SESSION_DATA = "sessionData";
@@ -28,6 +30,7 @@ public class DetailSessionActivity extends AppCompatActivity {
     private DatabaseReference mDbRef;
     private String mUID;
     private Session mSession;
+    private ArrayList<AccelerometerData> mAccelerometerDatas = new ArrayList<>();
 
     private LineGraphFragment mGraphFragment;
     private AccelerometerDataListFragment mAccelerometerDataListFragment;
@@ -64,34 +67,32 @@ public class DetailSessionActivity extends AppCompatActivity {
         initFirebaseDb();
     }
 
-
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
         mSession = savedInstanceState.getParcelable(RESTORE_SESSION);
-        mGraphFragment.setNewSessionValue(mSession);
-        mAccelerometerDataListFragment.setNewSessionValue(mSession);
+        mGraphFragment.setNewSessionValue(mAccelerometerDatas);
+        mAccelerometerDataListFragment.setNewSessionValue(mAccelerometerDatas);
     }
-
 
     public void initFirebaseDb(){
         mDatabase = FirebaseDatabase.getInstance();
-        mDbRef = mDatabase.getReference().child(mUID).child(mSession.getTime());
-
+        mDbRef = mDatabase.getReference().child("sessionData").child(mUID)
+                .child(String.valueOf(mSession.getSessionId()));
         mDbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                mSession = new Session();
-                mSession.setTime(dataSnapshot.getKey());
+//                mSession = new Session();
+//                mSession.setTime(dataSnapshot.getKey());
                 for(DataSnapshot data : dataSnapshot.getChildren()){
                     AccelerometerData accelerometerData = data.getValue(AccelerometerData.class);
-                    mSession.addData(accelerometerData);
+                    mAccelerometerDatas.add(accelerometerData);
                 }
 
-                mAccelerometerDataListFragment.setNewSessionValue(mSession);
-                mGraphFragment.setNewSessionValue(mSession);
+                mAccelerometerDataListFragment.setNewSessionValue(mAccelerometerDatas);
+                mGraphFragment.setNewSessionValue(mAccelerometerDatas);
             }
 
             @Override

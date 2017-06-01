@@ -14,59 +14,28 @@ import java.util.Map;
 @IgnoreExtraProperties
 public class Session implements Parcelable {
 
-    private String mTime;
-    private List<AccelerometerData> mData;
+    private int mSessionInterval;
+    private long mSessionId;
 
-    public Session(String time, List<AccelerometerData> data) {
-        mTime = time;
-        mData = data;
+    public Session(int sessionInterval, long sessionId) {
+        mSessionInterval = sessionInterval;
+        mSessionId = sessionId;
     }
 
-    public Session() {
-        mData = new ArrayList<>();
-    }
+    public Session() {}
 
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
-        result.put("time", mTime);
-        result.put("data", mData);
+        result.put("interval", mSessionInterval);
+        result.put("id", mSessionId);
 
         return result;
     }
 
-    public void addAccelerometerData(AccelerometerData accelerometerData){
-        mData.add(accelerometerData);
-    }
-
-    public String getTime() {
-        return mTime;
-    }
-
-    public void setTime(String time) {
-        mTime = time;
-    }
-
-    public List<AccelerometerData> getData() {
-        return mData;
-    }
-
-    public void setData(List<AccelerometerData> data) {
-        mData = data;
-    }
-
-    public void addData(AccelerometerData accelerometerData){
-        mData.add(accelerometerData);
-    }
-
     protected Session(Parcel in) {
-        mTime = in.readString();
-        if (in.readByte() == 0x01) {
-            mData = new ArrayList<AccelerometerData>();
-            in.readList(mData, AccelerometerData.class.getClassLoader());
-        } else {
-            mData = null;
-        }
+        mSessionInterval = in.readInt();
+        mSessionId = in.readLong();
     }
 
     @Override
@@ -76,13 +45,8 @@ public class Session implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(mTime);
-        if (mData == null) {
-            dest.writeByte((byte) (0x00));
-        } else {
-            dest.writeByte((byte) (0x01));
-            dest.writeList(mData);
-        }
+        dest.writeInt(mSessionInterval);
+        dest.writeLong(mSessionId);
     }
 
     @SuppressWarnings("unused")
@@ -97,4 +61,20 @@ public class Session implements Parcelable {
             return new Session[size];
         }
     };
+
+    public int getSessionInterval() {
+        return mSessionInterval;
+    }
+
+    public void setSessionInterval(int sessionInterval) {
+        mSessionInterval = sessionInterval;
+    }
+
+    public long getSessionId() {
+        return mSessionId;
+    }
+
+    public void setSessionId(long sessionId) {
+        mSessionId = sessionId;
+    }
 }

@@ -50,7 +50,7 @@ public class AccelerometerService extends Service implements SensorEventListener
     private AccelerometerData mAccelerometerData;
 
     private String mUID;
-    private String mSessionId;
+    private long mSessionId;
 
     private long mLastTimeSave;
 
@@ -102,7 +102,7 @@ public class AccelerometerService extends Service implements SensorEventListener
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {}
 
-    public void initSensorListener(){
+    private void initSensorListener(){
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         mSensorManager.registerListener(this,
                 mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
@@ -111,10 +111,19 @@ public class AccelerometerService extends Service implements SensorEventListener
 
     public void initAccelerometerConfig() {
         mActionStartTime = Util.getLocalTimeStamp();
-        mSessionId = Util.makeCurrentTimeStampToDate();
+//        mSessionId = Util.makeCurrentTimeStampToDate();
+        mSessionId = Util.getLocalTimeStamp();
+        saveSessionToFirebase();
     }
 
-    public void initStopBroadcastReceiver(){
+    private void saveSessionToFirebase(){
+        mDbRef.child("sessions").child(mUID).child(String.valueOf(mSessionId)).child("sessionIntervalInfo")
+                .setValue(String.valueOf(mIntervalTimeInMl));
+        mDbRef.child("sessions").child(mUID).child(String.valueOf(mSessionId)).child("sessionId")
+                .setValue(String.valueOf(mSessionId));
+    }
+
+    private void initStopBroadcastReceiver(){
         mStopBroadcastReciever = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
                 stopSelf();
@@ -126,7 +135,7 @@ public class AccelerometerService extends Service implements SensorEventListener
         LocalBroadcastManager.getInstance(this).registerReceiver(mStopBroadcastReciever, intentFilter);
     }
 
-    public boolean isPassingPeriodAndTypeFilter(SensorEvent event){
+    private boolean isPassingPeriodAndTypeFilter(SensorEvent event){
         if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER
                 && (Util.getLocalTimeStamp() - mLastTimeSave) >= mIntervalTimeInMl){
             return true;
@@ -135,7 +144,7 @@ public class AccelerometerService extends Service implements SensorEventListener
         return false;
     }
 
-    public boolean isSessionTimeOver(){
+    private boolean isSessionTimeOver(){
         if(mSessionTime != 0 && (Util.getLocalTimeStamp() - mActionStartTime) >= mSessionTime){
             return true;
         }
@@ -150,8 +159,10 @@ public class AccelerometerService extends Service implements SensorEventListener
 
         mAccelerometerData = new AccelerometerData(ax, ay, az);
         Map<String, Object> map = mAccelerometerData.toMap();
-        mDbRef.child(mUID).child(mSessionId)
-                .child(Util.makeCurrentTimeStampToDate()).setValue(map);
+//        mDbRef.child(mUID).child(mSessionId)
+//                .child(Util.makeCurrentTimeStampToDate()).setValue(map);
+        mDbRef.child("sessionData").child(mUID)
+                .child(String.valueOf(mSessionId)).child(Util.makeCurrentTimeStampToDate()).setValue(map);
 
         mLastTimeSave = Util.getLocalTimeStamp();
     }

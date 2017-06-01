@@ -18,7 +18,7 @@
             android:id="@+id/activity_list_time_execution_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Execute on time : "
+            android:text="Execute on sessionInterval : "
             android:layout_below="@+id/activity_list_time_value"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
@@ -92,7 +92,7 @@
             android:id="@+id/activity_list_time_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/time"
+            android:text="@string/sessionInterval"
             android:layout_below="@+id/activity_list_interval_value"
             android:layout_alignRight="@+id/activity_list_interval_text"
             android:layout_alignEnd="@+id/activity_list_interval_text"/>

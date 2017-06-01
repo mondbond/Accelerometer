@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 
 import com.example.mond.accelerometer.R;
 import com.example.mond.accelerometer.pojo.AccelerometerData;
-import com.example.mond.accelerometer.pojo.Session;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
@@ -29,7 +28,7 @@ public class LineGraphFragment extends Fragment {
     public static final String SESSION = "session";
     public static final String GRAPH_FRAGMENT_TAG = "graphFragment";
 
-    private Session mSession;
+    private ArrayList<AccelerometerData> accelerometerDatas;
 
     private List<Entry> mXEntries;
     private List<Entry> mYEntries;
@@ -55,7 +54,7 @@ public class LineGraphFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         if (getArguments() != null) {
-            mSession = getArguments().getParcelable(SESSION);
+            accelerometerDatas = getArguments().getParcelable(SESSION);
         }
     }
 
@@ -114,8 +113,8 @@ public class LineGraphFragment extends Fragment {
         mGraph.invalidate();
     }
 
-    public void setNewSessionValue(Session newSession){
-        mSession = newSession;
-        setNewAccelerometerData(mSession.getData());
+    public void setNewSessionValue(ArrayList<AccelerometerData> accelerometerDatas){
+        this.accelerometerDatas = accelerometerDatas;
+        setNewAccelerometerData(this.accelerometerDatas);
     }
 }
