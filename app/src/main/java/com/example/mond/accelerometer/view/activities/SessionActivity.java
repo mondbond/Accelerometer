@@ -2,6 +2,7 @@ package com.example.mond.accelerometer.view.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -29,10 +30,11 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SessionActivity extends AppCompatActivity implements SessionFragment.OnFragmentInteractionListener {
+public class SessionActivity extends AppCompatActivity implements SessionFragment.OnSessionFragmentInteractionListener {
 
     public static final String UID = "email";
     public static final String ACCELEROMETER_DIALOG_FRAGMENT_TAG = "accelerometerDialogFragmentTag";
+    private static final String RESTORE_SESSIONS = "restoreSessions";
 
     private FirebaseDatabase mDatabase;
     private DatabaseReference mDbRef;
@@ -45,18 +47,20 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // TODO: 30/05/17 single method should fit screen height!
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_session);
         ButterKnife.bind(this);
 
-        if(mSessionFragment == null){
+        FragmentManager fm = getSupportFragmentManager();
+
+        if(fm.findFragmentByTag(SessionFragment.SESSION_FRAGMENT_TAG) == null){
             mSessionFragment = SessionFragment.newInstance();
+        }else {
+            mSessionFragment = (SessionFragment) fm.findFragmentByTag(SessionFragment.SESSION_FRAGMENT_TAG);
         }
 
-        FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.sessionListContainer, mSessionFragment);
+        ft.replace(R.id.sessionListContainer, mSessionFragment, SessionFragment.SESSION_FRAGMENT_TAG);
         ft.commit();
 
         mFab.setOnClickListener(new View.OnClickListener() {
@@ -74,6 +78,14 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
         mUID = bundle.getString(UID);
 
         initFirebaseDb();
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        mSessions = savedInstanceState.getParcelableArrayList(RESTORE_SESSIONS);
+        mSessionFragment.setNewAccelerometerValues(mSessions);
     }
 
     public void initFirebaseDb(){
@@ -104,12 +116,10 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
     }
 
     @Override
-    public void onGetSessionData(Session accelerometerDatas) {
-
-//        start detailSessionActivity
+    public void onGetSessionData(Session session) {
         Intent detailSessionIntent = new Intent(this, DetailSessionActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putParcelable(DetailSessionActivity.SESSION_DATA, accelerometerDatas);
+        bundle.putParcelable(DetailSessionActivity.SESSION_DATA, session);
         bundle.putString(DetailSessionActivity.UID, mUID);
         detailSessionIntent.putExtras(bundle);
 
@@ -136,5 +146,11 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.session_activity_menu, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(RESTORE_SESSIONS, (ArrayList<? extends Parcelable>) mSessions);
     }
 }

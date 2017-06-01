@@ -2,6 +2,7 @@ package com.example.mond.accelerometer.view.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,7 +21,9 @@ import butterknife.ButterKnife;
 
 public class SessionFragment extends Fragment implements SessionAdapter.AdapterListener {
 
-    private OnFragmentInteractionListener mListener;
+    public static final String SESSION_FRAGMENT_TAG = "sessionFragmentTag";
+
+    private OnSessionFragmentInteractionListener mListener;
 
     @BindView(R.id.accelerometer_data_recycler) RecyclerView mRecycler;
     private SessionAdapter mAdapter;
@@ -28,6 +31,12 @@ public class SessionFragment extends Fragment implements SessionAdapter.AdapterL
     public static SessionFragment newInstance() {
         SessionFragment fragment = new SessionFragment();
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
 
     @Override
@@ -46,11 +55,11 @@ public class SessionFragment extends Fragment implements SessionAdapter.AdapterL
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof OnSessionFragmentInteractionListener) {
+            mListener = (OnSessionFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnSessionFragmentInteractionListener");
         }
     }
 
@@ -71,7 +80,7 @@ public class SessionFragment extends Fragment implements SessionAdapter.AdapterL
         }
     }
 
-    public interface OnFragmentInteractionListener {
+    public interface OnSessionFragmentInteractionListener {
         void onGetSessionData(Session session);
     }
 }

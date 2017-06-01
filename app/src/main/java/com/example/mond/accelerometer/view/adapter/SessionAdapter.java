@@ -41,15 +41,16 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         // TODO: 30/05/17 WTF IS THIS????
         // RTFM!!!
 
+        final int p = position;
         holder.session.setText(mSessions.get(position).getTime());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onItemClick(mSessions.get(position));
+                mListener.onItemClick(mSessions.get(p));
             }
         });
     }

@@ -2,6 +2,7 @@ package com.example.mond.accelerometer.view.adapter;
 
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,12 +39,12 @@ public class AccelerometerDataAdapter extends RecyclerView.Adapter<Accelerometer
                                                    int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.accelerometer_data_item, parent, false);
+
         return  new ViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-
         holder.time.setText(Util.makeTimeStampToDate(mSession.getData().get(position).getId()));
         holder.x.setText(String.valueOf(mSession.getData().get(position).getX()));
         holder.y.setText(String.valueOf(mSession.getData().get(position).getY()));
@@ -52,10 +53,10 @@ public class AccelerometerDataAdapter extends RecyclerView.Adapter<Accelerometer
 
     @Override
     public int getItemCount() {
-        if(mSession == null){
-            return 0;
-        }else {
+        if (mSession != null) {
             return mSession.getData().size();
+        } else {
+            return 0;
         }
     }
 

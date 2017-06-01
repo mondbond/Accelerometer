@@ -51,8 +51,6 @@ public class LoginActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         mAuth = FirebaseAuth.getInstance();
-        // TODO: - 30/05/17 user butterknife library
-
         mCreateAccountUserBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -67,7 +65,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
         // TODO: ? 30/05/17  mAuthListener is not connected to lifecycle
-        // TODO: - 30/05/17 implement Splash Screen logic: SplashActivity launcher with auth state check, then start Login or Main Screens
     }
 
     @Override
@@ -85,15 +82,11 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void createAccount(final String email, final String pswd){
-        // TODO: - 30/05/17 use TextUtils class to handle null pointer exception
-//        TextUtils.isEmpty(email);
-//        TextUtils.equals("str1", null);
-        if(isFieldsNotEmpty()) {
+        if(isFieldsNotNullAndEmpty()) {
             mAuth.createUserWithEmailAndPassword(email, pswd)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                    // TODO: - 30/05/17 TEXT, VISIBLE TO USER SHOULD BE IN STRINGS
                     if (!task.isSuccessful()) {
                         Toast.makeText(LoginActivity.this, getResources().getString(R.string.log_in_filed),
                                 Toast.LENGTH_SHORT).show();
@@ -112,36 +105,39 @@ public class LoginActivity extends AppCompatActivity {
 
     public void signIn(final String email, String pswd) {
         // TODO: 30/05/17 check createAccount
-            if (isFieldsNotEmpty()) {
-                mAuth.signInWithEmailAndPassword(email, pswd)
-                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (!task.isSuccessful()) {
-                            // TODO: - 30/05/17 DRY!!!
-                            Toast.makeText(LoginActivity.this, getResources().getString(R.string.log_in_filed),
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(LoginActivity.this, getResources().getString(R.string.logged),
-                                    Toast.LENGTH_SHORT).show();
-                            // TODO: - 30/05/17 better to use user UID as key.
-                            // TODO: ? 30/05/17 starter pattern
-                            Intent intent = new Intent(LoginActivity.this, SessionActivity.class);
-                            intent.putExtra(SessionActivity.UID, mAuth.getCurrentUser().getUid());
-                            startActivity(intent);
-
-                            finish();
-                        }
-                        }
-                    });
+        if (isFieldsNotNullAndEmpty()) {
+            mAuth.signInWithEmailAndPassword(email, pswd)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (!task.isSuccessful()) {
+                        Toast.makeText(LoginActivity.this, getResources().getString(R.string.log_in_filed),
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(LoginActivity.this, getResources().getString(R.string.logged),
+                                Toast.LENGTH_SHORT).show();
+                        startSessionActivity();
+                    }
+                    }
+                });
         }else {
             Toast.makeText(LoginActivity.this, getResources().getString(R.string.empty_fields_error),
                     Toast.LENGTH_SHORT).show();
         }
     }
 
-    public boolean isFieldsNotEmpty(){
-        if (!TextUtils.isEmpty(mUserEmail.getText().toString())
+    public void startSessionActivity(){
+        Intent intent = new Intent(LoginActivity.this, SessionActivity.class);
+        intent.putExtra(SessionActivity.UID, mAuth.getCurrentUser().getUid());
+        startActivity(intent);
+
+        finish();
+    }
+
+    public boolean isFieldsNotNullAndEmpty(){
+        if (!TextUtils.equals(mUserEmail.getText().toString(), null)
+                && !TextUtils.equals(mUserPassword.getText().toString(), null)
+                &&!TextUtils.isEmpty(mUserEmail.getText().toString())
                 && !TextUtils.isEmpty(mUserPassword.getText().toString())) {
             return true;
         }else{

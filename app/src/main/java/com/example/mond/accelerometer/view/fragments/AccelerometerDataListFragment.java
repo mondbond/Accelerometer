@@ -1,7 +1,5 @@
 package com.example.mond.accelerometer.view.fragments;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,27 +17,29 @@ import butterknife.ButterKnife;
 
 public class AccelerometerDataListFragment extends Fragment {
     public static final String SESSION = "session";
+    public static final String ACCELEROMETER_LIST_FRAGMENT_TAG = "accelerometerlistTag";
 
     private Session mSession;
     private AccelerometerDataAdapter mAdapter;
 
     @BindView(R.id.accelerometer_data_fragment_recycler) RecyclerView mRecycler;
 
-    public static AccelerometerDataListFragment newInstance(Session session) {
+    public static AccelerometerDataListFragment newInstance() {
         AccelerometerDataListFragment fragment = new AccelerometerDataListFragment();
-        Bundle args = new Bundle();
-        args.putParcelable(SESSION, session);
-        fragment.setArguments(args);
+//        Bundle args = new Bundle();
+//        args.putParcelable(SESSION, session);
+//        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+
         if (getArguments() != null) {
             mSession = getArguments().getParcelable(SESSION);
         }
-        mAdapter = new AccelerometerDataAdapter(null);
     }
 
     @Override
@@ -48,6 +48,7 @@ public class AccelerometerDataListFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_accelerometer_data_list, container, false);
         ButterKnife.bind(this, v);
 
+        mAdapter = new AccelerometerDataAdapter(null);
         mRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecycler.setAdapter(mAdapter);
 

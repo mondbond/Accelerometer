@@ -67,7 +67,6 @@ public class AccelerometerDialogFragment extends DialogFragment implements TimeP
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             if(mTimeExecutionValue.getText().toString().equals("")){
                 buttonView.setChecked(false);
-                // TODO: 30/05/17 HARDCODE
                 Toast.makeText(getActivity(), getResources().getString(R.string.empty_fields_error), Toast.LENGTH_SHORT).show();
                 }
             }

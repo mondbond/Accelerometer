@@ -27,6 +27,7 @@ import butterknife.ButterKnife;
 public class LineGraphFragment extends Fragment {
 
     public static final String SESSION = "session";
+    public static final String GRAPH_FRAGMENT_TAG = "graphFragment";
 
     private Session mSession;
 
@@ -41,17 +42,18 @@ public class LineGraphFragment extends Fragment {
 
     @BindView(R.id.graph_fragment_graph) LineChart mGraph;
 
-    public static LineGraphFragment newInstance(Session session) {
+    public static LineGraphFragment newInstance() {
         LineGraphFragment fragment = new LineGraphFragment();
-        Bundle args = new Bundle();
-        args.putParcelable(SESSION, session);
-        fragment.setArguments(args);
+//        Bundle args = new Bundle();
+//        args.putParcelable(SESSION, session);
+//        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         if (getArguments() != null) {
             mSession = getArguments().getParcelable(SESSION);
         }
