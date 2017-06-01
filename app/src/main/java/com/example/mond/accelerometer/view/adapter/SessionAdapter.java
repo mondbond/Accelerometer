@@ -5,26 +5,21 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.mond.accelerometer.R;
-import com.example.mond.accelerometer.pojo.AccelerometerData;
 import com.example.mond.accelerometer.pojo.Session;
-import com.example.mond.accelerometer.util.Util;
 
 import java.util.List;
 
 public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHolder> {
 
     private List<Session> mSessions;
-    private Context mContext;
     private AdapterListener mListener;
 
     public SessionAdapter(List<Session> sessions, AdapterListener listener, Context context) {
         this.mSessions = sessions;
         this.mListener = listener;
-        this.mContext = context;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

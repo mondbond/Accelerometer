@@ -52,7 +52,6 @@ public class LineGraphFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if (getArguments() != null) {
             mSession = getArguments().getParcelable(SESSION);
         }
@@ -62,7 +61,6 @@ public class LineGraphFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_line_graph, container, false);
-
         ButterKnife.bind(this, v);
 
         return  v;
@@ -74,12 +72,7 @@ public class LineGraphFragment extends Fragment {
         mGraph.invalidate();
     }
 
-    public void setAccelerometerDatas(List<AccelerometerData> accelerometerDatas) {
-        setNewAccelerometerData(accelerometerDatas);
-    }
-
     private void setNewAccelerometerData(List<AccelerometerData> accelerometerDatas){
-
         if(mXEntries == null || mZEntries == null || mYEntries == null  ){
             mXEntries = new ArrayList<>();
             mYEntries = new ArrayList<>();

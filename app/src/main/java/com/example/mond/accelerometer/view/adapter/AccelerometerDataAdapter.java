@@ -12,28 +12,25 @@ import com.example.mond.accelerometer.pojo.Session;
 import com.example.mond.accelerometer.util.Util;
 
 public class AccelerometerDataAdapter extends RecyclerView.Adapter<AccelerometerDataAdapter.ViewHolder> {
+
     private Session mSession;
 
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
+    public AccelerometerDataAdapter(Session session) {
+        mSession = session;
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        // each data item is just a string in this case
-        public TextView time;
-        public TextView x;
-        public TextView y;
-        public TextView z;
-        public ViewHolder(View v) {
+        TextView time;
+        TextView x;
+        TextView y;
+        TextView z;
+        ViewHolder(View v) {
             super(v);
             time = (TextView) v.findViewById(R.id.accelerometer_data_time);
             x = (TextView) v.findViewById(R.id.accelerometer_data_x);
             y = (TextView) v.findViewById(R.id.accelerometer_data_y);
             z = (TextView) v.findViewById(R.id.accelerometer_data_z);
         }
-    }
-
-    public AccelerometerDataAdapter(Session session) {
-        mSession = session;
     }
 
     @Override
@@ -44,7 +41,6 @@ public class AccelerometerDataAdapter extends RecyclerView.Adapter<Accelerometer
         return  new ViewHolder(v);
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
@@ -56,7 +52,6 @@ public class AccelerometerDataAdapter extends RecyclerView.Adapter<Accelerometer
 
     @Override
     public int getItemCount() {
-
         if(mSession == null){
             return 0;
         }else {

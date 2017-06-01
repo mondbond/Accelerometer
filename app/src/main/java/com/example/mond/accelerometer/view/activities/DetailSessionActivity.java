@@ -8,8 +8,7 @@ import android.os.Bundle;
 import com.example.mond.accelerometer.R;
 import com.example.mond.accelerometer.pojo.AccelerometerData;
 import com.example.mond.accelerometer.pojo.Session;
-import com.example.mond.accelerometer.util.Util;
-import com.example.mond.accelerometer.view.fragments.AccelerometerDataFragment;
+import com.example.mond.accelerometer.view.fragments.AccelerometerDataListFragment;
 import com.example.mond.accelerometer.view.fragments.LineGraphFragment;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -28,7 +27,7 @@ public class DetailSessionActivity extends AppCompatActivity {
     private Session mSession;
 
     private LineGraphFragment mGraphFragment;
-    private AccelerometerDataFragment mAccelerometerDataFragment;
+    private AccelerometerDataListFragment mAccelerometerDataListFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,18 +38,22 @@ public class DetailSessionActivity extends AppCompatActivity {
         mUID = bundle.getString(UID);
         mSession = bundle.getParcelable(SESSION_DATA);
 
-        if(mGraphFragment == null|| mAccelerometerDataFragment == null){
+        if(mGraphFragment == null|| mAccelerometerDataListFragment == null){
             mGraphFragment = LineGraphFragment.newInstance(mSession);
-            mAccelerometerDataFragment = AccelerometerDataFragment.newInstance(mSession);
+            mAccelerometerDataListFragment = AccelerometerDataListFragment.newInstance(mSession);
         }
 
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
 
         ft.replace(R.id.graph_fragment_container, mGraphFragment);
-        ft.replace(R.id.accelerometer_data_fragment_container, mAccelerometerDataFragment);
+        ft.replace(R.id.accelerometer_data_fragment_container, mAccelerometerDataListFragment);
         ft.commit();
 
+        initFirebaseDb();
+    }
+
+    public void initFirebaseDb(){
         mDatabase = FirebaseDatabase.getInstance();
         mDbRef = mDatabase.getReference().child(mUID).child(mSession.getTime());
 
@@ -65,7 +68,7 @@ public class DetailSessionActivity extends AppCompatActivity {
                     mSession.addData(accelerometerData);
                 }
 
-                mAccelerometerDataFragment.setNewSessionValue(mSession);
+                mAccelerometerDataListFragment.setNewSessionValue(mSession);
                 mGraphFragment.setNewSessionValue(mSession);
             }
 

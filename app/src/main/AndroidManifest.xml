@@ -11,7 +11,7 @@
         android:theme="@style/AppTheme">
         <activity android:name=".view.activities.LoginActivity">
         </activity>
-        <activity android:name=".view.activities.ListActivity">
+        <activity android:name=".view.activities.SessionActivity">
         </activity>
 
         <service

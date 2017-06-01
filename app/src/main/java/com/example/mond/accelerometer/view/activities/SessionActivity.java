@@ -6,7 +6,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -30,7 +29,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ListActivity extends AppCompatActivity implements SessionFragment.OnFragmentInteractionListener {
+public class SessionActivity extends AppCompatActivity implements SessionFragment.OnFragmentInteractionListener {
 
     public static final String UID = "email";
     public static final String ACCELEROMETER_DIALOG_FRAGMENT_TAG = "accelerometerDialogFragmentTag";
@@ -42,20 +41,14 @@ public class ListActivity extends AppCompatActivity implements SessionFragment.O
     private AccelerometerDialogFragment mAccelerometerDialogFragment;
     private SessionFragment mSessionFragment;
 
-    private FirebaseAuth mAuth;
-
     @BindView(R.id.fab) FloatingActionButton mFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // TODO: 30/05/17 single method should fit screen height!
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list);
-
+        setContentView(R.layout.activity_session);
         ButterKnife.bind(this);
-
-
-        mAuth = FirebaseAuth.getInstance();
 
         if(mSessionFragment == null){
             mSessionFragment = SessionFragment.newInstance();
@@ -80,18 +73,19 @@ public class ListActivity extends AppCompatActivity implements SessionFragment.O
         Bundle bundle = getIntent().getExtras();
         mUID = bundle.getString(UID);
 
+        initFirebaseDb();
+    }
+
+    public void initFirebaseDb(){
         mDatabase = FirebaseDatabase.getInstance();
         mDbRef = mDatabase.getReference().child(mUID);
-
         mDbRef.addValueEventListener(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
                 if(mSessions != null){
                     mSessions.clear();
                 }
-
                 for(DataSnapshot data : dataSnapshot.getChildren()){
                     Session session = new Session();
                     session.setTime(data.getKey());
@@ -101,7 +95,6 @@ public class ListActivity extends AppCompatActivity implements SessionFragment.O
                     }
                     mSessions.add(session);
                 }
-
                 mSessionFragment.setNewAccelerometerValues(mSessions);
             }
 
@@ -111,8 +104,9 @@ public class ListActivity extends AppCompatActivity implements SessionFragment.O
     }
 
     @Override
-    public void setSessionAcccelerometerData(Session accelerometerDatas) {
+    public void onGetSessionData(Session accelerometerDatas) {
 
+//        start detailSessionActivity
         Intent detailSessionIntent = new Intent(this, DetailSessionActivity.class);
         Bundle bundle = new Bundle();
         bundle.putParcelable(DetailSessionActivity.SESSION_DATA, accelerometerDatas);
@@ -125,9 +119,7 @@ public class ListActivity extends AppCompatActivity implements SessionFragment.O
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.log_out){
-
             FirebaseAuth.getInstance().signOut();
-
             Intent logOutIntent = new Intent(this, LoginActivity.class);
             logOutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(logOutIntent);

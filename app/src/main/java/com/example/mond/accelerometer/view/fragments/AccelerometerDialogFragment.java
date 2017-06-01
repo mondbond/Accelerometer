@@ -1,13 +1,10 @@
 package com.example.mond.accelerometer.view.fragments;
 
 import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,27 +25,25 @@ import butterknife.ButterKnife;
 
 public class AccelerometerDialogFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener{
 
-    public static final String EMAIL = "email";
+    public static final String UID = "email";
 
-    private OnFragmentInteractionListener mListener;
     private int mDayTimeExecuting;
 
     @BindView(R.id.activity_list_start_btn) Button mStartButton;
     @BindView(R.id.activity_list_stop_btn) Button mStopButton;
-
     @BindView(R.id.activity_list_interval_value) EditText mIntervalValue;
     @BindView(R.id.activity_list_time_value) EditText mActionTimeValue;
     @BindView(R.id.activity_list_time_execution_btn) Button mTimeExecutionSetterBtn;
     @BindView(R.id.activity_list_time_execution_value) TextView mTimeExecutionValue;
     @BindView(R.id.activity_list_is_time_execution) CheckBox mIsExecutingOnTime;
 
-    private String mEmail;
+    private String mUID;
     private TimePickerDialog mTimePickerDialog;
 
-    public static AccelerometerDialogFragment newInstance(String email) {
+    public static AccelerometerDialogFragment newInstance(String uID) {
         AccelerometerDialogFragment fragment = new AccelerometerDialogFragment();
         Bundle args = new Bundle();
-        args.putString(EMAIL, email);
+        args.putString(UID, uID);
         fragment.setArguments(args);
         return fragment;
     }
@@ -58,7 +53,7 @@ public class AccelerometerDialogFragment extends DialogFragment implements TimeP
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mEmail = getArguments().getString(EMAIL);
+            mUID = getArguments().getString(UID);
         }
     }
 
@@ -89,31 +84,37 @@ public class AccelerometerDialogFragment extends DialogFragment implements TimeP
             }
         });
 
+        initStartStopServiceButtons();
+
+        return v;
+    }
+
+    public void initStartStopServiceButtons(){
         mStartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-            int interval = 0;
-            int sessionTime = 0;
+                int interval = 0;
+                int sessionTime = 0;
 
-            if(!mIntervalValue.getText().toString().equals("")){
-                interval = Integer.parseInt(mIntervalValue.getText().toString());
-            }
+                if(!mIntervalValue.getText().toString().equals("")){
+                    interval = Integer.parseInt(mIntervalValue.getText().toString());
+                }
 
-            if(!mActionTimeValue.getText().toString().equals("")){
-                sessionTime = Integer.parseInt(mActionTimeValue.getText().toString());
-            }
+                if(!mActionTimeValue.getText().toString().equals("")){
+                    sessionTime = Integer.parseInt(mActionTimeValue.getText().toString());
+                }
 
-            Intent serviceIntent = new Intent(getActivity(), AccelerometerService.class);
-            Bundle bundle = new Bundle();
-            bundle.putInt(AccelerometerService.INTERVAL, interval);
-            bundle.putInt(AccelerometerService.SESSION_TIME, sessionTime);
-            bundle.putInt(AccelerometerService.TIME_OF_START, mDayTimeExecuting);
-            bundle.putBoolean(AccelerometerService.IS_DELAY_STARTING, mIsExecutingOnTime.isChecked());
-            bundle.putString(AccelerometerService.UID, mEmail);
-            serviceIntent.putExtras(bundle);
-            serviceIntent.setAction(AccelerometerService.START_ACTION);
-            getActivity().startService(serviceIntent);
+                Intent serviceIntent = new Intent(getActivity(), AccelerometerService.class);
+                Bundle bundle = new Bundle();
+                bundle.putInt(AccelerometerService.INTERVAL, interval);
+                bundle.putInt(AccelerometerService.SESSION_TIME, sessionTime);
+                bundle.putInt(AccelerometerService.TIME_OF_START, mDayTimeExecuting);
+                bundle.putBoolean(AccelerometerService.IS_DELAY_STARTING, mIsExecutingOnTime.isChecked());
+                bundle.putString(AccelerometerService.UID, mUID);
+                serviceIntent.putExtras(bundle);
+                serviceIntent.setAction(AccelerometerService.START_ACTION);
+                getActivity().startService(serviceIntent);
             }
         });
 
@@ -127,25 +128,6 @@ public class AccelerometerDialogFragment extends DialogFragment implements TimeP
                 dismiss();
             }
         });
-
-        return v;
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
     }
 
     @Override
@@ -156,9 +138,5 @@ public class AccelerometerDialogFragment extends DialogFragment implements TimeP
             mDayTimeExecuting = Util.getTimeOfDayInMl(hourOfDay, minute);
             mTimeExecutionValue.setText(String.valueOf(hourOfDay) + " : " + String.valueOf(minute));
         }
-    }
-
-    public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
     }
 }

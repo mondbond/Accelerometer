@@ -17,7 +17,7 @@ import com.example.mond.accelerometer.view.adapter.AccelerometerDataAdapter;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class AccelerometerDataFragment extends Fragment {
+public class AccelerometerDataListFragment extends Fragment {
     public static final String SESSION = "session";
 
     private Session mSession;
@@ -25,10 +25,8 @@ public class AccelerometerDataFragment extends Fragment {
 
     @BindView(R.id.accelerometer_data_fragment_recycler) RecyclerView mRecycler;
 
-    private OnFragmentInteractionListener mListener;
-
-    public static AccelerometerDataFragment newInstance(Session session) {
-        AccelerometerDataFragment fragment = new AccelerometerDataFragment();
+    public static AccelerometerDataListFragment newInstance(Session session) {
+        AccelerometerDataListFragment fragment = new AccelerometerDataListFragment();
         Bundle args = new Bundle();
         args.putParcelable(SESSION, session);
         fragment.setArguments(args);
@@ -47,8 +45,7 @@ public class AccelerometerDataFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_accelerometer_data, container, false);
+        View v = inflater.inflate(R.layout.fragment_accelerometer_data_list, container, false);
         ButterKnife.bind(this, v);
 
         mRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -57,29 +54,8 @@ public class AccelerometerDataFragment extends Fragment {
         return v;
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
     public void setNewSessionValue(Session newSession){
-        mAdapter.setNewSessionValue(newSession);
-    }
-
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        mSession = newSession;
+        mAdapter.setNewSessionValue(mSession);
     }
 }

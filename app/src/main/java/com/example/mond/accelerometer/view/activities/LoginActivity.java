@@ -12,7 +12,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mond.accelerometer.R;
-import com.example.mond.accelerometer.util.Util;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -28,36 +27,31 @@ public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
 
-    private TextView mUserEmail;
-    private TextView mUserPassword;
-
+    @BindView(R.id.field_email) TextView mUserEmail;
+    @BindView(R.id.field_password) TextView mUserPassword;
     @BindView(R.id.email_create_account_button) Button mCreateAccountUserBtn;
     @BindView(R.id.email_sign_in_button) Button mSignInBtn;
 
     private FirebaseAuth.AuthStateListener mAuthListener = new FirebaseAuth.AuthStateListener() {
         @Override
         public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-            FirebaseUser user = firebaseAuth.getCurrentUser();
-            if (user != null) {
-                Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-            } else {
-                Log.d(TAG, "onAuthStateChanged:signed_out");
-            }
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        if (user != null) {
+            Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+        } else {
+            Log.d(TAG, "onAuthStateChanged:signed_out");
+        }
         }
     };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
         mAuth = FirebaseAuth.getInstance();
-
         // TODO: - 30/05/17 user butterknife library
-        mUserEmail = (TextView) findViewById(R.id.field_email);
-        mUserPassword = (TextView) findViewById(R.id.field_password);
 
         mCreateAccountUserBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,7 +93,6 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                    Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
                     // TODO: - 30/05/17 TEXT, VISIBLE TO USER SHOULD BE IN STRINGS
                     if (!task.isSuccessful()) {
                         Toast.makeText(LoginActivity.this, getResources().getString(R.string.log_in_filed),
@@ -125,7 +118,7 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                         if (!task.isSuccessful()) {
-                            // TODO: 30/05/17 DRY!!!
+                            // TODO: - 30/05/17 DRY!!!
                             Toast.makeText(LoginActivity.this, getResources().getString(R.string.log_in_filed),
                                     Toast.LENGTH_SHORT).show();
                         } else {
@@ -133,9 +126,8 @@ public class LoginActivity extends AppCompatActivity {
                                     Toast.LENGTH_SHORT).show();
                             // TODO: - 30/05/17 better to use user UID as key.
                             // TODO: ? 30/05/17 starter pattern
-                            Intent intent = new Intent(LoginActivity.this, ListActivity.class);
-                            intent.putExtra(ListActivity.UID, mAuth.getCurrentUser().getUid());
-
+                            Intent intent = new Intent(LoginActivity.this, SessionActivity.class);
+                            intent.putExtra(SessionActivity.UID, mAuth.getCurrentUser().getUid());
                             startActivity(intent);
 
                             finish();
@@ -143,8 +135,8 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     });
         }else {
-            Toast.makeText(LoginActivity.this, getResources().getString(R.string.empty_fields_error), Toast.LENGTH_SHORT).show();
-
+            Toast.makeText(LoginActivity.this, getResources().getString(R.string.empty_fields_error),
+                    Toast.LENGTH_SHORT).show();
         }
     }
 

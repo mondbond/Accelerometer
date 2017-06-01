@@ -3,13 +3,11 @@ package com.example.mond.accelerometer.view.activities;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 
 public class SplashActivity extends AppCompatActivity {
 
-    private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseAuth mAuth;
 
     @Override
@@ -25,10 +23,9 @@ public class SplashActivity extends AppCompatActivity {
             Intent loginIntent = new Intent(this, LoginActivity.class);
             startActivity(loginIntent);
         }else {
-            Log.d("VERIFICATION", " is = " + mAuth.getCurrentUser().getEmail());
-            Intent sessionListIntent = new Intent(this, ListActivity.class);
+            Intent sessionListIntent = new Intent(this, SessionActivity.class);
             Bundle bundle = new Bundle();
-            bundle.putString(ListActivity.UID, mAuth.getCurrentUser().getUid());
+            bundle.putString(SessionActivity.UID, mAuth.getCurrentUser().getUid());
             sessionListIntent.putExtras(bundle);
             startActivity(sessionListIntent);
         }

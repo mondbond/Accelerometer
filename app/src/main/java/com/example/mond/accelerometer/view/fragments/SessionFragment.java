@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.mond.accelerometer.R;
-import com.example.mond.accelerometer.pojo.AccelerometerData;
 import com.example.mond.accelerometer.pojo.Session;
 import com.example.mond.accelerometer.view.adapter.SessionAdapter;
 
@@ -63,7 +62,7 @@ public class SessionFragment extends Fragment implements SessionAdapter.AdapterL
 
     @Override
     public void onItemClick(Session session) {
-        mListener.setSessionAcccelerometerData(session);
+        mListener.onGetSessionData(session);
     }
 
     public void setNewAccelerometerValues(List<Session> sessions){
@@ -73,6 +72,6 @@ public class SessionFragment extends Fragment implements SessionAdapter.AdapterL
     }
 
     public interface OnFragmentInteractionListener {
-        void setSessionAcccelerometerData(Session session);
+        void onGetSessionData(Session session);
     }
 }
