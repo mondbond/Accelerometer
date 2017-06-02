@@ -7,13 +7,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.mond.accelerometer.Constants;
 import com.example.mond.accelerometer.R;
-import com.example.mond.accelerometer.pojo.AccelerometerData;
 import com.example.mond.accelerometer.pojo.Session;
 import com.example.mond.accelerometer.view.fragments.AccelerometerDialogFragment;
 import com.example.mond.accelerometer.view.fragments.SessionFragment;
@@ -90,7 +91,7 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
 
     public void initFirebaseDb(){
         mDatabase = FirebaseDatabase.getInstance();
-        mDbRef = mDatabase.getReference().child("sessions").child(mUID);
+        mDbRef = mDatabase.getReference().child(Constants.FIREBASE_SESSIONS_NODE).child(mUID);
         mDbRef.addValueEventListener(new ValueEventListener() {
 
             @Override
@@ -100,12 +101,10 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
                 }
                 for(DataSnapshot data : dataSnapshot.getChildren()){
                     Session session = new Session();
-                    session.setSessionId(Long.parseLong((String) data.child("sessionId").getValue()));
-//                    session.setSessionInterval(Integer.getInteger((String) data.child("sessionIntervalInfo").getValue()));
-//                    for(DataSnapshot data1 : data.getChildren()){
-//                        AccelerometerData accelerometerData = data1.getValue(AccelerometerData.class);
-//                        session.addData(accelerometerData);
-//                    }
+                    if(data.child(Constants.FIREBASE_SESSION_ID).getValue() != null) {
+                        session.setSessionId(Long.parseLong(String.valueOf( data.child(Constants.FIREBASE_SESSION_ID).getValue())));
+                        session.setSessionInterval(Integer.parseInt(String.valueOf( data.child(Constants.FIREBASE_SESSIONS_INTERVAL_INFO).getValue())));
+                    }
                     mSessions.add(session);
                 }
                 mSessionFragment.setNewAccelerometerValues(mSessions);

@@ -15,14 +15,14 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 
+import com.example.mond.accelerometer.Constants;
 import com.example.mond.accelerometer.pojo.AccelerometerData;
+import com.example.mond.accelerometer.pojo.Session;
 import com.example.mond.accelerometer.util.Util;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class AccelerometerService extends Service implements SensorEventListener{
@@ -111,15 +111,14 @@ public class AccelerometerService extends Service implements SensorEventListener
 
     public void initAccelerometerConfig() {
         mActionStartTime = Util.getLocalTimeStamp();
-//        mSessionId = Util.makeCurrentTimeStampToDate();
         mSessionId = Util.getLocalTimeStamp();
         saveSessionToFirebase();
     }
 
     private void saveSessionToFirebase(){
-        mDbRef.child("sessions").child(mUID).child(String.valueOf(mSessionId)).child("sessionIntervalInfo")
+        mDbRef.child(Constants.FIREBASE_SESSIONS_NODE).child(mUID).child(String.valueOf(mSessionId)).child(Constants.FIREBASE_SESSIONS_INTERVAL_INFO)
                 .setValue(String.valueOf(mIntervalTimeInMl));
-        mDbRef.child("sessions").child(mUID).child(String.valueOf(mSessionId)).child("sessionId")
+        mDbRef.child(Constants.FIREBASE_SESSIONS_NODE).child(mUID).child(String.valueOf(mSessionId)).child(Constants.FIREBASE_SESSION_ID)
                 .setValue(String.valueOf(mSessionId));
     }
 
@@ -159,10 +158,8 @@ public class AccelerometerService extends Service implements SensorEventListener
 
         mAccelerometerData = new AccelerometerData(ax, ay, az);
         Map<String, Object> map = mAccelerometerData.toMap();
-//        mDbRef.child(mUID).child(mSessionId)
-//                .child(Util.makeCurrentTimeStampToDate()).setValue(map);
-        mDbRef.child("sessionData").child(mUID)
-                .child(String.valueOf(mSessionId)).child(Util.makeCurrentTimeStampToDate()).setValue(map);
+        mDbRef.child(Constants.FIREBASE_ACCELEROMETER_DATAS_NODE).child(mUID)
+                .child(String.valueOf(Util.makeTimeStampToDate(mSessionId))).child(Util.makeCurrentTimeStampToDate()).setValue(map);
 
         mLastTimeSave = Util.getLocalTimeStamp();
     }

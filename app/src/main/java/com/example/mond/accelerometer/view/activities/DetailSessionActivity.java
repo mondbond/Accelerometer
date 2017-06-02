@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.example.mond.accelerometer.Constants;
 import com.example.mond.accelerometer.R;
 import com.example.mond.accelerometer.pojo.AccelerometerData;
 import com.example.mond.accelerometer.pojo.Session;
@@ -78,14 +79,11 @@ public class DetailSessionActivity extends AppCompatActivity {
 
     public void initFirebaseDb(){
         mDatabase = FirebaseDatabase.getInstance();
-        mDbRef = mDatabase.getReference().child("sessionData").child(mUID)
+        mDbRef = mDatabase.getReference().child(Constants.FIREBASE_ACCELEROMETER_DATAS_NODE).child(mUID)
                 .child(String.valueOf(mSession.getSessionId()));
         mDbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
-//                mSession = new Session();
-//                mSession.setTime(dataSnapshot.getKey());
                 for(DataSnapshot data : dataSnapshot.getChildren()){
                     AccelerometerData accelerometerData = data.getValue(AccelerometerData.class);
                     mAccelerometerDatas.add(accelerometerData);

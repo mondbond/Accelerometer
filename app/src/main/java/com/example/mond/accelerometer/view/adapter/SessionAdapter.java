@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.example.mond.accelerometer.R;
 import com.example.mond.accelerometer.pojo.Session;
+import com.example.mond.accelerometer.util.Util;
 
 import java.util.List;
 
@@ -46,7 +47,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
         // RTFM!!!
 
         final int p = position;
-        holder.session.setText(String.valueOf(mSessions.get(position).getSessionId()));
+        holder.session.setText(Util.makeTimeStampToDate(mSessions.get(position).getSessionId()));
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

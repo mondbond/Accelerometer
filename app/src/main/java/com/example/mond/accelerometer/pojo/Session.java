@@ -17,7 +17,7 @@ public class Session implements Parcelable {
     private int mSessionInterval;
     private long mSessionId;
 
-    public Session(int sessionInterval, long sessionId) {
+    public Session(long sessionId, int sessionInterval) {
         mSessionInterval = sessionInterval;
         mSessionId = sessionId;
     }
@@ -27,8 +27,8 @@ public class Session implements Parcelable {
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
-        result.put("interval", mSessionInterval);
         result.put("id", mSessionId);
+        result.put("interval", mSessionInterval);
 
         return result;
     }
