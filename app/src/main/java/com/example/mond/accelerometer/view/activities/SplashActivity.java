@@ -24,6 +24,7 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
 
+
         mAuth = FirebaseAuth.getInstance();
         if(Util.isNetworkAvailable(this)) {
             verificate();

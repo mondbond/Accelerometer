@@ -39,18 +39,18 @@ public class LoginActivity extends AppCompatActivity {
         mCreateAccountUserBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(Util.isNetworkAvailable(LoginActivity.this)) {
-                    createAccount(mUserEmail.getText().toString(), mUserPassword.getText().toString());
-                }
+            if(Util.isNetworkAvailable(LoginActivity.this)) {
+                createAccount(mUserEmail.getText().toString(), mUserPassword.getText().toString());
+            }
             }
         });
 
         mSignInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(Util.isNetworkAvailable(LoginActivity.this)) {
-                    signIn(mUserEmail.getText().toString(), mUserPassword.getText().toString());
-                }
+            if(Util.isNetworkAvailable(LoginActivity.this)) {
+                signIn(mUserEmail.getText().toString(), mUserPassword.getText().toString());
+            }
             }
         });
     }
