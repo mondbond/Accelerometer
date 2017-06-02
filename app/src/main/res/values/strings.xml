@@ -4,7 +4,7 @@
     <string name="sign_in">Sign in</string>
     <string name="create_account">Create account</string>
 
-    <string name="hint_email">Hint UID</string>
+    <string name="hint_email">Hint email</string>
     <string name="hint_password">Hint password</string>
 
     <string name="sign_out">Sign out</string>
@@ -18,12 +18,12 @@
     <string name="log_in_filed">Log in error</string>
     <string name="empty_fields_error">Fields shouldn\'t be empty</string>
 
-    <string name="set_your_time_first_error">Set your sessionInterval first</string>
-    <string name="out_of_time_error">Out of sessionInterval</string>
+    <string name="set_your_time_first_error">Set your time first</string>
+    <string name="out_of_time_error">Out of time</string>
 
     <string name="interval">Interval : </string>
     <string name="sessionInterval">Time : </string>
-    <string name="execute_on_time">Execute on sessionInterval : </string>
+    <string name="is_execute_on_time">Execute on time : </string>
 
     <string name="title_activity_main">MainActivity</string>
     <string name="action_settings">Settings</string>

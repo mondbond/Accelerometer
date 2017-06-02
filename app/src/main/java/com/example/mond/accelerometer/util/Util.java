@@ -2,6 +2,7 @@ package com.example.mond.accelerometer.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 public class Util {
@@ -9,6 +10,7 @@ public class Util {
     static private final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd hh-mm-ss";
 
     private static SimpleDateFormat mDateFormat;
+    private static TimeZone timeZone = TimeZone.getDefault();
 
     public static String makeCurrentTimeStampToDate(){
             mDateFormat = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
@@ -39,11 +41,10 @@ public class Util {
     }
 
     public static int getTimeOfDayInMl(int hour, int minute){
-
         return ((int) TimeUnit.HOURS.toMillis(hour)) + ((int) TimeUnit.MINUTES.toMillis(minute));
     }
 
     public static long getLocalTimeStamp(){
-        return System.currentTimeMillis() ;
+        return System.currentTimeMillis() + timeZone.getOffset(System.currentTimeMillis());
     }
 }

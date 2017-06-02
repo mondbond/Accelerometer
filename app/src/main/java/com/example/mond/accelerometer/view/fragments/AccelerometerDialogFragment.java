@@ -8,6 +8,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -62,6 +63,7 @@ public class AccelerometerDialogFragment extends DialogFragment implements TimeP
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_accelerometer_dialog, container, false);
         ButterKnife.bind(this, v);
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         mIsExecutingOnTime.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -102,6 +104,9 @@ public class AccelerometerDialogFragment extends DialogFragment implements TimeP
 
                 if(!mActionTimeValue.getText().toString().equals("")){
                     sessionTime = Integer.parseInt(mActionTimeValue.getText().toString());
+                }else {
+//                    0 marked as infinite
+                    sessionTime = 0;
                 }
 
                 Intent serviceIntent = new Intent(getActivity(), AccelerometerService.class);

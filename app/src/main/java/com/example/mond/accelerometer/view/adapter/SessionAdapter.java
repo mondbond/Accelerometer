@@ -24,34 +24,30 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-
         TextView session;
 
-        ViewHolder(View v) {
-            super(v);
-            session = (TextView) v.findViewById(R.id.session_time);
+        ViewHolder(View view) {
+            super(view);
+            session = (TextView) view.findViewById(R.id.session_time);
         }
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext())
+        View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.session_item, parent, false);
 
-        return new ViewHolder(v);
+        return new ViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
-        // TODO: 30/05/17 WTF IS THIS????
-        // RTFM!!!
-
-        final int p = position;
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        final int finalPosition = position;
         holder.session.setText(Util.makeTimeStampToDate(mSessions.get(position).getSessionId()));
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onItemClick(mSessions.get(p));
+                mListener.onItemClick(mSessions.get(finalPosition));
             }
         });
     }

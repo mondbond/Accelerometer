@@ -18,30 +18,28 @@ public class AccelerometerDataAdapter extends RecyclerView.Adapter<Accelerometer
     private ArrayList<AccelerometerData> mAccelerometerDatas;
 
     public AccelerometerDataAdapter(ArrayList<AccelerometerData> accelerometerDatas) {
-        accelerometerDatas = accelerometerDatas;
+        mAccelerometerDatas = accelerometerDatas;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView time;
-        TextView x;
-        TextView y;
-        TextView z;
-        ViewHolder(View v) {
-            super(v);
-            time = (TextView) v.findViewById(R.id.accelerometer_data_time);
-            x = (TextView) v.findViewById(R.id.accelerometer_data_x);
-            y = (TextView) v.findViewById(R.id.accelerometer_data_y);
-            z = (TextView) v.findViewById(R.id.accelerometer_data_z);
+        TextView time, x, y, z;
+
+        ViewHolder(View view) {
+            super(view);
+            time = (TextView) view.findViewById(R.id.accelerometer_data_time);
+            x = (TextView) view.findViewById(R.id.accelerometer_data_x);
+            y = (TextView) view.findViewById(R.id.accelerometer_data_y);
+            z = (TextView) view.findViewById(R.id.accelerometer_data_z);
         }
     }
 
     @Override
     public AccelerometerDataAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                    int viewType) {
-        View v = LayoutInflater.from(parent.getContext())
+        View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.accelerometer_data_item, parent, false);
 
-        return  new ViewHolder(v);
+        return  new ViewHolder(itemView);
     }
 
     @Override

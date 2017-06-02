@@ -9,17 +9,19 @@
 
     <FrameLayout
         android:id="@+id/graph_fragment_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
         android:minHeight="200dp">
+
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/accelerometer_data_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/graph_fragment_container"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/graph_fragment_container"
+        android:layout_toEndOf="@+id/graph_fragment_container">
     </FrameLayout>
+
 </RelativeLayout>

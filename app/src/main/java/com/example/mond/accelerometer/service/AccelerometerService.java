@@ -14,18 +14,22 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import com.example.mond.accelerometer.Constants;
 import com.example.mond.accelerometer.pojo.AccelerometerData;
-import com.example.mond.accelerometer.pojo.Session;
 import com.example.mond.accelerometer.util.Util;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class AccelerometerService extends Service implements SensorEventListener{
+
+    private final String FIREBASE_ROOT = "/";
 
     public static final int MINIMUM_INTERVAL = 1000;
 
@@ -39,27 +43,29 @@ public class AccelerometerService extends Service implements SensorEventListener
 
     private BroadcastReceiver mStopBroadcastReciever;
 
-    private final String FIREBASE_ROOT = "/";
-
-    private FirebaseDatabase mDatabase;
-    private DatabaseReference mDbRef;
-
-    private SensorManager mSensorManager;
-    private double ax, ay, az;
-
-    private AccelerometerData mAccelerometerData;
-
     private String mUID;
     private long mSessionId;
 
     private long mLastTimeSave;
-
     private int mSessionTime;
     private int mIntervalTimeInMl;
     private long mActionStartTime;
 
     private boolean mIsDelayMode;
     private int mStartTime;
+
+    private FirebaseDatabase mDatabase;
+    private DatabaseReference mDbRef;
+
+    private SensorManager mSensorManager;
+
+    private double ax, ay, az;
+    private AccelerometerData mAccelerometerData;
+
+    private SensorEvent mLastEvent;
+
+    private ExecutorService mExecutorService;
+    private AsyncSave mAsyncSave;
 
     private LocalBinder mLocalBinder = new LocalBinder();
 
@@ -87,20 +93,11 @@ public class AccelerometerService extends Service implements SensorEventListener
         return super.onStartCommand(intent, flags, startId);
     }
 
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        if (mIsDelayMode && isPassingPeriodAndTypeFilter(event) && Util.isTimeToStart(mStartTime)
-                && isSessionTimeOver()) {
-            saveEventToFirebase(event);
-        } else if (isPassingPeriodAndTypeFilter(event) && !isSessionTimeOver()) {
-            saveEventToFirebase(event);
-        }else if(isSessionTimeOver()){
-            stopSelf();
+    private void initStartActionTime(){
+        if(mActionStartTime != 0) {
+            mActionStartTime = Util.getLocalTimeStamp();
         }
     }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
 
     private void initSensorListener(){
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -110,9 +107,10 @@ public class AccelerometerService extends Service implements SensorEventListener
     }
 
     public void initAccelerometerConfig() {
-        mActionStartTime = Util.getLocalTimeStamp();
         mSessionId = Util.getLocalTimeStamp();
         saveSessionToFirebase();
+        mExecutorService = Executors.newFixedThreadPool(2);
+        mAsyncSave = new AsyncSave();
     }
 
     private void saveSessionToFirebase(){
@@ -134,6 +132,24 @@ public class AccelerometerService extends Service implements SensorEventListener
         LocalBroadcastManager.getInstance(this).registerReceiver(mStopBroadcastReciever, intentFilter);
     }
 
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (mIsDelayMode && isPassingPeriodAndTypeFilter(event)) {
+            if(Util.isTimeToStart(mStartTime) && !isSessionTimeOver()){
+                initStartActionTime();
+                startAsyncSave(event);
+            }
+        } else if (isPassingPeriodAndTypeFilter(event) && !isSessionTimeOver()) {
+            initStartActionTime();
+            startAsyncSave(event);
+        }else if(isSessionTimeOver()){
+            stopSelf();
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+
     private boolean isPassingPeriodAndTypeFilter(SensorEvent event){
         if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER
                 && (Util.getLocalTimeStamp() - mLastTimeSave) >= mIntervalTimeInMl){
@@ -144,11 +160,20 @@ public class AccelerometerService extends Service implements SensorEventListener
     }
 
     private boolean isSessionTimeOver(){
-        if(mSessionTime != 0 && (Util.getLocalTimeStamp() - mActionStartTime) >= mSessionTime){
+//        if session time == 0 -> it should work until user woldn't stop it by himself
+        if(mSessionTime == 0){
+            Log.d("TIME", "ZERO - false");
+            return false;
+        }else if((Util.getLocalTimeStamp() - mActionStartTime) >= mSessionTime){
             return true;
         }
 
         return false;
+    }
+
+    private void startAsyncSave(SensorEvent event){
+        mLastEvent = event;
+        mExecutorService.submit(mAsyncSave);
     }
 
     private void saveEventToFirebase(SensorEvent event){
@@ -159,7 +184,7 @@ public class AccelerometerService extends Service implements SensorEventListener
         mAccelerometerData = new AccelerometerData(ax, ay, az);
         Map<String, Object> map = mAccelerometerData.toMap();
         mDbRef.child(Constants.FIREBASE_ACCELEROMETER_DATAS_NODE).child(mUID)
-                .child(String.valueOf(Util.makeTimeStampToDate(mSessionId))).child(Util.makeCurrentTimeStampToDate()).setValue(map);
+                .child(String.valueOf(mSessionId)).child(Util.makeCurrentTimeStampToDate()).setValue(map);
 
         mLastTimeSave = Util.getLocalTimeStamp();
     }
@@ -179,6 +204,14 @@ public class AccelerometerService extends Service implements SensorEventListener
     public class LocalBinder extends Binder {
         public AccelerometerService getService() {
             return AccelerometerService.this;
+        }
+    }
+
+    private class AsyncSave implements Runnable {
+
+        @Override
+        public void run() {
+            saveEventToFirebase(mLastEvent);
         }
     }
 }

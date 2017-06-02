@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -16,32 +15,18 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private final String TAG = "MAIN_ACTIVITY";
     private FirebaseAuth mAuth;
 
     @BindView(R.id.field_email) TextView mUserEmail;
     @BindView(R.id.field_password) TextView mUserPassword;
     @BindView(R.id.email_create_account_button) Button mCreateAccountUserBtn;
     @BindView(R.id.email_sign_in_button) Button mSignInBtn;
-
-    private FirebaseAuth.AuthStateListener mAuthListener = new FirebaseAuth.AuthStateListener() {
-        @Override
-        public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-        FirebaseUser user = firebaseAuth.getCurrentUser();
-        if (user != null) {
-            Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-        } else {
-            Log.d(TAG, "onAuthStateChanged:signed_out");
-        }
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,21 +48,6 @@ public class LoginActivity extends AppCompatActivity {
                 signIn(mUserEmail.getText().toString(), mUserPassword.getText().toString());
             }
         });
-        // TODO: ? 30/05/17  mAuthListener is not connected to lifecycle
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
-        }
     }
 
     public void createAccount(final String email, final String pswd){
@@ -103,7 +73,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void signIn(final String email, String pswd) {
-        // TODO: 30/05/17 check createAccount
         if (isFieldsNotNullAndEmpty()) {
             mAuth.signInWithEmailAndPassword(email, pswd)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {

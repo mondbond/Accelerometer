@@ -7,7 +7,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,6 +17,7 @@ import com.example.mond.accelerometer.Constants;
 import com.example.mond.accelerometer.R;
 import com.example.mond.accelerometer.pojo.Session;
 import com.example.mond.accelerometer.view.fragments.AccelerometerDialogFragment;
+import com.example.mond.accelerometer.view.fragments.LineGraphFragment;
 import com.example.mond.accelerometer.view.fragments.SessionFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -56,13 +57,16 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
 
         if(fm.findFragmentByTag(SessionFragment.SESSION_FRAGMENT_TAG) == null){
             mSessionFragment = SessionFragment.newInstance();
+            Log.d("FRAGMENT", " null ");
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.sessionListContainer, mSessionFragment, SessionFragment.SESSION_FRAGMENT_TAG);
+            ft.commit();
         }else {
             mSessionFragment = (SessionFragment) fm.findFragmentByTag(SessionFragment.SESSION_FRAGMENT_TAG);
+            Log.d("FRAGMENT", " not null");
         }
 
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.sessionListContainer, mSessionFragment, SessionFragment.SESSION_FRAGMENT_TAG);
-        ft.commit();
+
 
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,8 +103,10 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
                 if(mSessions != null){
                     mSessions.clear();
                 }
+
                 for(DataSnapshot data : dataSnapshot.getChildren()){
                     Session session = new Session();
+
                     if(data.child(Constants.FIREBASE_SESSION_ID).getValue() != null) {
                         session.setSessionId(Long.parseLong(String.valueOf( data.child(Constants.FIREBASE_SESSION_ID).getValue())));
                         session.setSessionInterval(Integer.parseInt(String.valueOf( data.child(Constants.FIREBASE_SESSIONS_INTERVAL_INFO).getValue())));
@@ -142,7 +148,6 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.session_activity_menu, menu);
         return super.onCreateOptionsMenu(menu);

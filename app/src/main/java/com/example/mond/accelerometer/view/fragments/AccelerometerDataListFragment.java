@@ -28,9 +28,6 @@ public class AccelerometerDataListFragment extends Fragment {
 
     public static AccelerometerDataListFragment newInstance() {
         AccelerometerDataListFragment fragment = new AccelerometerDataListFragment();
-//        Bundle args = new Bundle();
-//        args.putParcelable(SESSION, session);
-//        fragment.setArguments(args);
         return fragment;
     }
 
