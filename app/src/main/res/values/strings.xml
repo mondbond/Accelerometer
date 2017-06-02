@@ -3,6 +3,7 @@
     <string name="emailpassword_title_text">...</string>
     <string name="sign_in">Sign in</string>
     <string name="create_account">Create account</string>
+    <string name="try_again">try again</string>
 
     <string name="hint_email">Hint email</string>
     <string name="hint_password">Hint password</string>
