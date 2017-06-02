@@ -16,7 +16,9 @@
 
     <string name="logged">Logged</string>
     <string name="log_in_filed">Log in error</string>
+    <string name="create_acc_filed">Create account error</string>
     <string name="empty_fields_error">Fields shouldn\'t be empty</string>
+    <string name="network_is_not_available">Network is not available</string>
 
     <string name="set_your_time_first_error">Set your time first</string>
     <string name="out_of_time_error">Out of time</string>

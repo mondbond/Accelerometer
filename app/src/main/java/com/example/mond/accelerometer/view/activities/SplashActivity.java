@@ -1,9 +1,11 @@
 package com.example.mond.accelerometer.view.activities;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.example.mond.accelerometer.util.Util;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class SplashActivity extends AppCompatActivity {
@@ -14,7 +16,9 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
-        verificate();
+        if(Util.isNetworkAvailable(this)) {
+            verificate();
+        }
     }
 
     private void verificate(){

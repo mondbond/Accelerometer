@@ -16,8 +16,8 @@ import android.view.View;
 import com.example.mond.accelerometer.Constants;
 import com.example.mond.accelerometer.R;
 import com.example.mond.accelerometer.pojo.Session;
+import com.example.mond.accelerometer.util.Util;
 import com.example.mond.accelerometer.view.fragments.AccelerometerDialogFragment;
-import com.example.mond.accelerometer.view.fragments.LineGraphFragment;
 import com.example.mond.accelerometer.view.fragments.SessionFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -57,25 +57,21 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
 
         if(fm.findFragmentByTag(SessionFragment.SESSION_FRAGMENT_TAG) == null){
             mSessionFragment = SessionFragment.newInstance();
-            Log.d("FRAGMENT", " null ");
             FragmentTransaction ft = fm.beginTransaction();
             ft.replace(R.id.sessionListContainer, mSessionFragment, SessionFragment.SESSION_FRAGMENT_TAG);
             ft.commit();
         }else {
             mSessionFragment = (SessionFragment) fm.findFragmentByTag(SessionFragment.SESSION_FRAGMENT_TAG);
-            Log.d("FRAGMENT", " not null");
         }
-
-
 
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mAccelerometerDialogFragment == null){
-                    mAccelerometerDialogFragment = AccelerometerDialogFragment.newInstance(mUID);
-                }
+            if(mAccelerometerDialogFragment == null){
+                mAccelerometerDialogFragment = AccelerometerDialogFragment.newInstance(mUID);
+            }
 
-                mAccelerometerDialogFragment.show(getSupportFragmentManager(), ACCELEROMETER_DIALOG_FRAGMENT_TAG);
+            mAccelerometerDialogFragment.show(getSupportFragmentManager(), ACCELEROMETER_DIALOG_FRAGMENT_TAG);
             }
         });
 
@@ -134,7 +130,7 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.log_out){
+        if(item.getItemId() == R.id.log_out && Util.isNetworkAvailable(this)){
             FirebaseAuth.getInstance().signOut();
             Intent logOutIntent = new Intent(this, LoginActivity.class);
             logOutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

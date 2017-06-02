@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import com.example.mond.accelerometer.Constants;
 import com.example.mond.accelerometer.pojo.AccelerometerData;
@@ -162,7 +161,6 @@ public class AccelerometerService extends Service implements SensorEventListener
     private boolean isSessionTimeOver(){
 //        if session time == 0 -> it should work until user woldn't stop it by himself
         if(mSessionTime == 0){
-            Log.d("TIME", "ZERO - false");
             return false;
         }else if((Util.getLocalTimeStamp() - mActionStartTime) >= mSessionTime){
             return true;

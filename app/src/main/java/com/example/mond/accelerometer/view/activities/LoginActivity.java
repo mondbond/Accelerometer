@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mond.accelerometer.R;
+import com.example.mond.accelerometer.util.Util;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -38,14 +39,18 @@ public class LoginActivity extends AppCompatActivity {
         mCreateAccountUserBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createAccount(mUserEmail.getText().toString(), mUserPassword.getText().toString());
+                if(Util.isNetworkAvailable(LoginActivity.this)) {
+                    createAccount(mUserEmail.getText().toString(), mUserPassword.getText().toString());
+                }
             }
         });
 
         mSignInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                signIn(mUserEmail.getText().toString(), mUserPassword.getText().toString());
+                if(Util.isNetworkAvailable(LoginActivity.this)) {
+                    signIn(mUserEmail.getText().toString(), mUserPassword.getText().toString());
+                }
             }
         });
     }
@@ -57,12 +62,10 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                     if (!task.isSuccessful()) {
-                        Toast.makeText(LoginActivity.this, getResources().getString(R.string.log_in_filed),
+                        Toast.makeText(LoginActivity.this, getResources().getString(R.string.create_acc_filed),
                                 Toast.LENGTH_SHORT).show();
-                        signIn(email, pswd);
                     } else {
-                        Toast.makeText(LoginActivity.this, getResources().getString(R.string.logged),
-                                Toast.LENGTH_SHORT).show();
+                        signIn(email, pswd);
                     }
                     }
                 });

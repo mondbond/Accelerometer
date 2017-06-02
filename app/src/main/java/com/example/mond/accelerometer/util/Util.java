@@ -1,5 +1,12 @@
 package com.example.mond.accelerometer.util;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.widget.Toast;
+
+import com.example.mond.accelerometer.R;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -41,10 +48,21 @@ public class Util {
     }
 
     public static int getTimeOfDayInMl(int hour, int minute){
-        return ((int) TimeUnit.HOURS.toMillis(hour)) + ((int) TimeUnit.MINUTES.toMillis(minute));
+        return ((int) TimeUnit.HOURS.toMillis(hour)) + ((int) TimeUnit.MINUTES.toMillis(minute)) - timeZone.getOffset(System.currentTimeMillis());
     }
 
     public static long getLocalTimeStamp(){
-        return System.currentTimeMillis() + timeZone.getOffset(System.currentTimeMillis());
+        return System.currentTimeMillis();
+    }
+
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        if(!(activeNetworkInfo != null && activeNetworkInfo.isConnected())){
+            Toast.makeText(context, context.getResources().getString(R.string.network_is_not_available), Toast.LENGTH_SHORT).show();
+        }
+
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

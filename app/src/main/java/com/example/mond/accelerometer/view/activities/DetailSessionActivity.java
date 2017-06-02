@@ -4,13 +4,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.example.mond.accelerometer.Constants;
 import com.example.mond.accelerometer.R;
 import com.example.mond.accelerometer.pojo.AccelerometerData;
 import com.example.mond.accelerometer.pojo.Session;
-import com.example.mond.accelerometer.util.Util;
 import com.example.mond.accelerometer.view.fragments.AccelerometerDataListFragment;
 import com.example.mond.accelerometer.view.fragments.LineGraphFragment;
 import com.example.mond.accelerometer.view.fragments.SessionFragment;
