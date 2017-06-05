@@ -4,6 +4,7 @@
     <string name="sign_in">Sign in</string>
     <string name="create_account">Create account</string>
     <string name="try_again">try again</string>
+    <string name="no_connection">Turn on network connection</string>
 
     <string name="hint_email">Hint email</string>
     <string name="hint_password">Hint password</string>
