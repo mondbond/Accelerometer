@@ -190,7 +190,10 @@ public class AccelerometerService extends Service implements SensorEventListener
         Map<String, Object> map = mAccelerometerData.toMap();
         // TODO: 06/06/17 should be something like fEndpoint.pushAccelData(mSessionID, mAccelerometerData);
         mDbRef.child(Constants.FIREBASE_ACCELEROMETER_DATAS_NODE).child(mUID)
-                .child(String.valueOf(mSessionId)).child(Util.makeCurrentTimeStampToDate()).setValue(map);
+                .child(String.valueOf(mSessionId)).child(Util.makeCurrentTimeStampToDate()).setValue(map)
+//        .addOnCompleteListener()
+//        .addOnSuccessListener()
+        ;
 
         mLastTimeSave = Util.getLocalTimeStamp();
     }
