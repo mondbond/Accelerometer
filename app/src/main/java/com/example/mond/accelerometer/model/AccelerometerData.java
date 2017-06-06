@@ -1,4 +1,4 @@
-package com.example.mond.accelerometer.pojo;
+package com.example.mond.accelerometer.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

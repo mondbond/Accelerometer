@@ -1,9 +1,8 @@
 package com.example.mond.accelerometer.util;
 
 
-import com.example.mond.accelerometer.pojo.AccelerometerData;
-import com.example.mond.accelerometer.pojo.Session;
-import com.google.firebase.database.DatabaseReference;
+import com.example.mond.accelerometer.model.AccelerometerData;
+import com.example.mond.accelerometer.model.Session;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class FirebaseUtil {

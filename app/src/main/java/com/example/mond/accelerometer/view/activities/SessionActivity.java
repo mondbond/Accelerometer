@@ -2,7 +2,6 @@ package com.example.mond.accelerometer.view.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
@@ -10,11 +9,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 
-import com.example.mond.accelerometer.Constants;
 import com.example.mond.accelerometer.R;
-import com.example.mond.accelerometer.pojo.Session;
+import com.example.mond.accelerometer.model.Session;
 import com.example.mond.accelerometer.service.AccelerometerService;
 import com.example.mond.accelerometer.util.FirebaseUtil;
 import com.example.mond.accelerometer.util.Util;
@@ -29,9 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class SessionActivity extends AppCompatActivity implements SessionFragment.OnSessionFragmentInteractionListener {
 

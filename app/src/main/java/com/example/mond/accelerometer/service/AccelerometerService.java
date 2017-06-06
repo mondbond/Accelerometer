@@ -15,15 +15,12 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 
-import com.example.mond.accelerometer.Constants;
-import com.example.mond.accelerometer.pojo.AccelerometerData;
-import com.example.mond.accelerometer.pojo.Session;
+import com.example.mond.accelerometer.model.AccelerometerData;
 import com.example.mond.accelerometer.util.FirebaseUtil;
 import com.example.mond.accelerometer.util.Util;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;

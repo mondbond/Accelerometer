@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.mond.accelerometer.R;
-import com.example.mond.accelerometer.pojo.AccelerometerData;
+import com.example.mond.accelerometer.model.AccelerometerData;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;

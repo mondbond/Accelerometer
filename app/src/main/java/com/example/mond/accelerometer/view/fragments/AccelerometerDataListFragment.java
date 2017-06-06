@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.mond.accelerometer.R;
-import com.example.mond.accelerometer.pojo.AccelerometerData;
+import com.example.mond.accelerometer.model.AccelerometerData;
 import com.example.mond.accelerometer.view.adapter.AccelerometerDataAdapter;
 
 import java.util.ArrayList;

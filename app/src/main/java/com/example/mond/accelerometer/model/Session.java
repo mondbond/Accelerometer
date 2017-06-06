@@ -1,4 +1,4 @@
-package com.example.mond.accelerometer.pojo;
+package com.example.mond.accelerometer.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -6,9 +6,7 @@ import android.os.Parcelable;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @IgnoreExtraProperties

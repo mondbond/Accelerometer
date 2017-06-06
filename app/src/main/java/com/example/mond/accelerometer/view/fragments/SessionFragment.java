@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.mond.accelerometer.R;
-import com.example.mond.accelerometer.pojo.Session;
+import com.example.mond.accelerometer.model.Session;
 import com.example.mond.accelerometer.view.adapter.SessionAdapter;
 
 import java.util.List;

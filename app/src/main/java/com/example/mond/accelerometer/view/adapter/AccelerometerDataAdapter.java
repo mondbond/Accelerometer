@@ -8,8 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.mond.accelerometer.R;
-import com.example.mond.accelerometer.pojo.AccelerometerData;
-import com.example.mond.accelerometer.pojo.Session;
+import com.example.mond.accelerometer.model.AccelerometerData;
 import com.example.mond.accelerometer.util.Util;
 
 import java.util.ArrayList;

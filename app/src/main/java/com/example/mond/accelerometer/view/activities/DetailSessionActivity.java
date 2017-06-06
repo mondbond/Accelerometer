@@ -5,10 +5,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.example.mond.accelerometer.Constants;
 import com.example.mond.accelerometer.R;
-import com.example.mond.accelerometer.pojo.AccelerometerData;
-import com.example.mond.accelerometer.pojo.Session;
+import com.example.mond.accelerometer.model.AccelerometerData;
+import com.example.mond.accelerometer.model.Session;
 import com.example.mond.accelerometer.util.FirebaseUtil;
 import com.example.mond.accelerometer.view.fragments.AccelerometerDataListFragment;
 import com.example.mond.accelerometer.view.fragments.LineGraphFragment;
