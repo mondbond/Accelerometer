@@ -32,8 +32,12 @@ public class AccelerometerService extends Service implements SensorEventListener
 
     public static final int MINIMUM_INTERVAL = 1000;
 
+    // TODO: 06/06/17 be more specific, START_ACTION - ok, but what mean BROADCAST_ACTION?
+    // TODO: 06/06/17 use more complex action values (add package name)
     public static final String START_ACTION = "start";
     public static final String BROADCAST_ACTION = "broadcastAction";
+
+    // TODO: 06/06/17 ARG_INTERVAL, ...
     public static final String INTERVAL = "interval";
     public static final String SESSION_TIME = "sessionTime";
     public static final String TIME_OF_START = "timeOfStart";
@@ -113,6 +117,8 @@ public class AccelerometerService extends Service implements SensorEventListener
     }
 
     private void saveSessionToFirebase(){
+        // TODO: 06/06/17 move firebase related constants and static usage to FirebaseEndpoint
+        // TODO: 06/06/17 why Session model don't used?
         mDbRef.child(Constants.FIREBASE_SESSIONS_NODE).child(mUID).child(String.valueOf(mSessionId)).child(Constants.FIREBASE_SESSIONS_INTERVAL_INFO)
                 .setValue(String.valueOf(mIntervalTimeInMl));
         mDbRef.child(Constants.FIREBASE_SESSIONS_NODE).child(mUID).child(String.valueOf(mSessionId)).child(Constants.FIREBASE_SESSION_ID)
@@ -120,6 +126,7 @@ public class AccelerometerService extends Service implements SensorEventListener
     }
 
     private void initStopBroadcastReceiver(){
+        // TODO: 06/06/17 why local BroadcastReceiver?
         mStopBroadcastReciever = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
                 stopSelf();
@@ -181,6 +188,7 @@ public class AccelerometerService extends Service implements SensorEventListener
 
         mAccelerometerData = new AccelerometerData(ax, ay, az);
         Map<String, Object> map = mAccelerometerData.toMap();
+        // TODO: 06/06/17 should be something like fEndpoint.pushAccelData(mSessionID, mAccelerometerData);
         mDbRef.child(Constants.FIREBASE_ACCELEROMETER_DATAS_NODE).child(mUID)
                 .child(String.valueOf(mSessionId)).child(Util.makeCurrentTimeStampToDate()).setValue(map);
 

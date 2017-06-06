@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ import com.example.mond.accelerometer.util.Util;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+// TODO: 06/06/17 from this dialog you can only start the session, "Stop" button should be on the same level as button to show this dialog
 public class AccelerometerDialogFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener{
 
     public static final String UID = "email";
@@ -98,8 +100,10 @@ public class AccelerometerDialogFragment extends DialogFragment implements TimeP
                 int interval = 0;
                 int sessionTime = 0;
 
-                if(!mIntervalValue.getText().toString().equals("")){
-                    interval = Integer.parseInt(mIntervalValue.getText().toString());
+                // TODO: 06/06/17 DRY
+                String sessionInterval = mIntervalValue.getText().toString();
+                if(!TextUtils.isEmpty(sessionInterval)){
+                    interval = Integer.parseInt(sessionInterval);
                 }
 
                 if(!mActionTimeValue.getText().toString().equals("")){

@@ -1,8 +1,10 @@
 <resources>
+    <!--todo better to group resources by screens, so you know where precisely this string value used -->
     <string name="app_name">Accelerometer</string>
     <string name="emailpassword_title_text">...</string>
     <string name="sign_in">Sign in</string>
     <string name="create_account">Create account</string>
+    <!--todo add more explanation for id message_, hint_, title_, error_ so other people can understand where this variable can be used-->
     <string name="try_again">try again</string>
     <string name="no_connection">Turn on network connection</string>
 

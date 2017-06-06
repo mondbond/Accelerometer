@@ -81,6 +81,7 @@ public class SessionFragment extends Fragment implements SessionAdapter.AdapterL
     }
 
     public interface OnSessionFragmentInteractionListener {
+        // TODO: 06/06/17 on this level of abstraction you don't know what to do with session (onGetSessionData) you know that session item was clicked/selected
         void onGetSessionData(Session session);
     }
 }

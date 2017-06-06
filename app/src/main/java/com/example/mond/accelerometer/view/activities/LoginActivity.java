@@ -20,6 +20,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+// TODO: 06/06/17  REPEATED Login & Create Account are different thing, don't try to combine them
+// TODO: 06/06/17 add google+ sing in
 public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
@@ -36,6 +38,7 @@ public class LoginActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         mAuth = FirebaseAuth.getInstance();
+        // TODO: 06/06/17 butterknife?
         mCreateAccountUserBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -45,6 +48,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        // TODO: 06/06/17 butterknife?
         mSignInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

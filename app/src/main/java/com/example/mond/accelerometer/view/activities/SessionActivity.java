@@ -2,7 +2,6 @@ package com.example.mond.accelerometer.view.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -26,7 +25,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,7 +38,7 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
     private FirebaseDatabase mDatabase;
     private DatabaseReference mDbRef;
     private String mUID;
-    private List<Session> mSessions = new ArrayList<>();
+    private ArrayList<Session> mSessions = new ArrayList<>();
     private AccelerometerDialogFragment mAccelerometerDialogFragment;
     private SessionFragment mSessionFragment;
 
@@ -63,6 +61,7 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
             mSessionFragment = (SessionFragment) fm.findFragmentByTag(SessionFragment.SESSION_FRAGMENT_TAG);
         }
 
+        // TODO: 06/06/17 butterknife? 
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -99,6 +98,7 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
                     mSessions.clear();
                 }
 
+                // TODO: 06/06/17 use data models directly https://firebase.google.com/docs/database/android/read-and-write
                 for(DataSnapshot data : dataSnapshot.getChildren()){
                     Session session = new Session();
 
@@ -151,6 +151,6 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(RESTORE_SESSIONS, (ArrayList<? extends Parcelable>) mSessions);
+        outState.putParcelableArrayList(RESTORE_SESSIONS, mSessions);
     }
 }

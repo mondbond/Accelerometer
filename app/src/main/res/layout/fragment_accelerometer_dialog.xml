@@ -6,6 +6,7 @@
     android:padding="16dp"
     tools:context="com.example.mond.accelerometer.view.fragments.AccelerometerDialogFragment">
 
+    <!--todo text can be added to checkbox-->
         <CheckBox
             android:id="@+id/activity_list_is_time_execution"
             android:layout_width="wrap_content"

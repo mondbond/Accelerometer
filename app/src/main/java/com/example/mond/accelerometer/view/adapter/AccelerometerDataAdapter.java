@@ -13,6 +13,7 @@ import com.example.mond.accelerometer.util.Util;
 
 import java.util.ArrayList;
 
+// TODO: 06/06/17 check SessionAdapter
 public class AccelerometerDataAdapter extends RecyclerView.Adapter<AccelerometerDataAdapter.ViewHolder> {
 
     private ArrayList<AccelerometerData> mAccelerometerDatas;

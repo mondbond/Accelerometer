@@ -5,9 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.example.mond.accelerometer.R;
@@ -37,6 +36,7 @@ public class SplashActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         mAuth = FirebaseAuth.getInstance();
+        // TODO: 06/06/17 do you need network check here?
         if(Util.isNetworkAvailable(this)) {
             verificate();
         }else {
