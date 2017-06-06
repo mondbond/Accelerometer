@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 // TODO: 06/06/17  REPEATED Login & Create Account are different thing, don't try to combine them
 // TODO: 06/06/17 add google+ sing in
@@ -38,25 +39,20 @@ public class LoginActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         mAuth = FirebaseAuth.getInstance();
-        // TODO: 06/06/17 butterknife?
-        mCreateAccountUserBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            if(Util.isNetworkAvailable(LoginActivity.this)) {
-                createAccount(mUserEmail.getText().toString(), mUserPassword.getText().toString());
-            }
-            }
-        });
+    }
 
-        // TODO: 06/06/17 butterknife?
-        mSignInBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            if(Util.isNetworkAvailable(LoginActivity.this)) {
-                signIn(mUserEmail.getText().toString(), mUserPassword.getText().toString());
-            }
-            }
-        });
+    @OnClick(R.id.email_create_account_button)
+    public void onCreateAccountClicked(View v) {
+        if(Util.isNetworkAvailable(LoginActivity.this)) {
+            createAccount(mUserEmail.getText().toString(), mUserPassword.getText().toString());
+        }
+    }
+
+    @OnClick(R.id.email_sign_in_button)
+    public void onSignInClicked(View v) {
+        if(Util.isNetworkAvailable(LoginActivity.this)) {
+            signIn(mUserEmail.getText().toString(), mUserPassword.getText().toString());
+        }
     }
 
     public void createAccount(final String email, final String pswd){
@@ -66,7 +62,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                     if (!task.isSuccessful()) {
-                        Toast.makeText(LoginActivity.this, getResources().getString(R.string.create_acc_filed),
+                        Toast.makeText(LoginActivity.this, getResources().getString(R.string.error_create_account_filed),
                                 Toast.LENGTH_SHORT).show();
                     } else {
                         signIn(email, pswd);
@@ -74,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
         }else {
-            Toast.makeText(LoginActivity.this, getResources().getString(R.string.empty_fields_error),
+            Toast.makeText(LoginActivity.this, getResources().getString(R.string.error_empty_fields),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -86,17 +82,17 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                     if (!task.isSuccessful()) {
-                        Toast.makeText(LoginActivity.this, getResources().getString(R.string.log_in_filed),
+                        Toast.makeText(LoginActivity.this, getResources().getString(R.string.error_log_in_filed),
                                 Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(LoginActivity.this, getResources().getString(R.string.logged),
+                        Toast.makeText(LoginActivity.this, getResources().getString(R.string.message_logged),
                                 Toast.LENGTH_SHORT).show();
                         startSessionActivity();
                     }
                     }
                 });
         }else {
-            Toast.makeText(LoginActivity.this, getResources().getString(R.string.empty_fields_error),
+            Toast.makeText(LoginActivity.this, getResources().getString(R.string.error_empty_fields),
                     Toast.LENGTH_SHORT).show();
         }
     }

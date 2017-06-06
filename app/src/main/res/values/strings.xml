@@ -1,37 +1,23 @@
 <resources>
-    <!--todo better to group resources by screens, so you know where precisely this string value used -->
     <string name="app_name">Accelerometer</string>
-    <string name="emailpassword_title_text">...</string>
-    <string name="sign_in">Sign in</string>
-    <string name="create_account">Create account</string>
-    <!--todo add more explanation for id message_, hint_, title_, error_ so other people can understand where this variable can be used-->
-    <string name="try_again">try again</string>
-    <string name="no_connection">Turn on network connection</string>
 
-    <string name="hint_email">Hint email</string>
-    <string name="hint_password">Hint password</string>
+    <string name="error_try_again">try again</string>
+    <string name="hint_email"> email </string>
+    <string name="hint_password"> password </string>
+    <string name="text_verify_email">Verify UID</string>
+    <string name="text_sign_in">Sign in </string>
+    <string name="text_create_account">Create account</string>
+    <string name="message_logged">Logged</string>
+    <string name="error_log_in_filed">Log in error</string>
+    <string name="error_create_account_filed">Create account error</string>
+    <string name="error_empty_fields">Fields shouldn\'t be empty</string>
+    <string name="error_auth_filed">Auth filed</string>
 
-    <string name="sign_out">Sign out</string>
-    <string name="verify_email">Verify UID</string>
+    <string name="text_interval">Interval : </string>
+    <string name="text_session_interval">Time : </string>
+    <string name="text_is_execute_on_time">Execute on time : </string>
+    <string name="error_set_your_time_first">Set your time first</string>
+    <string name="error_out_of_time">Out of time</string>
 
-    <string name="signed_out">Signet out</string>
-
-    <string name="auth_filed">Auth filed</string>
-
-    <string name="logged">Logged</string>
-    <string name="log_in_filed">Log in error</string>
-    <string name="create_acc_filed">Create account error</string>
-    <string name="empty_fields_error">Fields shouldn\'t be empty</string>
-    <string name="network_is_not_available">Network is not available</string>
-
-    <string name="set_your_time_first_error">Set your time first</string>
-    <string name="out_of_time_error">Out of time</string>
-
-    <string name="interval">Interval : </string>
-    <string name="sessionInterval">Time : </string>
-    <string name="is_execute_on_time">Execute on time : </string>
-
-    <string name="title_activity_main">MainActivity</string>
-    <string name="action_settings">Settings</string>
-    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="error_network_is_not_available">Network is not available</string>
 </resources>

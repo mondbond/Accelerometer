@@ -9,6 +9,7 @@ import com.example.mond.accelerometer.Constants;
 import com.example.mond.accelerometer.R;
 import com.example.mond.accelerometer.pojo.AccelerometerData;
 import com.example.mond.accelerometer.pojo.Session;
+import com.example.mond.accelerometer.util.FirebaseUtil;
 import com.example.mond.accelerometer.view.fragments.AccelerometerDataListFragment;
 import com.example.mond.accelerometer.view.fragments.LineGraphFragment;
 import com.example.mond.accelerometer.view.fragments.SessionFragment;
@@ -78,7 +79,7 @@ public class DetailSessionActivity extends AppCompatActivity {
 
     public void initFirebaseDb(){
         mDatabase = FirebaseDatabase.getInstance();
-        mDbRef = mDatabase.getReference().child(Constants.FIREBASE_ACCELEROMETER_DATAS_NODE).child(mUID)
+        mDbRef = mDatabase.getReference().child(FirebaseUtil.FIREBASE_ACCELEROMETER_DATAS_NODE).child(mUID)
                 .child(String.valueOf(mSession.getSessionId()));
         mDbRef.addValueEventListener(new ValueEventListener() {
 

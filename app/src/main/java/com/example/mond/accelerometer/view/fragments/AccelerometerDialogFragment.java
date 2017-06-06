@@ -25,10 +25,10 @@ import com.example.mond.accelerometer.util.Util;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-// TODO: 06/06/17 from this dialog you can only start the session, "Stop" button should be on the same level as button to show this dialog
+// TODO: - 06/06/17 from this dialog you can only start the session, "Stop" button should be on the same level as button to show this dialog
 public class AccelerometerDialogFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener{
 
-    public static final String UID = "email";
+    public static final String UID = "uid";
 
     private int mDayTimeExecuting;
 
@@ -71,7 +71,7 @@ public class AccelerometerDialogFragment extends DialogFragment implements TimeP
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             if(mTimeExecutionValue.getText().toString().equals("")){
                 buttonView.setChecked(false);
-                Toast.makeText(getActivity(), getResources().getString(R.string.empty_fields_error), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getResources().getString(R.string.error_empty_fields), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -97,43 +97,42 @@ public class AccelerometerDialogFragment extends DialogFragment implements TimeP
             @Override
             public void onClick(View v) {
 
-                int interval = 0;
-                int sessionTime = 0;
+            int interval = 0;
+            int sessionTime = 0;
 
-                // TODO: 06/06/17 DRY
-                String sessionInterval = mIntervalValue.getText().toString();
-                if(!TextUtils.isEmpty(sessionInterval)){
-                    interval = Integer.parseInt(sessionInterval);
-                }
+            // TODO: 06/06/17 DRY
+            String sessionInterval = mIntervalValue.getText().toString();
+            if(!TextUtils.isEmpty(sessionInterval)){
+                interval = Integer.parseInt(sessionInterval);
+            }
 
-                if(!mActionTimeValue.getText().toString().equals("")){
-                    sessionTime = Integer.parseInt(mActionTimeValue.getText().toString());
-                }else {
+            if(!mActionTimeValue.getText().toString().equals("")){
+                sessionTime = Integer.parseInt(mActionTimeValue.getText().toString());
+            }else {
 //                    0 marked as infinite
-                    sessionTime = 0;
-                }
+                sessionTime = 0;
+            }
 
-                Intent serviceIntent = new Intent(getActivity(), AccelerometerService.class);
-                Bundle bundle = new Bundle();
-                bundle.putInt(AccelerometerService.INTERVAL, interval);
-                bundle.putInt(AccelerometerService.SESSION_TIME, sessionTime);
-                bundle.putInt(AccelerometerService.TIME_OF_START, mDayTimeExecuting);
-                bundle.putBoolean(AccelerometerService.IS_DELAY_STARTING, mIsExecutingOnTime.isChecked());
-                bundle.putString(AccelerometerService.UID, mUID);
-                serviceIntent.putExtras(bundle);
-                serviceIntent.setAction(AccelerometerService.START_ACTION);
-                getActivity().startService(serviceIntent);
+            Intent serviceIntent = new Intent(getActivity(), AccelerometerService.class);
+            Bundle bundle = new Bundle();
+            bundle.putInt(AccelerometerService.ARG_INTERVAL, interval);
+            bundle.putInt(AccelerometerService.ARG_SESSION_TIME, sessionTime);
+            bundle.putInt(AccelerometerService.ARG_TIME_OF_START, mDayTimeExecuting);
+            bundle.putBoolean(AccelerometerService.ARG_IS_DELAY_STARTING, mIsExecutingOnTime.isChecked());
+            bundle.putString(AccelerometerService.UID, mUID);
+            serviceIntent.putExtras(bundle);
+            serviceIntent.setAction(AccelerometerService.ACCELEROMETER_SERVICE_START_ACTION);
+            getActivity().startService(serviceIntent);
+
+            dismiss();
             }
         });
 
         mStopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(AccelerometerService.BROADCAST_ACTION);
-                intent.addCategory(Intent.CATEGORY_DEFAULT);
-                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
 
-                dismiss();
+//            dismiss();
             }
         });
     }
@@ -141,7 +140,7 @@ public class AccelerometerDialogFragment extends DialogFragment implements TimeP
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         if(Util.isOutOfTime(hourOfDay, minute)) {
-            Toast.makeText(getActivity(), getResources().getString(R.string.out_of_time_error), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getResources().getString(R.string.error_out_of_time), Toast.LENGTH_SHORT).show();
         }else {
             mDayTimeExecuting = Util.getTimeOfDayInMl(hourOfDay, minute);
             mTimeExecutionValue.setText(String.valueOf(hourOfDay) + " : " + String.valueOf(minute));

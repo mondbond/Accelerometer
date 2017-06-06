@@ -71,7 +71,6 @@ public class AccelerometerData implements Parcelable {
         this.z = z;
     }
 
-    // TODO: 06/06/17 check plugin to generate Parcelable object
     protected AccelerometerData(Parcel in) {
         id = in.readLong();
         x = in.readDouble();

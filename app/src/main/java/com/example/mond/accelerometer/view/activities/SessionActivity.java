@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,6 +15,8 @@ import android.view.View;
 import com.example.mond.accelerometer.Constants;
 import com.example.mond.accelerometer.R;
 import com.example.mond.accelerometer.pojo.Session;
+import com.example.mond.accelerometer.service.AccelerometerService;
+import com.example.mond.accelerometer.util.FirebaseUtil;
 import com.example.mond.accelerometer.util.Util;
 import com.example.mond.accelerometer.view.fragments.AccelerometerDialogFragment;
 import com.example.mond.accelerometer.view.fragments.SessionFragment;
@@ -28,6 +31,7 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class SessionActivity extends AppCompatActivity implements SessionFragment.OnSessionFragmentInteractionListener {
 
@@ -42,7 +46,9 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
     private AccelerometerDialogFragment mAccelerometerDialogFragment;
     private SessionFragment mSessionFragment;
 
-    @BindView(R.id.fab) FloatingActionButton mFab;
+//    @BindView(R.id.fab) FloatingActionButton mFab;
+    MenuItem mTurnOn;
+    MenuItem mTurnOff;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,23 +67,15 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
             mSessionFragment = (SessionFragment) fm.findFragmentByTag(SessionFragment.SESSION_FRAGMENT_TAG);
         }
 
-        // TODO: 06/06/17 butterknife? 
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-            if(mAccelerometerDialogFragment == null){
-                mAccelerometerDialogFragment = AccelerometerDialogFragment.newInstance(mUID);
-            }
-
-            mAccelerometerDialogFragment.show(getSupportFragmentManager(), ACCELEROMETER_DIALOG_FRAGMENT_TAG);
-            }
-        });
-
         Bundle bundle = getIntent().getExtras();
         mUID = bundle.getString(UID);
 
         initFirebaseDb();
     }
+
+//    @OnClick(R.id.fab)
+//    public void showAccelerometerDialog() {
+//    }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -89,7 +87,7 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
 
     public void initFirebaseDb(){
         mDatabase = FirebaseDatabase.getInstance();
-        mDbRef = mDatabase.getReference().child(Constants.FIREBASE_SESSIONS_NODE).child(mUID);
+        mDbRef = mDatabase.getReference().child(FirebaseUtil.FIREBASE_SESSIONS_NODE).child(mUID);
         mDbRef.addValueEventListener(new ValueEventListener() {
 
             @Override
@@ -98,15 +96,10 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
                     mSessions.clear();
                 }
 
-                // TODO: 06/06/17 use data models directly https://firebase.google.com/docs/database/android/read-and-write
                 for(DataSnapshot data : dataSnapshot.getChildren()){
-                    Session session = new Session();
-
-                    if(data.child(Constants.FIREBASE_SESSION_ID).getValue() != null) {
-                        session.setSessionId(Long.parseLong(String.valueOf( data.child(Constants.FIREBASE_SESSION_ID).getValue())));
-                        session.setSessionInterval(Integer.parseInt(String.valueOf( data.child(Constants.FIREBASE_SESSIONS_INTERVAL_INFO).getValue())));
+                    if(data.child(FirebaseUtil.FIREBASE_SESSION_ID).getValue() != null) {
+                        mSessions.add(data.getValue(Session.class));
                     }
-                    mSessions.add(session);
                 }
                 mSessionFragment.setNewAccelerometerValues(mSessions);
             }
@@ -117,7 +110,7 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
     }
 
     @Override
-    public void onGetSessionData(Session session) {
+    public void onSessionItemSelected(Session session) {
         Intent detailSessionIntent = new Intent(this, DetailSessionActivity.class);
         Bundle bundle = new Bundle();
         bundle.putParcelable(DetailSessionActivity.SESSION_DATA, session);
@@ -136,6 +129,19 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
             startActivity(logOutIntent);
 
             finish();
+        } else if(item.getItemId() == R.id.turn_on_accelerometer) {
+            item.setVisible(false);
+            mTurnOff.setVisible(true);
+            if(mAccelerometerDialogFragment == null){
+                mAccelerometerDialogFragment = AccelerometerDialogFragment.newInstance(mUID);
+            }
+            mAccelerometerDialogFragment.show(getSupportFragmentManager(), ACCELEROMETER_DIALOG_FRAGMENT_TAG);
+        }else if(item.getItemId() == R.id.turn_off_accelerometer) {
+            item.setVisible(false);
+            mTurnOn.setVisible(true);
+            Intent intent = new Intent(AccelerometerService.ACCELEROMETER_SERVICE_STOP_ACTION);
+            intent.addCategory(Intent.CATEGORY_DEFAULT);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
         }
 
         return super.onOptionsItemSelected(item);
@@ -145,6 +151,9 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.session_activity_menu, menu);
+        mTurnOn = menu.findItem(R.id.turn_on_accelerometer);
+        mTurnOff = menu.findItem(R.id.turn_off_accelerometer);
+
         return super.onCreateOptionsMenu(menu);
     }
 

@@ -13,29 +13,18 @@ import com.example.mond.accelerometer.util.Util;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHolder> {
 
     private List<Session> mSessions;
-    private AdapterListener mListener;
+    private OnItemClickListener mListener;
 
-    public SessionAdapter(List<Session> sessions, AdapterListener listener, Context context) {
+    public SessionAdapter(List<Session> sessions, OnItemClickListener listener, Context context) {
         this.mSessions = sessions;
         this.mListener = listener;
-    }
-
-    // TODO: 06/06/17 better to set ViewHolder in the bottom of the main class to separate ViewHolder methods & adapter methods
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView session;
-
-        ViewHolder(View view) {
-            super(view);
-            // TODO: 06/06/17 butterknife
-            session = (TextView) view.findViewById(R.id.session_time);
-        }
-
-        public void bind(Session session) {
-            // TODO: 06/06/17 implement this
-        }
     }
 
     @Override
@@ -48,15 +37,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        final int finalPosition = position;
-        holder.session.setText(Util.makeTimeStampToDate(mSessions.get(position).getSessionId()));
-        // TODO: 06/06/17 here you create listener each time, don't do this
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.onItemClick(mSessions.get(finalPosition));
-            }
-        });
+        holder.bind(mSessions.get(position));
     }
 
     @Override
@@ -68,14 +49,35 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
         }
     }
 
-    // TODO: 06/06/17
+    // TODO: - 06/06/17
     public void setSessions(List<Session> mSessions) {
         this.mSessions = mSessions;
         notifyDataSetChanged();
     }
 
-    // TODO: 06/06/17 meaningful names
-    public interface AdapterListener {
+    public interface OnItemClickListener {
         void onItemClick(Session accelerationDatas);
+    }
+
+
+    class ViewHolder extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.session_time) TextView sessionItem;
+        private Session mSession;
+
+        ViewHolder(View view) {
+            super(view);
+            ButterKnife.bind(this, view);
+        }
+
+        @OnClick(R.id.session_time)
+        public void sessionItemClicked(){
+                mListener.onItemClick(mSession);
+        }
+
+        public void bind(Session session) {
+            mSession = session;
+            sessionItem.setText(Util.makeTimeStampToDate(session.getSessionId()));
+        }
     }
 }

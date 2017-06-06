@@ -60,7 +60,7 @@ public class Util {
                 = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         if(!(activeNetworkInfo != null && activeNetworkInfo.isConnected())){
-            Toast.makeText(context, context.getResources().getString(R.string.network_is_not_available), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, context.getResources().getString(R.string.error_network_is_not_available), Toast.LENGTH_SHORT).show();
         }
 
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();

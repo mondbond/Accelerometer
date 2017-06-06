@@ -17,6 +17,8 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import com.example.mond.accelerometer.Constants;
 import com.example.mond.accelerometer.pojo.AccelerometerData;
+import com.example.mond.accelerometer.pojo.Session;
+import com.example.mond.accelerometer.util.FirebaseUtil;
 import com.example.mond.accelerometer.util.Util;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -32,16 +34,14 @@ public class AccelerometerService extends Service implements SensorEventListener
 
     public static final int MINIMUM_INTERVAL = 1000;
 
-    // TODO: 06/06/17 be more specific, START_ACTION - ok, but what mean BROADCAST_ACTION?
-    // TODO: 06/06/17 use more complex action values (add package name)
-    public static final String START_ACTION = "start";
-    public static final String BROADCAST_ACTION = "broadcastAction";
+    // TODO: - 06/06/17 be more specific, ACCELEROMETER_SERVICE_START_ACTION - ok, but what mean ACCELEROMETER_SERVICE_STOP_ACTION?
+    public static final String ACCELEROMETER_SERVICE_START_ACTION = "startAction";
+    public static final String ACCELEROMETER_SERVICE_STOP_ACTION = "stopAction";
 
-    // TODO: 06/06/17 ARG_INTERVAL, ...
-    public static final String INTERVAL = "interval";
-    public static final String SESSION_TIME = "sessionTime";
-    public static final String TIME_OF_START = "timeOfStart";
-    public static final String IS_DELAY_STARTING = "isDelayStarting";
+    public static final String ARG_INTERVAL = "interval";
+    public static final String ARG_SESSION_TIME = "sessionTime";
+    public static final String ARG_TIME_OF_START = "timeOfStart";
+    public static final String ARG_IS_DELAY_STARTING = "isDelayStarting";
     public static final String UID = "uid";
 
     private BroadcastReceiver mStopBroadcastReciever;
@@ -59,6 +59,7 @@ public class AccelerometerService extends Service implements SensorEventListener
 
     private FirebaseDatabase mDatabase;
     private DatabaseReference mDbRef;
+    private DatabaseReference mDbSessionsRef;
 
     private SensorManager mSensorManager;
 
@@ -80,12 +81,12 @@ public class AccelerometerService extends Service implements SensorEventListener
 
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-        if(intent.getAction().equals(START_ACTION)){
+        if(intent.getAction().equals(ACCELEROMETER_SERVICE_START_ACTION)){
             Bundle bundle = intent.getExtras();
-            mIsDelayMode = bundle.getBoolean(IS_DELAY_STARTING);
-            mStartTime = bundle.getInt(TIME_OF_START);
-            mIntervalTimeInMl = (int) Math.max(TimeUnit.SECONDS.toMillis(bundle.getInt(INTERVAL)), MINIMUM_INTERVAL);
-            mSessionTime = (int) TimeUnit.SECONDS.toMillis(bundle.getInt(SESSION_TIME));
+            mIsDelayMode = bundle.getBoolean(ARG_IS_DELAY_STARTING);
+            mStartTime = bundle.getInt(ARG_TIME_OF_START);
+            mIntervalTimeInMl = (int) Math.max(TimeUnit.SECONDS.toMillis(bundle.getInt(ARG_INTERVAL)), MINIMUM_INTERVAL);
+            mSessionTime = (int) TimeUnit.SECONDS.toMillis(bundle.getInt(ARG_SESSION_TIME));
             mUID = bundle.getString(UID);
 
             initSensorListener();
@@ -96,13 +97,13 @@ public class AccelerometerService extends Service implements SensorEventListener
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private void initStartActionTime(){
+    private void initStartActionTime() {
         if(mActionStartTime != 0) {
             mActionStartTime = Util.getLocalTimeStamp();
         }
     }
 
-    private void initSensorListener(){
+    private void initSensorListener() {
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         mSensorManager.registerListener(this,
                 mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
@@ -111,29 +112,36 @@ public class AccelerometerService extends Service implements SensorEventListener
 
     public void initAccelerometerConfig() {
         mSessionId = Util.getLocalTimeStamp();
-        saveSessionToFirebase();
         mExecutorService = Executors.newFixedThreadPool(2);
         mAsyncSave = new AsyncSave();
+
+        mDbSessionsRef = mDbRef.child(FirebaseUtil.FIREBASE_SESSIONS_NODE).child(mUID);
+
+        saveSessionToFirebase();
     }
 
-    private void saveSessionToFirebase(){
-        // TODO: 06/06/17 move firebase related constants and static usage to FirebaseEndpoint
-        // TODO: 06/06/17 why Session model don't used?
-        mDbRef.child(Constants.FIREBASE_SESSIONS_NODE).child(mUID).child(String.valueOf(mSessionId)).child(Constants.FIREBASE_SESSIONS_INTERVAL_INFO)
-                .setValue(String.valueOf(mIntervalTimeInMl));
-        mDbRef.child(Constants.FIREBASE_SESSIONS_NODE).child(mUID).child(String.valueOf(mSessionId)).child(Constants.FIREBASE_SESSION_ID)
-                .setValue(String.valueOf(mSessionId));
+    private void saveSessionToFirebase() {
+        // TODO: - 06/06/17 move firebase related constants and static usage to FirebaseEndpoint
+
+//        mDbSessionsRef.setValue(new Session(mSessionId, mIntervalTimeInMl));
+//        mDbSessionsRef.child(String.valueOf(mSessionId)).setValue(new Session(mSessionId, mIntervalTimeInMl));
+        FirebaseUtil.saveSession(mSessionId, mIntervalTimeInMl, mUID);
+
+//        mDbRef.child(Constants.FIREBASE_SESSIONS_NODE).child(mUID).child(String.valueOf(mSessionId)).child(Constants.FIREBASE_SESSIONS_INTERVAL_INFO)
+//                .setValue(mIntervalTimeInMl);
+//        mDbRef.child(Constants.FIREBASE_SESSIONS_NODE).child(mUID).child(String.valueOf(mSessionId)).child(Constants.FIREBASE_SESSION_ID)
+//                .setValue(mSessionId);
     }
 
-    private void initStopBroadcastReceiver(){
-        // TODO: 06/06/17 why local BroadcastReceiver?
+    private void initStopBroadcastReceiver() {
+        // TODO: - 06/06/17 why local BroadcastReceiver?
         mStopBroadcastReciever = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
                 stopSelf();
             }
         };
 
-        IntentFilter intentFilter = new IntentFilter(BROADCAST_ACTION);
+        IntentFilter intentFilter = new IntentFilter(ACCELEROMETER_SERVICE_STOP_ACTION);
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
         LocalBroadcastManager.getInstance(this).registerReceiver(mStopBroadcastReciever, intentFilter);
     }
@@ -187,13 +195,13 @@ public class AccelerometerService extends Service implements SensorEventListener
         az = event.values[2];
 
         mAccelerometerData = new AccelerometerData(ax, ay, az);
-        Map<String, Object> map = mAccelerometerData.toMap();
-        // TODO: 06/06/17 should be something like fEndpoint.pushAccelData(mSessionID, mAccelerometerData);
-        mDbRef.child(Constants.FIREBASE_ACCELEROMETER_DATAS_NODE).child(mUID)
-                .child(String.valueOf(mSessionId)).child(Util.makeCurrentTimeStampToDate()).setValue(map)
+//        Map<String, Object> map = mAccelerometerData.toMap();
+        // TODO: - 06/06/17 should be something like fEndpoint.pushAccelData(mSessionID, mAccelerometerData);
+
+        FirebaseUtil.pushAccelerometerData(mAccelerometerData, mSessionId, mUID);
 //        .addOnCompleteListener()
 //        .addOnSuccessListener()
-        ;
+
 
         mLastTimeSave = Util.getLocalTimeStamp();
     }

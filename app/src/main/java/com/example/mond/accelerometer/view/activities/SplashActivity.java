@@ -36,11 +36,11 @@ public class SplashActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         mAuth = FirebaseAuth.getInstance();
-        // TODO: 06/06/17 do you need network check here?
+        // TODO: - 06/06/17 do you need network check here?
         if(Util.isNetworkAvailable(this)) {
             verificate();
         }else {
-            Toast.makeText(this, getString(R.string.network_is_not_available), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.error_network_is_not_available), Toast.LENGTH_LONG).show();
         }
     }
 

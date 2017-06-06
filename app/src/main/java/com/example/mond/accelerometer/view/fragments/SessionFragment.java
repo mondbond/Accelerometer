@@ -19,7 +19,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SessionFragment extends Fragment implements SessionAdapter.AdapterListener {
+public class SessionFragment extends Fragment implements SessionAdapter.OnItemClickListener {
 
     public static final String SESSION_FRAGMENT_TAG = "sessionFragmentTag";
 
@@ -71,7 +71,7 @@ public class SessionFragment extends Fragment implements SessionAdapter.AdapterL
 
     @Override
     public void onItemClick(Session session) {
-        mListener.onGetSessionData(session);
+        mListener.onSessionItemSelected(session);
     }
 
     public void setNewAccelerometerValues(List<Session> sessions){
@@ -81,7 +81,7 @@ public class SessionFragment extends Fragment implements SessionAdapter.AdapterL
     }
 
     public interface OnSessionFragmentInteractionListener {
-        // TODO: 06/06/17 on this level of abstraction you don't know what to do with session (onGetSessionData) you know that session item was clicked/selected
-        void onGetSessionData(Session session);
+        // TODO: - 06/06/17 on this level of abstraction you don't know what to do with session (onSessionItemSelected) you know that session item was clicked/selected
+        void onSessionItemSelected(Session session);
     }
 }

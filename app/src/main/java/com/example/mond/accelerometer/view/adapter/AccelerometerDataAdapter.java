@@ -9,29 +9,20 @@ import android.widget.TextView;
 
 import com.example.mond.accelerometer.R;
 import com.example.mond.accelerometer.pojo.AccelerometerData;
+import com.example.mond.accelerometer.pojo.Session;
 import com.example.mond.accelerometer.util.Util;
 
 import java.util.ArrayList;
 
-// TODO: 06/06/17 check SessionAdapter
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class AccelerometerDataAdapter extends RecyclerView.Adapter<AccelerometerDataAdapter.ViewHolder> {
 
     private ArrayList<AccelerometerData> mAccelerometerDatas;
 
     public AccelerometerDataAdapter(ArrayList<AccelerometerData> accelerometerDatas) {
         mAccelerometerDatas = accelerometerDatas;
-    }
-
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView time, x, y, z;
-
-        ViewHolder(View view) {
-            super(view);
-            time = (TextView) view.findViewById(R.id.accelerometer_data_time);
-            x = (TextView) view.findViewById(R.id.accelerometer_data_x);
-            y = (TextView) view.findViewById(R.id.accelerometer_data_y);
-            z = (TextView) view.findViewById(R.id.accelerometer_data_z);
-        }
     }
 
     @Override
@@ -45,10 +36,7 @@ public class AccelerometerDataAdapter extends RecyclerView.Adapter<Accelerometer
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.time.setText(Util.makeTimeStampToDate(mAccelerometerDatas.get(position).getId()));
-        holder.x.setText(String.valueOf(mAccelerometerDatas.get(position).getX()));
-        holder.y.setText(String.valueOf(mAccelerometerDatas.get(position).getY()));
-        holder.z.setText(String.valueOf(mAccelerometerDatas.get(position).getZ()));
+        holder.bind(mAccelerometerDatas.get(position));
     }
 
     @Override
@@ -63,5 +51,24 @@ public class AccelerometerDataAdapter extends RecyclerView.Adapter<Accelerometer
     public void setNewSessionValue(ArrayList<AccelerometerData> accelerometerDatas){
         mAccelerometerDatas = accelerometerDatas;
         notifyDataSetChanged();
+    }
+
+    class ViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.accelerometer_data_time) TextView time;
+        @BindView(R.id.accelerometer_data_x) TextView x;
+        @BindView(R.id.accelerometer_data_y) TextView y;
+        @BindView(R.id.accelerometer_data_z) TextView z;
+
+        ViewHolder(View view) {
+            super(view);
+            ButterKnife.bind(this, view);
+        }
+
+        public void bind(AccelerometerData accelerometerData) {
+            time.setText(Util.makeTimeStampToDate(accelerometerData.getId()));
+            x.setText(String.valueOf(accelerometerData.getX()));
+            y.setText(String.valueOf(accelerometerData.getY()));
+            z.setText(String.valueOf(accelerometerData.getZ()));
+        }
     }
 }
