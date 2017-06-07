@@ -6,10 +6,7 @@ android {
         config {
             keyAlias 'boostandroidapps'
             keyPassword 'boost***'
-            // filename kostya???
-            // don't use absolute file names
-            // config don't used
-            storeFile file('/home/kostya/AndroidStudioProjects/AccelerometerFirebase/app/BoostAndroidAppKey.jks')
+            storeFile file('BoostAndroidAppKey.jks')
             storePassword 'boost***'
         }
     }
@@ -25,9 +22,11 @@ android {
     }
     buildTypes {
         debug {
+            signingConfig signingConfigs.config
             debuggable true
         }
         release {
+            signingConfig signingConfigs.config
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
