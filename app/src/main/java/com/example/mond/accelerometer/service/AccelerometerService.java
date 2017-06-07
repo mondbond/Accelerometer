@@ -61,11 +61,6 @@ public class AccelerometerService extends Service implements SensorEventListener
     private double ax, ay, az;
     private AccelerometerData mAccelerometerData;
 
-    private SensorEvent mLastEvent;
-
-    private ExecutorService mExecutorService;
-    private AsyncSave mAsyncSave;
-
     private LocalBinder mLocalBinder = new LocalBinder();
 
     public void onCreate() {
@@ -107,8 +102,6 @@ public class AccelerometerService extends Service implements SensorEventListener
 
     public void initAccelerometerConfigAndSaveSession() {
         mSessionId = Util.getLocalTimeStamp();
-        mExecutorService = Executors.newFixedThreadPool(2);
-        mAsyncSave = new AsyncSave();
 
         FirebaseUtil.saveSession(mSessionId, mIntervalTimeInMl, mUID);
     }
@@ -133,11 +126,11 @@ public class AccelerometerService extends Service implements SensorEventListener
         if (mIsDelayMode && isPassingPeriodAndTypeFilter(event)) {
             if(Util.isTimeToStart(mStartTime) && !isSessionTimeOver()){
                 initStartActionTime();
-                startAsyncSave(event);
+                saveEventToFirebase(event);
             }
         } else if (isPassingPeriodAndTypeFilter(event) && !isSessionTimeOver()) {
             initStartActionTime();
-            startAsyncSave(event);
+            saveEventToFirebase(event);
         }else if(isSessionTimeOver()){
             stopSelf();
         }
@@ -166,11 +159,6 @@ public class AccelerometerService extends Service implements SensorEventListener
         return false;
     }
 
-    private void startAsyncSave(SensorEvent event){
-        mLastEvent = event;
-        mExecutorService.submit(mAsyncSave);
-    }
-
     private void saveEventToFirebase(SensorEvent event){
         ax = event.values[0];
         ay = event.values[1];
@@ -180,6 +168,7 @@ public class AccelerometerService extends Service implements SensorEventListener
         FirebaseUtil.pushAccelerometerData(mAccelerometerData, mSessionId, mUID);
 //        .addOnCompleteListener()
 //        .addOnSuccessListener()
+//        for what does it need ?
         mLastTimeSave = Util.getLocalTimeStamp();
     }
 
@@ -198,14 +187,6 @@ public class AccelerometerService extends Service implements SensorEventListener
     public class LocalBinder extends Binder {
         public AccelerometerService getService() {
             return AccelerometerService.this;
-        }
-    }
-
-    private class AsyncSave implements Runnable {
-
-        @Override
-        public void run() {
-            saveEventToFirebase(mLastEvent);
         }
     }
 }
