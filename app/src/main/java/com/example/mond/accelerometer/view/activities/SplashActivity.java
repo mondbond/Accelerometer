@@ -17,15 +17,6 @@ import butterknife.ButterKnife;
 
 public class SplashActivity extends AppCompatActivity {
 
-    private BroadcastReceiver mNetworkConnectionChangeReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-        if(Util.isNetworkAvailable(SplashActivity.this)) {
-            verificate();
-        }
-        }
-    };
-
     private IntentFilter mIntentFilter;
     private FirebaseAuth mAuth;
 
@@ -37,19 +28,6 @@ public class SplashActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         verificate();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mIntentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(mNetworkConnectionChangeReceiver, mIntentFilter);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        unregisterReceiver(mNetworkConnectionChangeReceiver);
     }
 
     private void verificate() {
