@@ -18,10 +18,10 @@ import butterknife.ButterKnife;
 
 public class AccelerometerDataAdapter extends RecyclerView.Adapter<AccelerometerDataAdapter.ViewHolder> {
 
-    private ArrayList<AccelerometerData> mAccelerometerDatas;
+    private ArrayList<AccelerometerData> mAccelerometerData;
 
-    public AccelerometerDataAdapter(ArrayList<AccelerometerData> accelerometerDatas) {
-        mAccelerometerDatas = accelerometerDatas;
+    public AccelerometerDataAdapter(ArrayList<AccelerometerData> accelerometerData) {
+        mAccelerometerData = accelerometerData;
     }
 
     @Override
@@ -35,20 +35,20 @@ public class AccelerometerDataAdapter extends RecyclerView.Adapter<Accelerometer
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.bind(mAccelerometerDatas.get(position));
+        holder.bind(mAccelerometerData.get(position));
     }
 
     @Override
     public int getItemCount() {
-        if (mAccelerometerDatas != null) {
-            return mAccelerometerDatas.size();
+        if (mAccelerometerData != null) {
+            return mAccelerometerData.size();
         } else {
             return 0;
         }
     }
 
     public void setNewSessionValue(ArrayList<AccelerometerData> accelerometerDatas){
-        mAccelerometerDatas = accelerometerDatas;
+        mAccelerometerData = accelerometerDatas;
         notifyDataSetChanged();
     }
 

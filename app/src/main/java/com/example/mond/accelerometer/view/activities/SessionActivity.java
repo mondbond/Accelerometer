@@ -28,9 +28,10 @@ import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 
-public class SessionActivity extends AppCompatActivity implements SessionFragment.OnSessionFragmentInteractionListener {
+public class SessionActivity extends AppCompatActivity implements SessionFragment.OnSessionFragmentInteractionListener,
+        AccelerometerDialogFragment.AccelerometerDialogInteractionListener{
 
-    public static final String UID = "email";
+    public static final String UID = "uid";
     public static final String ACCELEROMETER_DIALOG_FRAGMENT_TAG = "accelerometerDialogFragmentTag";
     private static final String RESTORE_SESSIONS = "restoreSessions";
 
@@ -41,9 +42,8 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
     private AccelerometerDialogFragment mAccelerometerDialogFragment;
     private SessionFragment mSessionFragment;
 
-//    @BindView(R.id.fab) FloatingActionButton mFab;
-    MenuItem mTurnOn;
-    MenuItem mTurnOff;
+    private MenuItem mTurnOn;
+    private MenuItem mTurnOff;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,10 +67,6 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
 
         initFirebaseDb();
     }
-
-//    @OnClick(R.id.fab)
-//    public void showAccelerometerDialog() {
-//    }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -119,14 +115,12 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.log_out && Util.isNetworkAvailable(this)){
             FirebaseAuth.getInstance().signOut();
-            Intent logOutIntent = new Intent(this, LoginActivity.class);
+            Intent logOutIntent = new Intent(this, AuthenticationActivity.class);
             logOutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(logOutIntent);
 
             finish();
         } else if(item.getItemId() == R.id.turn_on_accelerometer) {
-            item.setVisible(false);
-            mTurnOff.setVisible(true);
             if(mAccelerometerDialogFragment == null){
                 mAccelerometerDialogFragment = AccelerometerDialogFragment.newInstance(mUID);
             }
@@ -150,6 +144,12 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
         mTurnOff = menu.findItem(R.id.turn_off_accelerometer);
 
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public void onAccelerometerStart() {
+        mTurnOn.setVisible(false);
+        mTurnOff.setVisible(true);
     }
 
     @Override

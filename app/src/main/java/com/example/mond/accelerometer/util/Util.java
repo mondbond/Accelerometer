@@ -3,6 +3,7 @@ package com.example.mond.accelerometer.util;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.example.mond.accelerometer.R;
@@ -64,5 +65,14 @@ public class Util {
         }
 
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    public static boolean isFieldsNotNullAndEmpty(String email, String pswd){
+        if (!TextUtils.equals(email, null) && !TextUtils.equals(pswd, null)
+                &&!TextUtils.isEmpty(email) && !TextUtils.isEmpty(pswd)) {
+            return true;
+        }else{
+            return false;
+        }
     }
 }

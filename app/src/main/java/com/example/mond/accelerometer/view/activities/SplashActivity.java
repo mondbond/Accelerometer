@@ -20,9 +20,9 @@ public class SplashActivity extends AppCompatActivity {
     private BroadcastReceiver mNetworkConnectionChangeReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(Util.isNetworkAvailable(SplashActivity.this)) {
-                verificate();
-            }
+        if(Util.isNetworkAvailable(SplashActivity.this)) {
+            verificate();
+        }
         }
     };
 
@@ -36,12 +36,7 @@ public class SplashActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         mAuth = FirebaseAuth.getInstance();
-        // TODO: - 06/06/17 do you need network check here?
-        if(Util.isNetworkAvailable(this)) {
-            verificate();
-        }else {
-            Toast.makeText(this, getString(R.string.error_network_is_not_available), Toast.LENGTH_LONG).show();
-        }
+        verificate();
     }
 
     @Override
@@ -59,7 +54,7 @@ public class SplashActivity extends AppCompatActivity {
 
     private void verificate() {
         if(mAuth.getCurrentUser() == null){
-            Intent loginIntent = new Intent(this, LoginActivity.class);
+            Intent loginIntent = new Intent(this, AuthenticationActivity.class);
             startActivity(loginIntent);
         }else {
             Intent sessionListIntent = new Intent(this, SessionActivity.class);

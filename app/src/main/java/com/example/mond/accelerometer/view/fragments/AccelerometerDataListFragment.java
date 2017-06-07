@@ -19,7 +19,7 @@ import butterknife.ButterKnife;
 
 public class AccelerometerDataListFragment extends Fragment {
     public static final String SESSION = "session";
-    public static final String ACCELEROMETER_LIST_FRAGMENT_TAG = "accelerometerlistTag";
+    public static final String ACCELEROMETER_LIST_FRAGMENT_TAG = "accelerometerListTag";
 
     private ArrayList<AccelerometerData> accelerometerDatas;
     private AccelerometerDataAdapter mAdapter;
@@ -27,8 +27,7 @@ public class AccelerometerDataListFragment extends Fragment {
     @BindView(R.id.accelerometer_data_fragment_recycler) RecyclerView mRecycler;
 
     public static AccelerometerDataListFragment newInstance() {
-        AccelerometerDataListFragment fragment = new AccelerometerDataListFragment();
-        return fragment;
+        return new AccelerometerDataListFragment();
     }
 
     @Override

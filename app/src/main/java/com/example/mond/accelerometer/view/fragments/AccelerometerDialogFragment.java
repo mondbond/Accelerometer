@@ -1,6 +1,7 @@
 package com.example.mond.accelerometer.view.fragments;
 
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -19,13 +20,13 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.example.mond.accelerometer.R;
+import com.example.mond.accelerometer.interfaces.AuthenticationInteractionListener;
 import com.example.mond.accelerometer.service.AccelerometerService;
 import com.example.mond.accelerometer.util.Util;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-// TODO: - 06/06/17 from this dialog you can only start the session, "Stop" button should be on the same level as button to show this dialog
 public class AccelerometerDialogFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener{
 
     public static final String UID = "uid";
@@ -33,7 +34,6 @@ public class AccelerometerDialogFragment extends DialogFragment implements TimeP
     private int mDayTimeExecuting;
 
     @BindView(R.id.activity_list_start_btn) Button mStartButton;
-    @BindView(R.id.activity_list_stop_btn) Button mStopButton;
     @BindView(R.id.activity_list_interval_value) EditText mIntervalValue;
     @BindView(R.id.activity_list_time_value) EditText mActionTimeValue;
     @BindView(R.id.activity_list_time_execution_btn) Button mTimeExecutionSetterBtn;
@@ -42,6 +42,8 @@ public class AccelerometerDialogFragment extends DialogFragment implements TimeP
 
     private String mUID;
     private TimePickerDialog mTimePickerDialog;
+
+    private AccelerometerDialogInteractionListener mListener;
 
     public static AccelerometerDialogFragment newInstance(String uID) {
         AccelerometerDialogFragment fragment = new AccelerometerDialogFragment();
@@ -92,6 +94,24 @@ public class AccelerometerDialogFragment extends DialogFragment implements TimeP
         return v;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof AccelerometerDialogInteractionListener) {
+            mListener = (AccelerometerDialogInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement AccelerometerDialogInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+
     public void initStartStopServiceButtons(){
         mStartButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,10 +120,8 @@ public class AccelerometerDialogFragment extends DialogFragment implements TimeP
             int interval = 0;
             int sessionTime = 0;
 
-            // TODO: 06/06/17 DRY
-            String sessionInterval = mIntervalValue.getText().toString();
-            if(!TextUtils.isEmpty(sessionInterval)){
-                interval = Integer.parseInt(sessionInterval);
+            if(!TextUtils.isEmpty(mIntervalValue.getText().toString())){
+                interval = Integer.parseInt(mIntervalValue.getText().toString());
             }
 
             if(!mActionTimeValue.getText().toString().equals("")){
@@ -112,6 +130,8 @@ public class AccelerometerDialogFragment extends DialogFragment implements TimeP
 //                    0 marked as infinite
                 sessionTime = 0;
             }
+
+            mListener.onAccelerometerStart();
 
             Intent serviceIntent = new Intent(getActivity(), AccelerometerService.class);
             Bundle bundle = new Bundle();
@@ -127,14 +147,6 @@ public class AccelerometerDialogFragment extends DialogFragment implements TimeP
             dismiss();
             }
         });
-
-        mStopButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-//            dismiss();
-            }
-        });
     }
 
     @Override
@@ -145,5 +157,10 @@ public class AccelerometerDialogFragment extends DialogFragment implements TimeP
             mDayTimeExecuting = Util.getTimeOfDayInMl(hourOfDay, minute);
             mTimeExecutionValue.setText(String.valueOf(hourOfDay) + " : " + String.valueOf(minute));
         }
+    }
+
+    public interface AccelerometerDialogInteractionListener{
+
+        void onAccelerometerStart();
     }
 }

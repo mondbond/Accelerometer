@@ -49,7 +49,6 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
         }
     }
 
-    // TODO: - 06/06/17
     public void setSessions(List<Session> mSessions) {
         this.mSessions = mSessions;
         notifyDataSetChanged();

@@ -29,8 +29,7 @@ public class SessionFragment extends Fragment implements SessionAdapter.OnItemCl
     private SessionAdapter mAdapter;
 
     public static SessionFragment newInstance() {
-        SessionFragment fragment = new SessionFragment();
-        return fragment;
+        return new SessionFragment();
     }
 
     @Override
@@ -81,7 +80,7 @@ public class SessionFragment extends Fragment implements SessionAdapter.OnItemCl
     }
 
     public interface OnSessionFragmentInteractionListener {
-        // TODO: - 06/06/17 on this level of abstraction you don't know what to do with session (onSessionItemSelected) you know that session item was clicked/selected
+
         void onSessionItemSelected(Session session);
     }
 }

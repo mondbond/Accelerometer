@@ -31,7 +31,6 @@ public class AccelerometerService extends Service implements SensorEventListener
 
     public static final int MINIMUM_INTERVAL = 1000;
 
-    // TODO: - 06/06/17 be more specific, ACCELEROMETER_SERVICE_START_ACTION - ok, but what mean ACCELEROMETER_SERVICE_STOP_ACTION?
     public static final String ACCELEROMETER_SERVICE_START_ACTION = "startAction";
     public static final String ACCELEROMETER_SERVICE_STOP_ACTION = "stopAction";
 
@@ -56,7 +55,6 @@ public class AccelerometerService extends Service implements SensorEventListener
 
     private FirebaseDatabase mDatabase;
     private DatabaseReference mDbRef;
-    private DatabaseReference mDbSessionsRef;
 
     private SensorManager mSensorManager;
 
@@ -87,7 +85,7 @@ public class AccelerometerService extends Service implements SensorEventListener
             mUID = bundle.getString(UID);
 
             initSensorListener();
-            initAccelerometerConfig();
+            initAccelerometerConfigAndSaveSession();
             initStopBroadcastReceiver();
         }
 
@@ -107,34 +105,21 @@ public class AccelerometerService extends Service implements SensorEventListener
                 SensorManager.SENSOR_DELAY_NORMAL);
     }
 
-    public void initAccelerometerConfig() {
+    public void initAccelerometerConfigAndSaveSession() {
         mSessionId = Util.getLocalTimeStamp();
         mExecutorService = Executors.newFixedThreadPool(2);
         mAsyncSave = new AsyncSave();
 
-        mDbSessionsRef = mDbRef.child(FirebaseUtil.FIREBASE_SESSIONS_NODE).child(mUID);
-
-        saveSessionToFirebase();
-    }
-
-    private void saveSessionToFirebase() {
-        // TODO: - 06/06/17 move firebase related constants and static usage to FirebaseEndpoint
-
-//        mDbSessionsRef.setValue(new Session(mSessionId, mIntervalTimeInMl));
-//        mDbSessionsRef.child(String.valueOf(mSessionId)).setValue(new Session(mSessionId, mIntervalTimeInMl));
         FirebaseUtil.saveSession(mSessionId, mIntervalTimeInMl, mUID);
-
-//        mDbRef.child(Constants.FIREBASE_SESSIONS_NODE).child(mUID).child(String.valueOf(mSessionId)).child(Constants.FIREBASE_SESSIONS_INTERVAL_INFO)
-//                .setValue(mIntervalTimeInMl);
-//        mDbRef.child(Constants.FIREBASE_SESSIONS_NODE).child(mUID).child(String.valueOf(mSessionId)).child(Constants.FIREBASE_SESSION_ID)
-//                .setValue(mSessionId);
     }
 
     private void initStopBroadcastReceiver() {
         // TODO: - 06/06/17 why local BroadcastReceiver?
+        // we don't need to give it more opportunities than it need and it's used only in this app
+
         mStopBroadcastReciever = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
-                stopSelf();
+            stopSelf();
             }
         };
 
@@ -192,14 +177,9 @@ public class AccelerometerService extends Service implements SensorEventListener
         az = event.values[2];
 
         mAccelerometerData = new AccelerometerData(ax, ay, az);
-//        Map<String, Object> map = mAccelerometerData.toMap();
-        // TODO: - 06/06/17 should be something like fEndpoint.pushAccelData(mSessionID, mAccelerometerData);
-
         FirebaseUtil.pushAccelerometerData(mAccelerometerData, mSessionId, mUID);
 //        .addOnCompleteListener()
 //        .addOnSuccessListener()
-
-
         mLastTimeSave = Util.getLocalTimeStamp();
     }
 

@@ -42,8 +42,7 @@ public class LineGraphFragment extends Fragment {
     @BindView(R.id.graph_fragment_graph) LineChart mGraph;
 
     public static LineGraphFragment newInstance() {
-        LineGraphFragment fragment = new LineGraphFragment();
-        return fragment;
+        return new LineGraphFragment();
     }
 
     @Override

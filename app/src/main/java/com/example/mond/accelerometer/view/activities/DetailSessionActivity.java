@@ -23,7 +23,7 @@ import java.util.ArrayList;
 public class DetailSessionActivity extends AppCompatActivity {
 
     public final static String SESSION_DATA = "sessionData";
-    public final static String UID = "email";
+    public final static String UID = "uid";
 
     private static final String RESTORE_SESSION = "restoreSessions";
 
@@ -78,13 +78,13 @@ public class DetailSessionActivity extends AppCompatActivity {
 
     public void initFirebaseDb(){
         mDatabase = FirebaseDatabase.getInstance();
-        mDbRef = mDatabase.getReference().child(FirebaseUtil.FIREBASE_ACCELEROMETER_DATAS_NODE).child(mUID)
+        mDbRef = mDatabase.getReference().child(FirebaseUtil.FIREBASE_ACCELEROMETER_DATA_NODE).child(mUID)
                 .child(String.valueOf(mSession.getSessionId()));
         mDbRef.addValueEventListener(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot data : dataSnapshot.getChildren()){
+                for(DataSnapshot data : dataSnapshot.getChildren()) {
                     AccelerometerData accelerometerData = data.getValue(AccelerometerData.class);
                     mAccelerometerDatas.add(accelerometerData);
                 }
