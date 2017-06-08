@@ -118,7 +118,7 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
-                    startSessionActivity();
+                    startChooserActivity();
                 }else {
                     Toast.makeText(AuthenticationActivity.this, getResources().getString(R.string.error_log_in_filed),
                             Toast.LENGTH_SHORT).show();
@@ -153,15 +153,15 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
                 } else {
                     Toast.makeText(AuthenticationActivity.this, getResources().getString(R.string.message_logged),
                             Toast.LENGTH_SHORT).show();
-                    startSessionActivity();
+                    startChooserActivity();
                 }
                 }
             });
     }
 
-    public void startSessionActivity(){
-        Intent intent = new Intent(AuthenticationActivity.this, SessionActivity.class);
-        intent.putExtra(SessionActivity.UID, mAuth.getCurrentUser().getUid());
+    public void startChooserActivity(){
+        Intent intent = new Intent(AuthenticationActivity.this, ChooserActivity.class);
+        intent.putExtra(ChooserActivity.UID, mAuth.getCurrentUser().getUid());
         startActivity(intent);
 
         finish();

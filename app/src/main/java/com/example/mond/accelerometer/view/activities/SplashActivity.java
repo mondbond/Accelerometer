@@ -35,9 +35,9 @@ public class SplashActivity extends AppCompatActivity {
             Intent loginIntent = new Intent(this, AuthenticationActivity.class);
             startActivity(loginIntent);
         }else {
-            Intent sessionListIntent = new Intent(this, SessionActivity.class);
+            Intent sessionListIntent = new Intent(this, ChooserActivity.class);
             Bundle bundle = new Bundle();
-            bundle.putString(SessionActivity.UID, mAuth.getCurrentUser().getUid());
+            bundle.putString(ChooserActivity.UID, mAuth.getCurrentUser().getUid());
             sessionListIntent.putExtras(bundle);
             startActivity(sessionListIntent);
         }

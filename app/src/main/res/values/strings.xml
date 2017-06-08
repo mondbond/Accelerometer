@@ -15,6 +15,11 @@
     <string name="text_log_in_propose"> Registered already ? Log in </string>
     <string name="text_registration_propose"> Have no registered yet ? Just do it </string>
 
+    <string name="text_accelerometer"> Accelerometer </string>
+    <string name="text_file_storage"> File storage </string>
+
+    <string name="text_upload">upload</string>
+
     <string name="text_interval">Interval : </string>
     <string name="text_session_interval">Time : </string>
     <string name="text_is_execute_on_time">Execute on time : </string>
@@ -24,5 +29,6 @@
     <string name="error_network_is_not_available">Network is not available</string>
 
     <string name="server_client_id">897840151448-kggetcr47r7ecqnr6ajsvnslb9r2duuo.apps.googleusercontent.com</string>
+
 
 </resources>
