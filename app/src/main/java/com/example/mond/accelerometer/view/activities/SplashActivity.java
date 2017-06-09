@@ -1,23 +1,14 @@
 package com.example.mond.accelerometer.view.activities;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
-
 import com.example.mond.accelerometer.R;
-import com.example.mond.accelerometer.util.Util;
 import com.google.firebase.auth.FirebaseAuth;
-
 import butterknife.ButterKnife;
 
 public class SplashActivity extends AppCompatActivity {
 
-    private IntentFilter mIntentFilter;
     private FirebaseAuth mAuth;
 
     @Override

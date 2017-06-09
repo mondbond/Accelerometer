@@ -13,7 +13,6 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class FileStorageAdapter extends RecyclerView.Adapter<FileStorageAdapter.ViewHolder> {
 
@@ -52,14 +51,6 @@ public class FileStorageAdapter extends RecyclerView.Adapter<FileStorageAdapter.
             mStorageFiles = new ArrayList<>();
         }
         mStorageFiles = storageFiles;
-        notifyDataSetChanged();
-    }
-
-    public void addNewStorageFile(StorageFile storageFile) {
-        if (mStorageFiles == null) {
-            mStorageFiles = new ArrayList<>();
-        }
-        mStorageFiles.add(storageFile);
         notifyDataSetChanged();
     }
 

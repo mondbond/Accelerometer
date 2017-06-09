@@ -97,4 +97,14 @@ public class Util {
         cursor.moveToFirst();
         return cursor.getString(column_index);
     }
+
+    public static String getMimeContentType(Uri uri, Context context){
+        String[] parts = getMimeType(uri, context).split("/");
+        return parts[0];
+    }
+
+    public static String getExtension(Uri uri, Context context){
+        String[] parts = getMimeType(uri, context).split("/");
+        return "." + parts[1];
+    }
 }

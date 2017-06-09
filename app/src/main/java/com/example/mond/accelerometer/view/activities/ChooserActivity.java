@@ -17,7 +17,6 @@ public class ChooserActivity extends AppCompatActivity {
     public static final String UID = "uid";
 
     @BindView(R.id.chooser_accelerometer_btn) Button mChooseAccelerometer;
-
     @BindView(R.id.chooser_file_storage_btn) Button mChooseStorage;
 
     private Bundle mBundle;

@@ -7,7 +7,6 @@ import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +15,8 @@ import android.widget.ImageView;
 
 import com.example.mond.accelerometer.R;
 import com.example.mond.accelerometer.util.Util;
+import com.github.ybq.android.spinkit.SpinKitView;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -31,6 +30,7 @@ public class FileUploadAdapter extends RecyclerView.Adapter<FileUploadAdapter.Vi
     private ArrayList<Uri> mFileList;
     private OnPhotoSelected mListener;
     private Context mContext;
+    private InputStream mInputStream;
 
     public FileUploadAdapter(ArrayList<Uri> fileList, OnPhotoSelected listener, Context context) {
         mFileList = fileList;
@@ -62,7 +62,6 @@ public class FileUploadAdapter extends RecyclerView.Adapter<FileUploadAdapter.Vi
     }
 
     public void setFile(ArrayList<Uri> files){
-
         mFileList = files;
         notifyDataSetChanged();
     }
@@ -87,11 +86,12 @@ public class FileUploadAdapter extends RecyclerView.Adapter<FileUploadAdapter.Vi
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        private Bitmap mBitmap;
         private Uri mUri;
+         Bitmap mBitmap;
 
         @BindView(R.id.file_upload_button) Button uploadButton;
         @BindView(R.id.upload_image) ImageView photo;
+        @BindView(R.id.loading_progress_animation) SpinKitView progress;
 
         ViewHolder(View view) {
             super(view);
@@ -101,28 +101,40 @@ public class FileUploadAdapter extends RecyclerView.Adapter<FileUploadAdapter.Vi
         @OnClick(R.id.file_upload_button)
         void notificateListener(){
             mListener.onPhotoSelected(mUri);
+            progress.setVisibility(View.VISIBLE);
         }
 
         public void bind(Uri file) {
+
+            if(mUri != file){
+                progress.setVisibility(View.INVISIBLE);
+            }
+
             mUri = file;
-            if(Util.getMimeType(file, mContext).equals("image/jpeg")){
-                InputStream imageStream = null;
+
+            if(Util.getMimeContentType(file, mContext).equals("image")){
+
+                mInputStream = null;
                 try {
-                    imageStream = mContext.getContentResolver().openInputStream(file);
+                    mInputStream = mContext.getContentResolver().openInputStream(file);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
-                mBitmap = BitmapFactory.decodeStream(imageStream);
-            }else if(Util.getMimeType(file, mContext).equals("video/mp4")){
-                File fil = new File(file.toString());
 
-                Log.d("Bitmap", "path :" + fil.getAbsolutePath());
-                Log.d("Bitmap", "path :" + file.getPath());
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inSampleSize = 6;
 
-                mBitmap = ThumbnailUtils.createVideoThumbnail(Util.getPath(file, mContext), MediaStore.Video.Thumbnails.MINI_KIND);
+                if(mBitmap != null){
+                    mBitmap.recycle();
+                }
+
+                mBitmap = BitmapFactory.decodeStream(mInputStream, null , options);
+                photo.setImageBitmap(mBitmap);
+
+            }else if(Util.getMimeContentType(file, mContext).equals("video")){
+                photo.setImageBitmap(ThumbnailUtils.createVideoThumbnail(Util.getPath(file, mContext),
+                        MediaStore.Video.Thumbnails.MINI_KIND));
             }
-
-            photo.setImageBitmap(mBitmap);
         }
     }
 

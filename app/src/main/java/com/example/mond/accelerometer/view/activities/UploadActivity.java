@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -36,7 +37,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class UploadActivity extends AppCompatActivity {
+public class UploadActivity extends AppCompatActivity implements FileUploadFragment.OnFilesCountChangeListener{
 
     public static final String UID = "uid";
     private static final int SELECT_PHOTO = 12312;
@@ -44,15 +45,8 @@ public class UploadActivity extends AppCompatActivity {
 
     private FileUploadFragment mFileUploadFragment;
 
-    private FirebaseStorage mStorage = FirebaseStorage.getInstance();
-    private StorageReference mStorageRef;
-    private StorageReference mImagesRef;
-
-
     private FirebaseDatabase mDatabase;
     private DatabaseReference mDbRef;
-
-    private Bitmap mBitmap;
 
     @BindView(R.id.upload_activity_recycler) RecyclerView mRecycler;
 
@@ -61,6 +55,7 @@ public class UploadActivity extends AppCompatActivity {
     private ArrayList<StorageFile> mStorageFiles;
 
     private String mUid;
+    FragmentManager mFm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,15 +70,16 @@ public class UploadActivity extends AppCompatActivity {
         mAdapter = new FileStorageAdapter(null);
         mRecycler.setAdapter(mAdapter);
 
-        FragmentManager fm = getSupportFragmentManager();
+        mFm = getSupportFragmentManager();
 
-        if(fm.findFragmentByTag(FileUploadFragment.FILE_UPLOAD_FRAGMENT_TAG) == null){
+        if(mFm.findFragmentByTag(FileUploadFragment.FILE_UPLOAD_FRAGMENT_TAG) == null){
             mFileUploadFragment = FileUploadFragment.newInstance(mUid);
-            FragmentTransaction ft = fm.beginTransaction();
+            FragmentTransaction ft = mFm.beginTransaction();
             ft.replace(R.id.file_upload_fragment_container, mFileUploadFragment, FileUploadFragment.FILE_UPLOAD_FRAGMENT_TAG);
+            ft.hide(mFileUploadFragment);
             ft.commit();
         }else {
-            mFileUploadFragment = (FileUploadFragment) fm.findFragmentByTag(FileUploadFragment.FILE_UPLOAD_FRAGMENT_TAG);
+            mFileUploadFragment = (FileUploadFragment) mFm.findFragmentByTag(FileUploadFragment.FILE_UPLOAD_FRAGMENT_TAG);
         }
 
         initFirebaseDb();
@@ -114,8 +110,6 @@ public class UploadActivity extends AppCompatActivity {
     }
 
     public void initStorageRefs() {
-        mStorageRef = mStorage.getReference();
-        mImagesRef = mStorageRef.child("pic").child(mUid);
         mStorageFiles = new ArrayList<>();
     }
 
@@ -138,7 +132,6 @@ public class UploadActivity extends AppCompatActivity {
 
     private void choosePhotoFromGallery() {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-//        photoPickerIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         photoPickerIntent.setType("image/video/*");
         startActivityForResult(photoPickerIntent, SELECT_PHOTO);
     }
@@ -151,19 +144,22 @@ public class UploadActivity extends AppCompatActivity {
             case SELECT_PHOTO:
                 if (resultCode == RESULT_OK) {
                     Uri selectedFile = imageReturnedIntent.getData();
-//                    InputStream imageStream = null;
-//                    try {
-//                        imageStream = getContentResolver().openInputStream(selectedImage);
-//                    } catch (FileNotFoundException e) {
-//                        e.printStackTrace();
-//                    }
-
-//                    mBitmap = BitmapFactory.decodeStream(imageStream);
-
                     Util.getMimeType(selectedFile, this);
-
                     mFileUploadFragment.addFile(selectedFile);
                 }
+        }
+    }
+
+    @Override
+    public void onFilesCountChange(int count) {
+        if(count == 0 && !mFileUploadFragment.isHidden()){
+            FragmentTransaction ft = mFm.beginTransaction();
+            ft.hide(mFileUploadFragment);
+            ft.commit();
+        }else if (count > 0 && mFileUploadFragment.isHidden()) {
+            FragmentTransaction ft = mFm.beginTransaction();
+            ft.show(mFileUploadFragment);
+            ft.commit();
         }
     }
 }

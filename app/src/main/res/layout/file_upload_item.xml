@@ -3,11 +3,12 @@
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_margin="16dp">
 
     <Button
         android:id="@+id/file_upload_button"
-        android:layout_width="wrap_content"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -18,11 +19,21 @@
         android:id="@+id/upload_image"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:layout_alignEnd="@+id/file_upload_button"
-        android:layout_alignRight="@+id/file_upload_button"
+        app:srcCompat="@drawable/common_google_signin_btn_icon_dark"
         android:layout_below="@+id/file_upload_button"
-        android:layout_marginTop="12dp"
-        app:srcCompat="@drawable/common_google_signin_btn_icon_dark"/>
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
 
+    <com.github.ybq.android.spinkit.SpinKitView
+        android:id="@+id/loading_progress_animation"
+        style="@style/SpinKitView.Large.ThreeBounce"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        app:SpinKit_Color="@color/white"
+        android:visibility="invisible"
+        android:layout_marginBottom="14dp"
+        android:layout_alignBottom="@+id/upload_image"
+        android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>

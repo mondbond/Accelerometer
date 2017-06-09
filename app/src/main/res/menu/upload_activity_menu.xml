@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/upload"
-          android:icon="@drawable/play_ico"
-          android:title="play"
+          android:icon="@drawable/upload_ico"
+          android:title="upload"
           app:showAsAction="always" />
 </menu>

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,9 +13,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
+import android.webkit.URLUtil;
 
 import com.example.mond.accelerometer.R;
 import com.example.mond.accelerometer.util.FirebaseUtil;
+import com.example.mond.accelerometer.util.Util;
 import com.example.mond.accelerometer.view.adapter.FileUploadAdapter;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -43,6 +47,8 @@ public class FileUploadFragment extends Fragment implements FileUploadAdapter.On
 
     private FileUploadAdapter mAdapter;
 
+    private OnFilesCountChangeListener mListener;
+
     @BindView(R.id.upload_file_recycler) RecyclerView mRecycler;
 
     public static FileUploadFragment newInstance(String uID) {
@@ -63,9 +69,26 @@ public class FileUploadFragment extends Fragment implements FileUploadAdapter.On
         }
 
         mStorageRef = mStorage.getReference();
-        mImagesRef = mStorageRef.child("pic").child(mUID);
+        mImagesRef = mStorageRef.child("data").child(mUID);
 
         mAdapter = new FileUploadAdapter(null, this, getActivity());
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFilesCountChangeListener) {
+            mListener = (OnFilesCountChangeListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFilesCountChangeListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }
 
     @Override
@@ -84,41 +107,35 @@ public class FileUploadFragment extends Fragment implements FileUploadAdapter.On
 
     @Override
     public void onPhotoSelected(Uri uri) {
-        Log.d("TO UPLOAD", "-");
         uploadImage(uri);
     }
 
     private void uploadImage(final Uri uri){
-        mCurrentRandom = UUID.randomUUID() + ".jpg";
+        mCurrentRandom = Util.makeCurrentTimeStampToDate() + Util.getExtension(uri, getActivity());
         final StorageReference picRef = mImagesRef.child(mCurrentRandom);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
 
         UploadTask uploadTask = picRef.putFile(uri);
-
-        uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                @SuppressWarnings("VisibleForTests") long b =  taskSnapshot.getBytesTransferred();
-            }
-        });
-
         uploadTask.addOnFailureListener(new OnFailureListener() {
 
             @Override
-            public void onFailure(@NonNull Exception e) {}
-        });
+            public void onFailure(@NonNull Exception e) {}});
 
         uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 FirebaseUtil.saveImageRef(picRef, mCurrentRandom, mUID);
                 mAdapter.removeUploadedFile(uri);
+                mListener.onFilesCountChange(mAdapter.getItemCount());
             }
         });
     }
 
     public void addFile(Uri file) {
         mAdapter.setNewFile(file);
+        mListener.onFilesCountChange(mAdapter.getItemCount());
+    }
+
+    public interface OnFilesCountChangeListener{
+        void onFilesCountChange(int count);
     }
 }
