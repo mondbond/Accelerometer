@@ -1,6 +1,5 @@
 package com.example.mond.accelerometer.util;
 
-
 import android.net.Uri;
 
 import com.example.mond.accelerometer.model.AccelerometerData;

@@ -1,25 +1,22 @@
 package com.example.mond.accelerometer.view.fragments;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.MimeTypeMap;
-import android.webkit.URLUtil;
 
 import com.example.mond.accelerometer.R;
 import com.example.mond.accelerometer.util.FirebaseUtil;
 import com.example.mond.accelerometer.util.Util;
 import com.example.mond.accelerometer.view.adapter.FileUploadAdapter;
+import com.github.lzyzsd.circleprogress.CircleProgress;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
@@ -27,8 +24,7 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayOutputStream;
-import java.util.UUID;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -106,19 +102,29 @@ public class FileUploadFragment extends Fragment implements FileUploadAdapter.On
     }
 
     @Override
-    public void onPhotoSelected(Uri uri) {
-        uploadImage(uri);
+    public void onFileSelected(Uri uri, CircleProgress circleProgress) {
+        uploadFile(uri, circleProgress);
     }
 
-    private void uploadImage(final Uri uri){
+    private void uploadFile(final Uri uri, final CircleProgress circleProgress){
         mCurrentRandom = Util.makeCurrentTimeStampToDate() + Util.getExtension(uri, getActivity());
         final StorageReference picRef = mImagesRef.child(mCurrentRandom);
 
         UploadTask uploadTask = picRef.putFile(uri);
+
+        uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+            @SuppressWarnings("VisibleForTests") double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+            circleProgress.setProgress((int) progress);
+            }
+        });
         uploadTask.addOnFailureListener(new OnFailureListener() {
 
             @Override
-            public void onFailure(@NonNull Exception e) {}});
+            public void onFailure(@NonNull Exception e) {
+//                wrong something
+            }});
 
         uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override

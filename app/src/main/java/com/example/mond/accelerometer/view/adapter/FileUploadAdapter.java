@@ -1,8 +1,6 @@
 package com.example.mond.accelerometer.view.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -15,9 +13,9 @@ import android.widget.ImageView;
 
 import com.example.mond.accelerometer.R;
 import com.example.mond.accelerometer.util.Util;
-import com.github.ybq.android.spinkit.SpinKitView;
+import com.github.lzyzsd.circleprogress.CircleProgress;
+import com.squareup.picasso.Picasso;
 
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
@@ -30,7 +28,6 @@ public class FileUploadAdapter extends RecyclerView.Adapter<FileUploadAdapter.Vi
     private ArrayList<Uri> mFileList;
     private OnPhotoSelected mListener;
     private Context mContext;
-    private InputStream mInputStream;
 
     public FileUploadAdapter(ArrayList<Uri> fileList, OnPhotoSelected listener, Context context) {
         mFileList = fileList;
@@ -87,11 +84,10 @@ public class FileUploadAdapter extends RecyclerView.Adapter<FileUploadAdapter.Vi
     class ViewHolder extends RecyclerView.ViewHolder {
 
         private Uri mUri;
-         Bitmap mBitmap;
 
         @BindView(R.id.file_upload_button) Button uploadButton;
         @BindView(R.id.upload_image) ImageView photo;
-        @BindView(R.id.loading_progress_animation) SpinKitView progress;
+        @BindView(R.id.circle_progress) CircleProgress progress;
 
         ViewHolder(View view) {
             super(view);
@@ -100,12 +96,11 @@ public class FileUploadAdapter extends RecyclerView.Adapter<FileUploadAdapter.Vi
 
         @OnClick(R.id.file_upload_button)
         void notificateListener(){
-            mListener.onPhotoSelected(mUri);
+            mListener.onFileSelected(mUri, progress);
             progress.setVisibility(View.VISIBLE);
         }
 
         public void bind(Uri file) {
-
             if(mUri != file){
                 progress.setVisibility(View.INVISIBLE);
             }
@@ -113,24 +108,7 @@ public class FileUploadAdapter extends RecyclerView.Adapter<FileUploadAdapter.Vi
             mUri = file;
 
             if(Util.getMimeContentType(file, mContext).equals("image")){
-
-                mInputStream = null;
-                try {
-                    mInputStream = mContext.getContentResolver().openInputStream(file);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inSampleSize = 6;
-
-                if(mBitmap != null){
-                    mBitmap.recycle();
-                }
-
-                mBitmap = BitmapFactory.decodeStream(mInputStream, null , options);
-                photo.setImageBitmap(mBitmap);
-
+                Picasso.with(mContext).load(file).resize(150, 150).into(photo);
             }else if(Util.getMimeContentType(file, mContext).equals("video")){
                 photo.setImageBitmap(ThumbnailUtils.createVideoThumbnail(Util.getPath(file, mContext),
                         MediaStore.Video.Thumbnails.MINI_KIND));
@@ -139,6 +117,6 @@ public class FileUploadAdapter extends RecyclerView.Adapter<FileUploadAdapter.Vi
     }
 
     public interface OnPhotoSelected {
-        void onPhotoSelected(Uri uri);
+        void onFileSelected(Uri uri, CircleProgress progress);
     }
 }
