@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -15,6 +16,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 
+import com.example.mond.accelerometer.Constants;
 import com.example.mond.accelerometer.model.AccelerometerData;
 import com.example.mond.accelerometer.util.FirebaseUtil;
 import com.example.mond.accelerometer.util.Util;
@@ -71,12 +73,23 @@ public class AccelerometerService extends Service implements SensorEventListener
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
         if(intent.getAction().equals(ACCELEROMETER_SERVICE_START_ACTION)){
-            Bundle bundle = intent.getExtras();
-            mIsDelayMode = bundle.getBoolean(ARG_IS_DELAY_STARTING);
-            mStartTime = bundle.getInt(ARG_TIME_OF_START);
-            mIntervalTimeInMl = (int) Math.max(TimeUnit.SECONDS.toMillis(bundle.getInt(ARG_INTERVAL)), MINIMUM_INTERVAL);
-            mSessionTime = (int) TimeUnit.SECONDS.toMillis(bundle.getInt(ARG_SESSION_TIME));
-            mUID = bundle.getString(UID);
+
+
+            SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(Constants.ACCELEROMETER_PARAMETERS_SHARED_PREFERENCE,
+                    Context.MODE_PRIVATE);
+
+            mIsDelayMode = sharedPref.getBoolean(Constants.ACCELEROMETER_IS_START_ON_TIME, false);
+            mStartTime = sharedPref.getInt(Constants.ACCELEROMETER_TIME_OF_START_IN_ML, 0);
+            mIntervalTimeInMl = (int) Math.max(TimeUnit.SECONDS.toMillis(sharedPref.getInt(Constants.ACCELEROMETER_INTERVAL, 1000)), MINIMUM_INTERVAL);
+            mSessionTime = (int) TimeUnit.SECONDS.toMillis(sharedPref.getInt(Constants.ACCELEROMETER_SERVICE_WORK_TIME, 0));
+            mUID = sharedPref.getString(Constants.UID, "");
+
+//            Bundle bundle = intent.getExtras();
+//            mIsDelayMode = bundle.getBoolean(ARG_IS_DELAY_STARTING);
+//            mStartTime = bundle.getInt(ARG_TIME_OF_START);
+//            mIntervalTimeInMl = (int) Math.max(TimeUnit.SECONDS.toMillis(bundle.getInt(ARG_INTERVAL)), MINIMUM_INTERVAL);
+//            mSessionTime = (int) TimeUnit.SECONDS.toMillis(bundle.getInt(ARG_SESSION_TIME));
+//            mUID = bundle.getString(UID);
 
             initSensorListener();
             initAccelerometerConfigAndSaveSession();

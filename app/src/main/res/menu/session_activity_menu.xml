@@ -15,7 +15,6 @@
           android:title="play"
           app:showAsAction="always" />
 
-
     <item android:id="@+id/turn_off_accelerometer"
           android:icon="@drawable/stop_ico"
           android:title="stop"

@@ -70,7 +70,7 @@ public class LineGraphFragment extends Fragment {
     }
 
     private void setNewAccelerometerData(List<AccelerometerData> accelerometerDatas){
-        if(mXEntries == null || mZEntries == null || mYEntries == null  ){
+        if(mXEntries == null || mZEntries == null || mYEntries == null  ) {
             mXEntries = new ArrayList<>();
             mYEntries = new ArrayList<>();
             mZEntries = new ArrayList<>();
