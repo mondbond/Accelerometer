@@ -3,8 +3,6 @@ package com.example.mond.accelerometer.view.fragments;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,18 +11,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.mond.accelerometer.R;
+import com.example.mond.accelerometer.util.FileUploadItem;
 import com.example.mond.accelerometer.util.FirebaseUtil;
 import com.example.mond.accelerometer.util.Util;
 import com.example.mond.accelerometer.view.adapter.FileUploadAdapter;
-import com.github.lzyzsd.circleprogress.CircleProgress;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -67,6 +61,7 @@ public class FileUploadFragment extends Fragment implements FileUploadAdapter.On
         mStorageRef = mStorage.getReference();
         mImagesRef = mStorageRef.child("data").child(mUID);
 
+
         mAdapter = new FileUploadAdapter(null, this, getActivity());
     }
 
@@ -102,42 +97,39 @@ public class FileUploadFragment extends Fragment implements FileUploadAdapter.On
     }
 
     @Override
-    public void onFileSelected(Uri uri, CircleProgress circleProgress) {
-        uploadFile(uri, circleProgress);
+    public void onFileSelected(FileUploadItem item) {
+        uploadFile(item);
     }
 
-    private void uploadFile(final Uri uri, final CircleProgress circleProgress){
-        mCurrentRandom = Util.makeCurrentTimeStampToDate() + Util.getExtension(uri, getActivity());
+    @Override
+    public UploadTask createUploadTask(FileUploadItem item) {
+        mCurrentRandom = Util.makeCurrentTimeStampToDate() + Util.getExtension(item.getmUri(), getActivity());
+        final StorageReference picRef = mImagesRef.child(mCurrentRandom);
+        UploadTask uploadTask = picRef.putFile(item.getmUri());
+        return uploadTask;
+    }
+
+
+    private void uploadFile(final FileUploadItem item){
+        mCurrentRandom = Util.makeCurrentTimeStampToDate() + Util.getExtension(item.getmUri(), getActivity());
         final StorageReference picRef = mImagesRef.child(mCurrentRandom);
 
-        UploadTask uploadTask = picRef.putFile(uri);
+        UploadTask uploadTask = picRef.putFile(item.getmUri());
 
-        uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-            @SuppressWarnings("VisibleForTests") double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-            circleProgress.setProgress((int) progress);
-            }
-        });
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-
-            @Override
-            public void onFailure(@NonNull Exception e) {
-//                wrong something
-            }});
+        item.setmUploadTask(uploadTask);
 
         uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 FirebaseUtil.saveImageRef(picRef, mCurrentRandom, mUID);
-                mAdapter.removeUploadedFile(uri);
+                mAdapter.removeUploadedFile(item.getmUri());
                 mListener.onFilesCountChange(mAdapter.getItemCount());
             }
         });
     }
 
-    public void addFile(Uri file) {
-        mAdapter.setNewFile(file);
+    public void addFile(Uri uri) {
+        mAdapter.setNewFile(new FileUploadItem(uri));
         mListener.onFilesCountChange(mAdapter.getItemCount());
     }
 

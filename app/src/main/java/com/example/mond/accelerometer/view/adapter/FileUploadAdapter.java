@@ -12,11 +12,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.example.mond.accelerometer.R;
+import com.example.mond.accelerometer.util.FileUploadItem;
 import com.example.mond.accelerometer.util.Util;
 import com.github.lzyzsd.circleprogress.CircleProgress;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -25,11 +27,11 @@ import butterknife.OnClick;
 
 public class FileUploadAdapter extends RecyclerView.Adapter<FileUploadAdapter.ViewHolder> {
 
-    private ArrayList<Uri> mFileList;
+    private ArrayList<FileUploadItem> mFileList;
     private OnPhotoSelected mListener;
     private Context mContext;
 
-    public FileUploadAdapter(ArrayList<Uri> fileList, OnPhotoSelected listener, Context context) {
+    public FileUploadAdapter(ArrayList<FileUploadItem> fileList, OnPhotoSelected listener, Context context) {
         mFileList = fileList;
         mListener = listener;
         mContext = context;
@@ -58,12 +60,12 @@ public class FileUploadAdapter extends RecyclerView.Adapter<FileUploadAdapter.Vi
         }
     }
 
-    public void setFile(ArrayList<Uri> files){
+    public void setFile(ArrayList<FileUploadItem> files){
         mFileList = files;
         notifyDataSetChanged();
     }
 
-    public void setNewFile(Uri uri){
+    public void setNewFile(FileUploadItem uri){
         if(mFileList == null){
             mFileList = new ArrayList<>();
         }
@@ -72,8 +74,8 @@ public class FileUploadAdapter extends RecyclerView.Adapter<FileUploadAdapter.Vi
     }
 
     public void removeUploadedFile(Uri uri) {
-        for (Uri item : mFileList){
-            if(item.equals(uri)){
+        for (FileUploadItem item : mFileList){
+            if(item.getmUri().equals(uri)){
                 mFileList.remove(item);
                 break;
             }
@@ -83,11 +85,12 @@ public class FileUploadAdapter extends RecyclerView.Adapter<FileUploadAdapter.Vi
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        private Uri mUri;
+        //        private Uri mUri;
+        private FileUploadItem mUri;
 
         @BindView(R.id.file_upload_button) Button uploadButton;
         @BindView(R.id.upload_image) ImageView photo;
-        @BindView(R.id.circle_progress) CircleProgress progress;
+        @BindView(R.id.circle_progress) CircleProgress circleProgress;
 
         ViewHolder(View view) {
             super(view);
@@ -96,27 +99,54 @@ public class FileUploadAdapter extends RecyclerView.Adapter<FileUploadAdapter.Vi
 
         @OnClick(R.id.file_upload_button)
         void notificateListener(){
-            mListener.onFileSelected(mUri, progress);
-            progress.setVisibility(View.VISIBLE);
+            mUri.setmUploadTask(mListener.createUploadTask(mUri));
+            mUri.getmUploadTask().addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                    @SuppressWarnings("VisibleForTests") double progress = (100.0 * taskSnapshot.getBytesTransferred())
+                            / taskSnapshot.getTotalByteCount();
+                    circleProgress.setProgress((int) progress);
+                }
+            });
+
+            mListener.onFileSelected(mUri);
+            circleProgress.setVisibility(View.VISIBLE);
         }
 
-        public void bind(Uri file) {
-            if(mUri != file){
-                progress.setVisibility(View.INVISIBLE);
+        public void bind(FileUploadItem file) {
+
+            if(mUri.getmUploadTask() == null){
+                circleProgress.setVisibility(View.INVISIBLE);
             }
 
             mUri = file;
 
-            if(Util.getMimeContentType(file, mContext).equals("image")){
-                Picasso.with(mContext).load(file).resize(150, 150).into(photo);
-            }else if(Util.getMimeContentType(file, mContext).equals("video")){
-                photo.setImageBitmap(ThumbnailUtils.createVideoThumbnail(Util.getPath(file, mContext),
+            if(mUri.getmUploadTask() != null){
+
+                circleProgress.setVisibility(View.VISIBLE);
+
+
+                mUri.getmUploadTask().addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                        @SuppressWarnings("VisibleForTests") double progress = (100.0 * taskSnapshot.getBytesTransferred())
+                                / taskSnapshot.getTotalByteCount();
+                        circleProgress.setProgress((int) progress);
+                    }
+                });
+            }
+
+            if(Util.getMimeContentType(file.getmUri(), mContext).equals("image")) {
+                Picasso.with(mContext).load(file.getmUri()).resize(150, 150).into(photo);
+            }else if(Util.getMimeContentType(file.getmUri(), mContext).equals("video")){
+                photo.setImageBitmap(ThumbnailUtils.createVideoThumbnail(Util.getPath(file.getmUri(), mContext),
                         MediaStore.Video.Thumbnails.MINI_KIND));
             }
         }
     }
 
     public interface OnPhotoSelected {
-        void onFileSelected(Uri uri, CircleProgress progress);
+        void onFileSelected(FileUploadItem item);
+        UploadTask createUploadTask(FileUploadItem item);
     }
 }
