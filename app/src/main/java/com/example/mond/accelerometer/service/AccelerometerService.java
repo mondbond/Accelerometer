@@ -21,8 +21,6 @@ import com.example.mond.accelerometer.util.Util;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class AccelerometerService extends Service implements SensorEventListener{
@@ -69,6 +67,7 @@ public class AccelerometerService extends Service implements SensorEventListener
         mDbRef = mDatabase.getReference(FIREBASE_ROOT);
     }
 
+    // TODO: 13/06/17 crash after service restart. Service and Activity should be independent
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
         if(intent.getAction().equals(ACCELEROMETER_SERVICE_START_ACTION)){
@@ -109,6 +108,7 @@ public class AccelerometerService extends Service implements SensorEventListener
     private void initStopBroadcastReceiver() {
         // TODO: - 06/06/17 why local BroadcastReceiver?
         // we don't need to give it more opportunities than it need and it's used only in this app
+        // TODO: 13/06/17 service can be bound and terminated directly from activity
 
         mStopBroadcastReciever = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
@@ -168,7 +168,8 @@ public class AccelerometerService extends Service implements SensorEventListener
         FirebaseUtil.pushAccelerometerData(mAccelerometerData, mSessionId, mUID);
 //        .addOnCompleteListener()
 //        .addOnSuccessListener()
-//        for what does it need ?
+//        for what does it need ? can be used to get the result after async operation
+
         mLastTimeSave = Util.getLocalTimeStamp();
     }
 

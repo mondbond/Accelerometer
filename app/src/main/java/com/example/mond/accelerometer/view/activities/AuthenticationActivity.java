@@ -95,7 +95,8 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
                 .build();
     }
 
-    @Override public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
@@ -108,7 +109,7 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Toast.makeText(AuthenticationActivity.this, getResources().getString(R.string.error_log_in_filed),
+        Toast.makeText(AuthenticationActivity.this, R.string.error_log_in_filed,
                 Toast.LENGTH_SHORT).show();
     }
 

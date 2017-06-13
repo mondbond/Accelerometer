@@ -113,8 +113,10 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // TODO: 13/06/17 switch item.getItemId()?
         if(item.getItemId() == R.id.log_out && Util.isNetworkAvailable(this)){
             FirebaseAuth.getInstance().signOut();
+            // TODO: 13/06/17 google+ logout wanted
             Intent logOutIntent = new Intent(this, AuthenticationActivity.class);
             logOutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(logOutIntent);

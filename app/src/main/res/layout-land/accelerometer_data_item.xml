@@ -5,15 +5,18 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:padding="16dp">
 
+    <!--todo use tools declaration to set up data for preview-->
     <TextView
         android:id="@+id/accelerometer_data_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"/>
+        android:layout_alignParentTop="true"
+        tools:text="21.12.2017"/>
 
     <TextView
         android:id="@+id/accelerometer_data_x"
