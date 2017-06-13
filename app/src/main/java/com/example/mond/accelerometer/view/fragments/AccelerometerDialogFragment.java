@@ -69,6 +69,8 @@ public class AccelerometerDialogFragment extends DialogFragment implements TimeP
         View v = inflater.inflate(R.layout.fragment_accelerometer_dialog, container, false);
         ButterKnife.bind(this, v);
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+
+
         mIsExecutingOnTime.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -78,19 +80,6 @@ public class AccelerometerDialogFragment extends DialogFragment implements TimeP
                 }
             }
         });
-
-        mTimeExecutionSetterBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            if(mTimePickerDialog == null){
-                mTimePickerDialog = new TimePickerDialog(getActivity(),
-                        AccelerometerDialogFragment.this, 0, 0, true);
-            }
-             mTimePickerDialog.show();
-            }
-        });
-
-//        initStartStopServiceButtons();
 
         return v;
     }
@@ -112,36 +101,22 @@ public class AccelerometerDialogFragment extends DialogFragment implements TimeP
         mListener = null;
     }
 
+    @OnClick(R.id.activity_list_time_execution_btn)
+    public void showTimePicker(){
+        if(mTimePickerDialog == null){
+            mTimePickerDialog = new TimePickerDialog(getActivity(),
+                    AccelerometerDialogFragment.this, 0, 0, true);
+        }
+        mTimePickerDialog.show();
+    }
+
     @OnClick(R.id.activity_list_start_btn)
     public void initParametersAndStart(){
-
-
         saveConfiguration();
         mListener.onAccelerometerStart();
 
-        Intent serviceIntent = new Intent(getActivity(), AccelerometerService.class);
-//        Bundle bundle = new Bundle();
-//        bundle.putInt(AccelerometerService.ARG_INTERVAL, interval);
-//        bundle.putInt(AccelerometerService.ARG_SESSION_TIME, sessionTime);
-//        bundle.putInt(AccelerometerService.ARG_TIME_OF_START, mDayTimeExecuting);
-//        bundle.putBoolean(AccelerometerService.ARG_IS_DELAY_STARTING, mIsExecutingOnTime.isChecked());
-//        bundle.putString(AccelerometerService.UID, mUID);
-//        serviceIntent.putExtras(bundle);
-        serviceIntent.setAction(AccelerometerService.ACCELEROMETER_SERVICE_START_ACTION);
-        getActivity().startService(serviceIntent);
-
         dismiss();
     }
-
-
-//    public void initStartStopServiceButtons(){
-//        mStartButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//            }
-//        });
-//    }
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
@@ -151,12 +126,6 @@ public class AccelerometerDialogFragment extends DialogFragment implements TimeP
             mDayTimeExecuting = Util.getTimeOfDayInMl(hourOfDay, minute);
             mTimeExecutionValue.setText(String.valueOf(hourOfDay) + " : " + String.valueOf(minute));
         }
-    }
-
-    public interface AccelerometerDialogInteractionListener {
-
-
-        void onAccelerometerStart();
     }
 
     private void saveConfiguration(){
@@ -184,5 +153,11 @@ public class AccelerometerDialogFragment extends DialogFragment implements TimeP
         editor.putInt(Constants.ACCELEROMETER_TIME_OF_START_IN_ML, mDayTimeExecuting);
         editor.putString(Constants.UID, mUID);
         editor.apply();
+    }
+
+
+    public interface AccelerometerDialogInteractionListener {
+
+        void onAccelerometerStart();
     }
 }

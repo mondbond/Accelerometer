@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import com.example.mond.accelerometer.Constants;
 import com.example.mond.accelerometer.model.AccelerometerData;
@@ -33,12 +34,6 @@ public class AccelerometerService extends Service implements SensorEventListener
 
     public static final String ACCELEROMETER_SERVICE_START_ACTION = "startAction";
     public static final String ACCELEROMETER_SERVICE_STOP_ACTION = "stopAction";
-
-    public static final String ARG_INTERVAL = "interval";
-    public static final String ARG_SESSION_TIME = "sessionTime";
-    public static final String ARG_TIME_OF_START = "timeOfStart";
-    public static final String ARG_IS_DELAY_STARTING = "isDelayStarting";
-    public static final String UID = "uid";
 
     private BroadcastReceiver mStopBroadcastReciever;
 
@@ -61,7 +56,8 @@ public class AccelerometerService extends Service implements SensorEventListener
     private double ax, ay, az;
     private AccelerometerData mAccelerometerData;
 
-    private LocalBinder mLocalBinder = new LocalBinder();
+    private final IBinder mBinder = new LocalBinder();
+
 
     public void onCreate() {
         super.onCreate();
@@ -69,7 +65,7 @@ public class AccelerometerService extends Service implements SensorEventListener
         mDbRef = mDatabase.getReference(FIREBASE_ROOT);
     }
 
-    // TODO: 13/06/17 crash after service restart. Service and Activity should be independent
+    // TODO: ? 13/06/17 crash after service restart. Service and Activity should be independent
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
         if(intent.getAction().equals(ACCELEROMETER_SERVICE_START_ACTION)){
@@ -83,13 +79,6 @@ public class AccelerometerService extends Service implements SensorEventListener
             mIntervalTimeInMl = (int) Math.max(TimeUnit.SECONDS.toMillis(sharedPref.getInt(Constants.ACCELEROMETER_INTERVAL, 1000)), MINIMUM_INTERVAL);
             mSessionTime = (int) TimeUnit.SECONDS.toMillis(sharedPref.getInt(Constants.ACCELEROMETER_SERVICE_WORK_TIME, 0));
             mUID = sharedPref.getString(Constants.UID, "");
-
-//            Bundle bundle = intent.getExtras();
-//            mIsDelayMode = bundle.getBoolean(ARG_IS_DELAY_STARTING);
-//            mStartTime = bundle.getInt(ARG_TIME_OF_START);
-//            mIntervalTimeInMl = (int) Math.max(TimeUnit.SECONDS.toMillis(bundle.getInt(ARG_INTERVAL)), MINIMUM_INTERVAL);
-//            mSessionTime = (int) TimeUnit.SECONDS.toMillis(bundle.getInt(ARG_SESSION_TIME));
-//            mUID = bundle.getString(UID);
 
             initSensorListener();
             initAccelerometerConfigAndSaveSession();
@@ -121,7 +110,7 @@ public class AccelerometerService extends Service implements SensorEventListener
     private void initStopBroadcastReceiver() {
         // TODO: - 06/06/17 why local BroadcastReceiver?
         // we don't need to give it more opportunities than it need and it's used only in this app
-        // TODO: 13/06/17 service can be bound and terminated directly from activity
+        // TODO: - 13/06/17 service can be bound and terminated directly from activity
 
         mStopBroadcastReciever = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
@@ -132,6 +121,12 @@ public class AccelerometerService extends Service implements SensorEventListener
         IntentFilter intentFilter = new IntentFilter(ACCELEROMETER_SERVICE_STOP_ACTION);
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
         LocalBroadcastManager.getInstance(this).registerReceiver(mStopBroadcastReciever, intentFilter);
+    }
+
+    public void stopAccelerometer(){
+
+        Log.d("STOPACCELEROMETER", "-");
+        stopSelf();
     }
 
     @Override
@@ -187,15 +182,22 @@ public class AccelerometerService extends Service implements SensorEventListener
     }
 
     @Override
+    public boolean onUnbind(Intent intent) {
+        Log.d("UNBIND", "-");
+//        stopSelf();
+        return super.onUnbind(intent);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
-        mSensorManager.unregisterListener(this);
-        LocalBroadcastManager manager = LocalBroadcastManager.getInstance(this);
-        manager.unregisterReceiver(mStopBroadcastReciever);
+        if(mSensorManager != null) {
+            mSensorManager.unregisterListener(this);
+        }
     }
 
     public IBinder onBind(Intent intent) {
-        return mLocalBinder;
+        return mBinder;
     }
 
     public class LocalBinder extends Binder {

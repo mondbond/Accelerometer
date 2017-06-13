@@ -1,11 +1,16 @@
 package com.example.mond.accelerometer.view.activities;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -42,6 +47,9 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
     private AccelerometerDialogFragment mAccelerometerDialogFragment;
     private SessionFragment mSessionFragment;
 
+    private AccelerometerService mService;
+    boolean mBound = false;
+
     private MenuItem mTurnOn;
     private MenuItem mTurnOff;
 
@@ -66,6 +74,23 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
         mUID = bundle.getString(UID);
 
         initFirebaseDb();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        Intent intent = new Intent(this, AccelerometerService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mBound) {
+            unbindService(mConnection);
+            mBound = false;
+        }
     }
 
     @Override
@@ -130,9 +155,12 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
         }else if(item.getItemId() == R.id.turn_off_accelerometer) {
             item.setVisible(false);
             mTurnOn.setVisible(true);
-            Intent intent = new Intent(AccelerometerService.ACCELEROMETER_SERVICE_STOP_ACTION);
-            intent.addCategory(Intent.CATEGORY_DEFAULT);
-            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+
+            mService.stopAccelerometer();
+            if (mBound) {
+                unbindService(mConnection);
+                mBound = false;
+            }
         }
 
         return super.onOptionsItemSelected(item);
@@ -150,6 +178,12 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
 
     @Override
     public void onAccelerometerStart() {
+
+        Intent serviceIntent = new Intent(this, AccelerometerService.class);
+        serviceIntent.setAction(AccelerometerService.ACCELEROMETER_SERVICE_START_ACTION);
+        startService(serviceIntent);
+        bindService(serviceIntent, mConnection, Context.BIND_AUTO_CREATE);
+
         mTurnOn.setVisible(false);
         mTurnOff.setVisible(true);
     }
@@ -159,4 +193,23 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(RESTORE_SESSIONS, mSessions);
     }
+
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            AccelerometerService.LocalBinder binder = (AccelerometerService.LocalBinder) service;
+            mService = binder.getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            Log.d("DISCONNECTED", "-");
+            mBound = false;
+        }
+    };
+
 }
