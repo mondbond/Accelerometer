@@ -67,7 +67,6 @@ public class Util {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    // TODO: - 13/06/17 better to create separated methods to validate email & password
     public static boolean isFieldsNotEmpty(String email, String pswd){
         if (isEmailValidate(email) && isPasswordValidate(pswd)) {
             return true;

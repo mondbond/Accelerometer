@@ -1,6 +1,5 @@
 package com.example.mond.accelerometer.util;
 
-
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -19,9 +18,11 @@ public class FirebaseUtil {
 
     private static FirebaseDatabase mDb = FirebaseDatabase.getInstance();
 
-    public static void pushAccelerometerData(AccelerometerData accelerometerData, long sessionId,  String uid){
+    public static void pushAccelerometerData(AccelerometerData accelerometerData, long sessionId,
+                                             String uid){
         mDb.getReference().child(FirebaseUtil.FIREBASE_ACCELEROMETER_DATA_NODE).child(uid)
-                .child(String.valueOf(sessionId)).child(Util.makeCurrentTimeStampToDate()).setValue(accelerometerData).addOnCompleteListener(new OnCompleteListener<Void>() {
+                .child(String.valueOf(sessionId)).child(Util.makeCurrentTimeStampToDate())
+                .setValue(accelerometerData).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 Log.d("FIREBASE_UPLOAD", "Done");
@@ -41,6 +42,7 @@ public class FirebaseUtil {
     }
 
     public static void saveSession(long sessionId, int intervalTime, String uid) {
-        mDb.getReference().child(FirebaseUtil.FIREBASE_SESSIONS_NODE).child(uid).child(String.valueOf(sessionId)).setValue(new Session(sessionId, intervalTime));
+        mDb.getReference().child(FirebaseUtil.FIREBASE_SESSIONS_NODE).child(uid)
+                .child(String.valueOf(sessionId)).setValue(new Session(sessionId, intervalTime));
     }
 }

@@ -19,7 +19,6 @@ import butterknife.ButterKnife;
 
 public class AccelerometerDataListFragment extends Fragment {
     public static final String SESSION = "session";
-    public static final String ACCELEROMETER_LIST_FRAGMENT_TAG = "accelerometerListTag";
 
     private ArrayList<AccelerometerData> accelerometerDatas;
     private AccelerometerDataAdapter mAdapter;

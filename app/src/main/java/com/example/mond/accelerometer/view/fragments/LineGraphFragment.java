@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +27,6 @@ import butterknife.ButterKnife;
 public class LineGraphFragment extends Fragment {
 
     public static final String SESSION = "session";
-    public static final String GRAPH_FRAGMENT_TAG = "graphFragment";
 
     private ArrayList<AccelerometerData> accelerometerDatas;
 
@@ -49,6 +49,7 @@ public class LineGraphFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+
         if (getArguments() != null) {
             accelerometerDatas = getArguments().getParcelable(SESSION);
         }
@@ -98,11 +99,9 @@ public class LineGraphFragment extends Fragment {
         mZLine.setAxisDependency(YAxis.AxisDependency.LEFT);
 
         List<ILineDataSet> dataSets = new ArrayList<>();
-
         dataSets.add(mXLine);
         dataSets.add(mYLine);
         dataSets.add(mZLine);
-
         mLineData = new LineData(dataSets);
 
         mGraph.setData(mLineData);

@@ -14,19 +14,20 @@ public class SessionDetailViewPagerAdapter extends FragmentStatePagerAdapter {
     private LineGraphFragment mGraphFragment;
     private AccelerometerDataListFragment mAccelerometerDataListFragment;
 
-    public SessionDetailViewPagerAdapter (FragmentManager fm) {
+    public SessionDetailViewPagerAdapter(FragmentManager fm) {
         super(fm);
     }
 
     @Override
     public Fragment getItem(int position) {
 
-        switch (position){
+        switch (position) {
             case 0:
                 return mAccelerometerDataListFragment;
             case 1:
                 return mGraphFragment;
-            default:return mAccelerometerDataListFragment;
+            default:
+                return null;
         }
     }
 
@@ -35,9 +36,8 @@ public class SessionDetailViewPagerAdapter extends FragmentStatePagerAdapter {
         return NUM_PAGES;
     }
 
-
     public void initFragments(AccelerometerDataListFragment accelerometerDataListFragment,
-                              LineGraphFragment lineGraphFragment){
+                              LineGraphFragment lineGraphFragment) {
         mAccelerometerDataListFragment = accelerometerDataListFragment;
         mGraphFragment = lineGraphFragment;
     }

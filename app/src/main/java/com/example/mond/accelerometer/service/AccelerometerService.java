@@ -33,8 +33,6 @@ import java.util.concurrent.TimeUnit;
 
 public class AccelerometerService extends Service implements SensorEventListener{
 
-    private final String FIREBASE_ROOT = "/";
-
     public static final int MINIMUM_INTERVAL = 1000;
 
     public static final String ACCELEROMETER_SERVICE_START_ACTION = "startAction";
@@ -51,9 +49,6 @@ public class AccelerometerService extends Service implements SensorEventListener
     private boolean mIsDelayMode;
     private int mStartTime;
 
-    private FirebaseDatabase mDatabase;
-    private DatabaseReference mDbRef;
-
     private SensorManager mSensorManager;
 
     private double ax, ay, az;
@@ -61,14 +56,6 @@ public class AccelerometerService extends Service implements SensorEventListener
 
     private final IBinder mBinder = new LocalBinder();
 
-
-    public void onCreate() {
-        super.onCreate();
-        mDatabase = FirebaseDatabase.getInstance();
-        mDbRef = mDatabase.getReference(FIREBASE_ROOT);
-    }
-
-    // TODO: ? 13/06/17 crash after service restart. Service and Activity should be independent
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
         if(intent != null && intent.getAction().equals(ACCELEROMETER_SERVICE_START_ACTION)){
