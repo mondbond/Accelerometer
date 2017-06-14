@@ -49,7 +49,7 @@ public class LogInFragment extends Fragment {
 
     @OnClick(R.id.log_in_button)
     public void signIn(){
-        if(Util.isFieldsNotNullAndEmpty(mEmailInput.getText().toString(),
+        if(Util.isFieldsNotEmpty(mEmailInput.getText().toString(),
                 mPasswordInput.getText().toString())) {
             mListener.onLogIn(mEmailInput.getText().toString(), mPasswordInput.getText().toString());
         }

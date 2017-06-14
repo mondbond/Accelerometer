@@ -67,14 +67,20 @@ public class Util {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    // TODO: 13/06/17 better to create separated methods to validate email & password
-    public static boolean isFieldsNotNullAndEmpty(String email, String pswd){
-        // TODO: 13/06/17 why you need TextUtils.equals(email, null)???
-        if (!TextUtils.equals(email, null) && !TextUtils.equals(pswd, null)
-                &&!TextUtils.isEmpty(email) && !TextUtils.isEmpty(pswd)) {
+    // TODO: - 13/06/17 better to create separated methods to validate email & password
+    public static boolean isFieldsNotEmpty(String email, String pswd){
+        if (isEmailValidate(email) && isPasswordValidate(pswd)) {
             return true;
         }else{
             return false;
         }
+    }
+
+    public static boolean isEmailValidate(String email){
+        return !TextUtils.isEmpty(email);
+    }
+
+    public static boolean isPasswordValidate(String pswd){
+        return !TextUtils.isEmpty(pswd);
     }
 }

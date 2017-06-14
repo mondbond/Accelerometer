@@ -49,7 +49,7 @@ public class RegisterFragment extends Fragment {
 
     @OnClick(R.id.register_button)
     public void registration(){
-        if(Util.isFieldsNotNullAndEmpty(mEmailInput.getText().toString(),
+        if(Util.isFieldsNotEmpty(mEmailInput.getText().toString(),
                 mPasswordInput.getText().toString())) {
             mListener.onRegister(mEmailInput.getText().toString(), mPasswordInput.getText().toString());
         }

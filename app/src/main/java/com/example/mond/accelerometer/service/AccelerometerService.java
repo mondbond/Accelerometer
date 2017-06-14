@@ -1,5 +1,7 @@
 package com.example.mond.accelerometer.service;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -14,10 +16,13 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.example.mond.accelerometer.Constants;
+import com.example.mond.accelerometer.R;
 import com.example.mond.accelerometer.model.AccelerometerData;
 import com.example.mond.accelerometer.util.FirebaseUtil;
 import com.example.mond.accelerometer.util.Util;
@@ -33,9 +38,7 @@ public class AccelerometerService extends Service implements SensorEventListener
     public static final int MINIMUM_INTERVAL = 1000;
 
     public static final String ACCELEROMETER_SERVICE_START_ACTION = "startAction";
-    public static final String ACCELEROMETER_SERVICE_STOP_ACTION = "stopAction";
-
-    private BroadcastReceiver mStopBroadcastReciever;
+    public static final int ACCELEROMETER_START_NOTIFICATION_ID = 34;
 
     private String mUID;
     private long mSessionId;
@@ -68,9 +71,7 @@ public class AccelerometerService extends Service implements SensorEventListener
     // TODO: ? 13/06/17 crash after service restart. Service and Activity should be independent
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-        if(intent.getAction().equals(ACCELEROMETER_SERVICE_START_ACTION)){
-
-
+        if(intent != null && intent.getAction().equals(ACCELEROMETER_SERVICE_START_ACTION)){
             SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(Constants.ACCELEROMETER_PARAMETERS_SHARED_PREFERENCE,
                     Context.MODE_PRIVATE);
 
@@ -82,10 +83,22 @@ public class AccelerometerService extends Service implements SensorEventListener
 
             initSensorListener();
             initAccelerometerConfigAndSaveSession();
-            initStopBroadcastReceiver();
+            buildNotification();
         }
 
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    private void buildNotification(){
+        NotificationCompat.Builder notificationBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
+                        .setContentTitle(getResources().getString(R.string.text_accelerometer_start))
+                        .setContentText(getResources().getString(R.string.text_accelerometer_start_session)
+                                + Util.makeTimeStampToDate(mSessionId));
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.notify(ACCELEROMETER_START_NOTIFICATION_ID, notificationBuilder.build());
     }
 
     private void initStartActionTime() {
@@ -107,25 +120,7 @@ public class AccelerometerService extends Service implements SensorEventListener
         FirebaseUtil.saveSession(mSessionId, mIntervalTimeInMl, mUID);
     }
 
-    private void initStopBroadcastReceiver() {
-        // TODO: - 06/06/17 why local BroadcastReceiver?
-        // we don't need to give it more opportunities than it need and it's used only in this app
-        // TODO: - 13/06/17 service can be bound and terminated directly from activity
-
-        mStopBroadcastReciever = new BroadcastReceiver() {
-            public void onReceive(Context context, Intent intent) {
-            stopSelf();
-            }
-        };
-
-        IntentFilter intentFilter = new IntentFilter(ACCELEROMETER_SERVICE_STOP_ACTION);
-        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
-        LocalBroadcastManager.getInstance(this).registerReceiver(mStopBroadcastReciever, intentFilter);
-    }
-
     public void stopAccelerometer(){
-
-        Log.d("STOPACCELEROMETER", "-");
         stopSelf();
     }
 
@@ -174,18 +169,7 @@ public class AccelerometerService extends Service implements SensorEventListener
 
         mAccelerometerData = new AccelerometerData(ax, ay, az);
         FirebaseUtil.pushAccelerometerData(mAccelerometerData, mSessionId, mUID);
-//        .addOnCompleteListener()
-//        .addOnSuccessListener()
-//        for what does it need ? can be used to get the result after async operation
-
         mLastTimeSave = Util.getLocalTimeStamp();
-    }
-
-    @Override
-    public boolean onUnbind(Intent intent) {
-        Log.d("UNBIND", "-");
-//        stopSelf();
-        return super.onUnbind(intent);
     }
 
     @Override

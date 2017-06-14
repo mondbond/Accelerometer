@@ -6,7 +6,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:padding="16dp">
 
-    <!--todo use tools declaration to set up data for preview-->
     <TextView
         android:id="@+id/accelerometer_data_time"
         android:layout_width="wrap_content"
