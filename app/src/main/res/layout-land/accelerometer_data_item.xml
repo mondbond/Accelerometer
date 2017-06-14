@@ -3,6 +3,7 @@
 <!--it's different-->
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="16dp">
@@ -13,7 +14,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"/>
+        android:layout_alignParentTop="true"
+        tools:text="12.05.2001"/>
 
     <TextView
         android:id="@+id/accelerometer_data_x"
@@ -24,7 +26,8 @@
         android:layout_below="@+id/accelerometer_data_time"
         android:layout_marginLeft="29dp"
         android:layout_marginStart="29dp"
-        android:layout_marginTop="11dp"/>
+        android:layout_marginTop="11dp"
+        tools:text="0.12232423"/>
 
     <TextView
         android:id="@+id/accelerometer_data_y"
@@ -33,7 +36,8 @@
         android:layout_alignLeft="@+id/accelerometer_data_x"
         android:layout_alignStart="@+id/accelerometer_data_x"
         android:layout_below="@+id/accelerometer_data_x"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginTop="10dp"
+        tools:text="0.12232423"/>
 
     <TextView
         android:id="@+id/accelerometer_data_z"
@@ -42,6 +46,7 @@
         android:layout_alignLeft="@+id/accelerometer_data_y"
         android:layout_alignStart="@+id/accelerometer_data_y"
         android:layout_below="@+id/accelerometer_data_y"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginTop="10dp"
+        tools:text="0.12232423"/>
 
 </RelativeLayout>

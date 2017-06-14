@@ -38,8 +38,7 @@ public class FileUploadAdapter extends RecyclerView.Adapter<FileUploadAdapter.Vi
     }
 
     @Override
-    public FileUploadAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                           int viewType) {
+    public FileUploadAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.file_upload_item, parent, false);
 
@@ -65,11 +64,11 @@ public class FileUploadAdapter extends RecyclerView.Adapter<FileUploadAdapter.Vi
         notifyDataSetChanged();
     }
 
-    public void setNewFile(FileUploadItem uri){
+    public void setNewFile(FileUploadItem file){
         if(mFileList == null){
             mFileList = new ArrayList<>();
         }
-        mFileList.add(uri);
+        mFileList.add(file);
         notifyDataSetChanged();
     }
 
@@ -85,8 +84,7 @@ public class FileUploadAdapter extends RecyclerView.Adapter<FileUploadAdapter.Vi
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        //        private Uri mUri;
-        private FileUploadItem mUri;
+        private FileUploadItem mFileUpload;
 
         @BindView(R.id.file_upload_button) Button uploadButton;
         @BindView(R.id.upload_image) ImageView photo;
@@ -99,8 +97,8 @@ public class FileUploadAdapter extends RecyclerView.Adapter<FileUploadAdapter.Vi
 
         @OnClick(R.id.file_upload_button)
         void notificateListener(){
-            mUri.setmUploadTask(mListener.createUploadTask(mUri));
-            mUri.getmUploadTask().addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+            mFileUpload.setmUploadTask(mListener.createUploadTask(mFileUpload));
+            mFileUpload.getmUploadTask().addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                     @SuppressWarnings("VisibleForTests") double progress = (100.0 * taskSnapshot.getBytesTransferred())
@@ -109,24 +107,20 @@ public class FileUploadAdapter extends RecyclerView.Adapter<FileUploadAdapter.Vi
                 }
             });
 
-            mListener.onFileSelected(mUri);
+            mListener.onFileSelected(mFileUpload);
             circleProgress.setVisibility(View.VISIBLE);
         }
 
         public void bind(FileUploadItem file) {
+            mFileUpload = file;
 
-            if(mUri.getmUploadTask() == null){
+            if(mFileUpload.getmUploadTask() == null){
                 circleProgress.setVisibility(View.INVISIBLE);
             }
-
-            mUri = file;
-
-            if(mUri.getmUploadTask() != null){
-
+            if(mFileUpload.getmUploadTask() != null){
                 circleProgress.setVisibility(View.VISIBLE);
 
-
-                mUri.getmUploadTask().addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                mFileUpload.getmUploadTask().addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                         @SuppressWarnings("VisibleForTests") double progress = (100.0 * taskSnapshot.getBytesTransferred())

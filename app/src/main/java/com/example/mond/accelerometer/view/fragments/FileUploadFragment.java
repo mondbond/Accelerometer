@@ -60,8 +60,6 @@ public class FileUploadFragment extends Fragment implements FileUploadAdapter.On
 
         mStorageRef = mStorage.getReference();
         mImagesRef = mStorageRef.child("data").child(mUID);
-
-
         mAdapter = new FileUploadAdapter(null, this, getActivity());
     }
 
