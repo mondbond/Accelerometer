@@ -17,7 +17,6 @@ import butterknife.ButterKnife;
 public class FileStorageAdapter extends RecyclerView.Adapter<FileStorageAdapter.ViewHolder> {
 
     private ArrayList<StorageFile> mStorageFiles;
-    private FileUploadAdapter.OnPhotoSelected mListener;
 
     public FileStorageAdapter(ArrayList<StorageFile> storageFiles) {
         mStorageFiles = storageFiles;

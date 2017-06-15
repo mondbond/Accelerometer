@@ -19,7 +19,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class LogInFragment extends Fragment {
-
     public static final String LOG_IN_FRAGMENT_TAG = "logInFragmentTag";
 
     @BindView(R.id.field_email) EditText mEmailInput;

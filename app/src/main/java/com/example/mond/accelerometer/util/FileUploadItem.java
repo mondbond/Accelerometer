@@ -12,19 +12,19 @@ public class FileUploadItem {
         this.mUri = mUri;
     }
 
-    public Uri getmUri() {
+    public Uri getUri() {
         return mUri;
     }
 
-    public void setmUri(Uri mUri) {
+    public void setUri(Uri mUri) {
         this.mUri = mUri;
     }
 
-    public UploadTask getmUploadTask() {
+    public UploadTask getUploadTask() {
         return mUploadTask;
     }
 
-    public void setmUploadTask(UploadTask mUploadTask) {
+    public void setUploadTask(UploadTask mUploadTask) {
         this.mUploadTask = mUploadTask;
     }
 }

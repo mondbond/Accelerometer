@@ -24,8 +24,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class FileUploadFragment extends Fragment implements FileUploadAdapter.OnPhotoSelected{
-
     public static final String FILE_UPLOAD_FRAGMENT_TAG = "fileUploadFragment";
+
     public static final String UID = "uid";
 
     private String mUID;
@@ -101,26 +101,26 @@ public class FileUploadFragment extends Fragment implements FileUploadAdapter.On
 
     @Override
     public UploadTask createUploadTask(FileUploadItem item) {
-        mCurrentRandom = Util.makeCurrentTimeStampToDate() + Util.getExtension(item.getmUri(), getActivity());
+        mCurrentRandom = Util.makeCurrentTimeStampToDate() + Util.getExtension(item.getUri(), getActivity());
         final StorageReference picRef = mImagesRef.child(mCurrentRandom);
-        UploadTask uploadTask = picRef.putFile(item.getmUri());
+        UploadTask uploadTask = picRef.putFile(item.getUri());
         return uploadTask;
     }
 
 
     private void uploadFile(final FileUploadItem item){
-        mCurrentRandom = Util.makeCurrentTimeStampToDate() + Util.getExtension(item.getmUri(), getActivity());
+        mCurrentRandom = Util.makeCurrentTimeStampToDate() + Util.getExtension(item.getUri(), getActivity());
         final StorageReference picRef = mImagesRef.child(mCurrentRandom);
 
-        UploadTask uploadTask = picRef.putFile(item.getmUri());
+        UploadTask uploadTask = picRef.putFile(item.getUri());
 
-        item.setmUploadTask(uploadTask);
+        item.setUploadTask(uploadTask);
 
         uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 FirebaseUtil.saveImageRef(picRef, mCurrentRandom, mUID);
-                mAdapter.removeUploadedFile(item.getmUri());
+                mAdapter.removeUploadedFile(item.getUri());
                 mListener.onFilesCountChange(mAdapter.getItemCount());
             }
         });

@@ -82,9 +82,9 @@ public class ChooserActivity extends AppCompatActivity implements GoogleApiClien
         switch (item.getItemId()){
             case R.id.log_out:
                 if(Util.isNetworkAvailable(this)){
+                    // TODO: ? 13/06/17 google+ logout wanted
                     mGoogleApiClient.clearDefaultAccountAndReconnect();
                     FirebaseAuth.getInstance().signOut();
-                    // TODO: ? 13/06/17 google+ logout wanted
                     Intent logOutIntent = new Intent(this, AuthenticationActivity.class);
                     logOutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(logOutIntent);

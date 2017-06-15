@@ -74,11 +74,7 @@ public class Util {
     }
 
     public static boolean isFieldsNotEmpty(String email, String pswd){
-        if (isEmailValidate(email) && isPasswordValidate(pswd)) {
-            return true;
-        }else{
-            return false;
-        }
+        return (isEmailValidate(email) && isPasswordValidate(pswd));
     }
 
     public static boolean isEmailValidate(String email){
@@ -95,12 +91,11 @@ public class Util {
         return mContentResolver.getType(uri);
     }
 
-//    method
+//    make right path for method createVideoThumbnail()
     public static String getPath(Uri uri, Context context) {
         String[] projection = { MediaStore.Images.Media.DATA };
         Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
-        int column_index = cursor
-                .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
         return cursor.getString(column_index);
     }

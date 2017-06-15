@@ -1,6 +1,5 @@
 package com.example.mond.accelerometer.view.adapter;
 
-
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;

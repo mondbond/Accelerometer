@@ -2,7 +2,6 @@ package com.example.mond.accelerometer.view.fragments;
 
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -21,7 +20,6 @@ import android.widget.Toast;
 
 import com.example.mond.accelerometer.Constants;
 import com.example.mond.accelerometer.R;
-import com.example.mond.accelerometer.service.AccelerometerService;
 import com.example.mond.accelerometer.util.Util;
 
 import butterknife.BindView;
@@ -154,7 +152,6 @@ public class AccelerometerDialogFragment extends DialogFragment implements TimeP
         editor.putString(Constants.UID, mUID);
         editor.apply();
     }
-
 
     public interface AccelerometerDialogInteractionListener {
 

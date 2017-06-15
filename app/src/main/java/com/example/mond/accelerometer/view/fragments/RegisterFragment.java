@@ -19,7 +19,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class RegisterFragment extends Fragment {
-
     public static final String REGISTER_FRAGMENT_TAG = "registerFragmentTag";
 
     @BindView(R.id.field_email) EditText mEmailInput;
@@ -48,7 +47,7 @@ public class RegisterFragment extends Fragment {
     }
 
     @OnClick(R.id.register_button)
-    public void registration(){
+    public void registration() {
         if(Util.isFieldsNotEmpty(mEmailInput.getText().toString(),
                 mPasswordInput.getText().toString())) {
             mListener.onRegister(mEmailInput.getText().toString(), mPasswordInput.getText().toString());

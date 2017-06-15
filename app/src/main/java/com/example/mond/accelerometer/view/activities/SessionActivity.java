@@ -18,14 +18,10 @@ import com.example.mond.accelerometer.R;
 import com.example.mond.accelerometer.model.Session;
 import com.example.mond.accelerometer.service.AccelerometerService;
 import com.example.mond.accelerometer.util.FirebaseUtil;
-import com.example.mond.accelerometer.util.Util;
 import com.example.mond.accelerometer.view.fragments.AccelerometerDialogFragment;
 import com.example.mond.accelerometer.view.fragments.SessionFragment;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -53,6 +49,21 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
 
     private AccelerometerService mService;
     boolean mBound = false;
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            AccelerometerService.LocalBinder binder = (AccelerometerService.LocalBinder) service;
+            mService = binder.getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mBound = false;
+        }
+    };
 
     private MenuItem mTurnOn;
     private MenuItem mTurnOff;
@@ -200,23 +211,6 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
         outState.putParcelableArrayList(RESTORE_SESSIONS, mSessions);
         outState.putBoolean(RESTORE_IS_RUNNING, mIsRunning);
     }
-
-
-    private ServiceConnection mConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            AccelerometerService.LocalBinder binder = (AccelerometerService.LocalBinder) service;
-            mService = binder.getService();
-            mBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            mBound = false;
-        }
-    };
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {}

@@ -118,12 +118,12 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
         mAuth.signInWithCredential(authCredential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
-                    startChooserActivity();
-                }else {
-                    Toast.makeText(AuthenticationActivity.this, getResources().getString(R.string.error_log_in_filed),
-                            Toast.LENGTH_SHORT).show();
-                }
+            if(task.isSuccessful()){
+                startChooserActivity();
+            }else {
+                Toast.makeText(AuthenticationActivity.this, getResources().getString(R.string.error_log_in_filed),
+                        Toast.LENGTH_SHORT).show();
+            }
             }
         });
     }

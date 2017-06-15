@@ -20,7 +20,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class SessionFragment extends Fragment implements SessionAdapter.OnItemClickListener {
-
     public static final String SESSION_FRAGMENT_TAG = "sessionFragmentTag";
 
     private OnSessionFragmentInteractionListener mListener;

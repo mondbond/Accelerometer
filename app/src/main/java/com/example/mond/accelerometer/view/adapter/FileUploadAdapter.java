@@ -74,7 +74,7 @@ public class FileUploadAdapter extends RecyclerView.Adapter<FileUploadAdapter.Vi
 
     public void removeUploadedFile(Uri uri) {
         for (FileUploadItem item : mFileList){
-            if(item.getmUri().equals(uri)){
+            if(item.getUri().equals(uri)){
                 mFileList.remove(item);
                 break;
             }
@@ -97,8 +97,8 @@ public class FileUploadAdapter extends RecyclerView.Adapter<FileUploadAdapter.Vi
 
         @OnClick(R.id.file_upload_button)
         void notificateListener(){
-            mFileUpload.setmUploadTask(mListener.createUploadTask(mFileUpload));
-            mFileUpload.getmUploadTask().addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+            mFileUpload.setUploadTask(mListener.createUploadTask(mFileUpload));
+            mFileUpload.getUploadTask().addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                     @SuppressWarnings("VisibleForTests") double progress = (100.0 * taskSnapshot.getBytesTransferred())
@@ -114,13 +114,13 @@ public class FileUploadAdapter extends RecyclerView.Adapter<FileUploadAdapter.Vi
         public void bind(FileUploadItem file) {
             mFileUpload = file;
 
-            if(mFileUpload.getmUploadTask() == null){
+            if(mFileUpload.getUploadTask() == null){
                 circleProgress.setVisibility(View.INVISIBLE);
             }
-            if(mFileUpload.getmUploadTask() != null){
+            if(mFileUpload.getUploadTask() != null){
                 circleProgress.setVisibility(View.VISIBLE);
 
-                mFileUpload.getmUploadTask().addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                mFileUpload.getUploadTask().addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                         @SuppressWarnings("VisibleForTests") double progress = (100.0 * taskSnapshot.getBytesTransferred())
@@ -130,10 +130,10 @@ public class FileUploadAdapter extends RecyclerView.Adapter<FileUploadAdapter.Vi
                 });
             }
 
-            if(Util.getMimeContentType(file.getmUri(), mContext).equals("image")) {
-                Picasso.with(mContext).load(file.getmUri()).resize(150, 150).into(photo);
-            }else if(Util.getMimeContentType(file.getmUri(), mContext).equals("video")){
-                photo.setImageBitmap(ThumbnailUtils.createVideoThumbnail(Util.getPath(file.getmUri(), mContext),
+            if(Util.getMimeContentType(file.getUri(), mContext).equals("image")) {
+                Picasso.with(mContext).load(file.getUri()).resize(150, 150).into(photo);
+            }else if(Util.getMimeContentType(file.getUri(), mContext).equals("video")){
+                photo.setImageBitmap(ThumbnailUtils.createVideoThumbnail(Util.getPath(file.getUri(), mContext),
                         MediaStore.Video.Thumbnails.MINI_KIND));
             }
         }
