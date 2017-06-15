@@ -73,13 +73,20 @@ public class Util {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    public static boolean isFieldsNotNullAndEmpty(String email, String pswd){
-        if (!TextUtils.equals(email, null) && !TextUtils.equals(pswd, null)
-                &&!TextUtils.isEmpty(email) && !TextUtils.isEmpty(pswd)) {
+    public static boolean isFieldsNotEmpty(String email, String pswd){
+        if (isEmailValidate(email) && isPasswordValidate(pswd)) {
             return true;
         }else{
             return false;
         }
+    }
+
+    public static boolean isEmailValidate(String email){
+        return !TextUtils.isEmpty(email);
+    }
+
+    public static boolean isPasswordValidate(String pswd){
+        return !TextUtils.isEmpty(pswd);
     }
 
     public static String getMimeType(Uri uri, Context context){

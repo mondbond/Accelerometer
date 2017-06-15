@@ -4,37 +4,21 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.example.mond.accelerometer.R;
-import com.example.mond.accelerometer.model.AccelerometerData;
 import com.example.mond.accelerometer.model.Session;
-import com.example.mond.accelerometer.util.FirebaseUtil;
-import com.example.mond.accelerometer.view.fragments.AccelerometerDataListFragment;
-import com.example.mond.accelerometer.view.fragments.LineGraphFragment;
-import com.example.mond.accelerometer.view.fragments.SessionFragment;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.ArrayList;
+import com.example.mond.accelerometer.view.fragments.DetailFragment;
 
 public class DetailSessionActivity extends AppCompatActivity {
 
     public final static String SESSION_DATA = "sessionData";
     public final static String UID = "uid";
 
-    private static final String RESTORE_SESSION = "restoreSessions";
-
-    private FirebaseDatabase mDatabase;
-    private DatabaseReference mDbRef;
     private String mUID;
     private Session mSession;
-    private ArrayList<AccelerometerData> mAccelerometerDatas = new ArrayList<>();
 
-    private LineGraphFragment mGraphFragment;
-    private AccelerometerDataListFragment mAccelerometerDataListFragment;
+    DetailFragment mDetailFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,60 +31,13 @@ public class DetailSessionActivity extends AppCompatActivity {
 
         FragmentManager fm = getSupportFragmentManager();
 
-        if(fm.findFragmentByTag(SessionFragment.SESSION_FRAGMENT_TAG) == null){
-            mAccelerometerDataListFragment = AccelerometerDataListFragment.newInstance();
-        }else {
-            mAccelerometerDataListFragment = (AccelerometerDataListFragment)
-                    fm.findFragmentByTag(AccelerometerDataListFragment.ACCELEROMETER_LIST_FRAGMENT_TAG);
-        }
-
-        if(fm.findFragmentByTag(LineGraphFragment.GRAPH_FRAGMENT_TAG) == null){
-            mGraphFragment = LineGraphFragment.newInstance();
+        if(fm.findFragmentByTag(DetailFragment.DETAIL_FRAGMENT_TAG) == null){
+            mDetailFragment = DetailFragment.newInstance(mUID, mSession);
             FragmentTransaction ft = fm.beginTransaction();
-            ft.replace(R.id.graph_fragment_container, mGraphFragment);
-            ft.replace(R.id.accelerometer_data_fragment_container, mAccelerometerDataListFragment);
+            ft.replace(R.id.detail_fragment_container, mDetailFragment, DetailFragment.DETAIL_FRAGMENT_TAG);
             ft.commit();
         }else {
-            mGraphFragment = (LineGraphFragment) fm.findFragmentByTag(LineGraphFragment.GRAPH_FRAGMENT_TAG);
+            mDetailFragment = (DetailFragment) fm.findFragmentByTag(DetailFragment.DETAIL_FRAGMENT_TAG);
         }
-
-        initFirebaseDb();
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-
-        mSession = savedInstanceState.getParcelable(RESTORE_SESSION);
-        mGraphFragment.setNewSessionValue(mAccelerometerDatas);
-        mAccelerometerDataListFragment.setNewSessionValue(mAccelerometerDatas);
-    }
-
-    public void initFirebaseDb(){
-        mDatabase = FirebaseDatabase.getInstance();
-        mDbRef = mDatabase.getReference().child(FirebaseUtil.FIREBASE_ACCELEROMETER_DATA_NODE).child(mUID)
-                .child(String.valueOf(mSession.getSessionId()));
-        mDbRef.addValueEventListener(new ValueEventListener() {
-
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot data : dataSnapshot.getChildren()) {
-                    AccelerometerData accelerometerData = data.getValue(AccelerometerData.class);
-                    mAccelerometerDatas.add(accelerometerData);
-                }
-
-                mAccelerometerDataListFragment.setNewSessionValue(mAccelerometerDatas);
-                mGraphFragment.setNewSessionValue(mAccelerometerDatas);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {}
-        });
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelable(RESTORE_SESSION, mSession);
     }
 }

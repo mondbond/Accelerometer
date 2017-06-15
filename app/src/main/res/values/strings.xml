@@ -28,6 +28,9 @@
 
     <string name="error_network_is_not_available">Network is not available</string>
 
+    <string name="text_accelerometer_start">Accelerometer start</string>
+    <string name="text_accelerometer_start_session">Session start at </string>
+
     <string name="server_client_id">897840151448-kggetcr47r7ecqnr6ajsvnslb9r2duuo.apps.googleusercontent.com</string>
 
 
