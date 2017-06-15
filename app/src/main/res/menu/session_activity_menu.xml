@@ -5,11 +5,6 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context=".MainActivity">
 
-    <item android:id="@+id/log_out"
-      android:icon="@drawable/log_out_ico"
-      android:title="log out"
-      app:showAsAction="always" />
-
     <item android:id="@+id/turn_on_accelerometer"
           android:icon="@drawable/play_ico"
           android:title="play"

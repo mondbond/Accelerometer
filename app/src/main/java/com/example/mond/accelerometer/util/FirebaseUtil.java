@@ -1,5 +1,6 @@
 package com.example.mond.accelerometer.util;
 
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -9,7 +10,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.example.mond.accelerometer.model.StorageFile;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.StorageReference;
 
