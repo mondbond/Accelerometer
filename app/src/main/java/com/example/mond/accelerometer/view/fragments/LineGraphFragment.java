@@ -70,6 +70,7 @@ public class LineGraphFragment extends Fragment {
         mGraph.invalidate();
     }
 
+    // TODO: 19.06.17 One method should do one thing. Optimize
     private void setNewAccelerometerData(List<AccelerometerData> accelerometerDatas){
         if(mXEntries == null || mZEntries == null || mYEntries == null  ) {
             mXEntries = new ArrayList<>();

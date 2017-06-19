@@ -22,6 +22,7 @@ public class RegisterFragment extends Fragment {
 
     public static final String REGISTER_FRAGMENT_TAG = "registerFragmentTag";
 
+    // TODO: 19.06.17 Check the id/variable naming convention in code style.
     @BindView(R.id.field_email) EditText mEmailInput;
     @BindView(R.id.field_password) EditText mPasswordInput;
     @BindView(R.id.register_button) Button mRegisterBtn;

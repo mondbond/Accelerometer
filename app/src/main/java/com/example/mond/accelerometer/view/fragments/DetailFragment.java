@@ -97,6 +97,7 @@ public class DetailFragment extends Fragment {
                     AccelerometerData accelerometerData = data.getValue(AccelerometerData.class);
                     mAccelerometerDatas.add(accelerometerData);
                 }
+                // TODO: 19.06.17 You should not communicate to a fragment from another fragment (Read about fragment - fragment, fragment - activity interactions.)
                 mAccelerometerDataListFragment.setNewSessionValue(mAccelerometerDatas);
                 mGraphFragment.setNewSessionValue(mAccelerometerDatas);
             }

@@ -26,6 +26,7 @@ import com.example.mond.accelerometer.util.Util;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 
 public class AccelerometerDialogFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener{
@@ -70,7 +71,7 @@ public class AccelerometerDialogFragment extends DialogFragment implements TimeP
         ButterKnife.bind(this, v);
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
-
+        // TODO: 19.06.17 Butterknife has @OnCheckedChanged annotation
         mIsExecutingOnTime.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -144,6 +145,7 @@ public class AccelerometerDialogFragment extends DialogFragment implements TimeP
             sessionTime = 0;
         }
 
+        // TODO: 19.06.17 Should have a separated manager to handle shared preference interactions
         SharedPreferences sharedPref = getActivity().getSharedPreferences(Constants.ACCELEROMETER_PARAMETERS_SHARED_PREFERENCE,
                 Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();

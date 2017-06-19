@@ -20,6 +20,7 @@ import butterknife.ButterKnife;
 public class AccelerometerDataListFragment extends Fragment {
     public static final String SESSION = "session";
 
+    // TODO: 19.06.17 variable name code style. (Datas? Mb it would be better to call it mAccelerometerDataList)?
     private ArrayList<AccelerometerData> accelerometerDatas;
     private AccelerometerDataAdapter mAdapter;
 

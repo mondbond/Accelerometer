@@ -18,6 +18,10 @@ public class SessionDetailViewPagerAdapter extends FragmentStatePagerAdapter {
         super(fm);
     }
 
+
+    // TODO: 19.06.17 It would be better to create fragment instances inside the the adapter, because the app will crash if you will forget to call the initFragments method
+    // e.g. case 0:
+    // return AccelerometerDataListFragment.newInstance();
     @Override
     public Fragment getItem(int position) {
 

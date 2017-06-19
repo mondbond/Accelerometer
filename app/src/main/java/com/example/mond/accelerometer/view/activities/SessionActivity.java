@@ -60,6 +60,9 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
     private MenuItem mTurnOff;
     private boolean mIsRunning;
 
+
+    // TODO: 19.06.17 Too much stuff is going on in this method. It would be better to split logic into separated methods (e.g. initGoogleSignIn)
+    // Don`t forget to use format code (ctrl + alt + L)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -154,6 +157,7 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
         startActivity(detailSessionIntent);
     }
 
+    // TODO: 19.06.17 Separated methods for different 'case' action (e.g. logout())
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){

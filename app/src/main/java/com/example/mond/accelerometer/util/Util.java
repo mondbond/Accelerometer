@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
+// TODO: 19.06.17 Different Util classes for different purposes (e.g. DateUtils)
 public class Util {
 
     static private final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd hh-mm-ss";

@@ -53,6 +53,8 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
         ButterKnife.bind(this);
 
         mAuth = FirebaseAuth.getInstance();
+        // TODO: 19.06.17 DRY. Don't repeat yourself.
+        // TODO: 19.06.17 too much code in single method
 
         mFm = getSupportFragmentManager();
         if(mFm.findFragmentByTag(LogInFragment.LOG_IN_FRAGMENT_TAG) == null){
@@ -113,6 +115,7 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
                 Toast.LENGTH_SHORT).show();
     }
 
+    // TODO: 19.06.17 Why all methods are public?
     public void signInWithGoogle(GoogleSignInAccount account){
         AuthCredential authCredential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         mAuth.signInWithCredential(authCredential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
