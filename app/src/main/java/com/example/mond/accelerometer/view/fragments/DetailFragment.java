@@ -35,12 +35,9 @@ public class DetailFragment extends Fragment {
     private LineGraphFragment mGraphFragment;
     private AccelerometerDataListFragment mAccelerometerDataListFragment;
 
-    private FirebaseDatabase mDatabase;
-    private DatabaseReference mDbRef;
 
-    private ArrayList<AccelerometerData> mAccelerometerDatas = new ArrayList<>();
 
-    @BindView(R.id.activity_detail_session_pager)
+    @BindView(R.id.vp_fragment_detail)
     ViewPager mPager;
     SessionDetailViewPagerAdapter mAdapter;
 
@@ -65,7 +62,6 @@ public class DetailFragment extends Fragment {
         mAccelerometerDataListFragment = AccelerometerDataListFragment.newInstance();
 
         mAdapter = new SessionDetailViewPagerAdapter(getChildFragmentManager());
-        mAdapter.initFragments(mAccelerometerDataListFragment, mGraphFragment);
     }
 
     @Override
@@ -77,33 +73,5 @@ public class DetailFragment extends Fragment {
         mPager.setAdapter(mAdapter);
 
         return v;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        initFirebaseDb();
-    }
-
-    public void initFirebaseDb() {
-        mDatabase = FirebaseDatabase.getInstance();
-        mDbRef = mDatabase.getReference().child(FirebaseUtil.FIREBASE_ACCELEROMETER_DATA_NODE).child(mUid)
-                .child(String.valueOf(mSession.getSessionId()));
-        mDbRef.addValueEventListener(new ValueEventListener() {
-
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot data : dataSnapshot.getChildren()) {
-                    AccelerometerData accelerometerData = data.getValue(AccelerometerData.class);
-                    mAccelerometerDatas.add(accelerometerData);
-                }
-                // TODO: 19.06.17 You should not communicate to a fragment from another fragment (Read about fragment - fragment, fragment - activity interactions.)
-                mAccelerometerDataListFragment.setNewSessionValue(mAccelerometerDatas);
-                mGraphFragment.setNewSessionValue(mAccelerometerDatas);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {}
-        });
     }
 }

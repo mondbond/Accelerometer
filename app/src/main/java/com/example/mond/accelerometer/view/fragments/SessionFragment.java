@@ -25,7 +25,8 @@ public class SessionFragment extends Fragment implements SessionAdapter.OnItemCl
 
     private OnSessionFragmentInteractionListener mListener;
 
-    @BindView(R.id.accelerometer_data_recycler) RecyclerView mRecycler;
+    @BindView(R.id.rv_accelerometer_items)
+    RecyclerView mRecycler;
     private SessionAdapter mAdapter;
 
     public static SessionFragment newInstance() {
@@ -48,7 +49,7 @@ public class SessionFragment extends Fragment implements SessionAdapter.OnItemCl
         mRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecycler.setAdapter(mAdapter);
 
-        return  v;
+        return v;
     }
 
     @Override
@@ -73,8 +74,8 @@ public class SessionFragment extends Fragment implements SessionAdapter.OnItemCl
         mListener.onSessionItemSelected(session);
     }
 
-    public void setNewAccelerometerValues(List<Session> sessions){
-        if(mAdapter!= null) {
+    public void setNewAccelerometerValues(List<Session> sessions) {
+        if (mAdapter != null) {
             mAdapter.setSessions(sessions);
         }
     }

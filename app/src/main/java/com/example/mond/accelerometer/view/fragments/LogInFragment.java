@@ -22,10 +22,14 @@ public class LogInFragment extends Fragment {
 
     public static final String LOG_IN_FRAGMENT_TAG = "logInFragmentTag";
 
-    @BindView(R.id.field_email) EditText mEmailInput;
-    @BindView(R.id.field_password) EditText mPasswordInput;
-    @BindView(R.id.log_in_button) Button mLogInBtn;
-    @BindView(R.id.registration_propose_text) TextView mRegistrationProposeText;
+    @BindView(R.id.et_user_email)
+    EditText mEmailInput;
+    @BindView(R.id.et_user_password)
+    EditText mPasswordInput;
+    @BindView(R.id.btn_log_in)
+    Button mLogInBtn;
+    @BindView(R.id.tv_registration_propose)
+    TextView mRegistrationProposeText;
 
     private AuthenticationInteractionListener mListener;
 
@@ -47,16 +51,16 @@ public class LogInFragment extends Fragment {
         return v;
     }
 
-    @OnClick(R.id.log_in_button)
-    public void signIn(){
-        if(Util.isFieldsNotEmpty(mEmailInput.getText().toString(),
+    @OnClick(R.id.btn_log_in)
+    public void signIn() {
+        if (Util.isFieldsNotEmpty(mEmailInput.getText().toString(),
                 mPasswordInput.getText().toString())) {
             mListener.onLogIn(mEmailInput.getText().toString(), mPasswordInput.getText().toString());
         }
     }
 
-    @OnClick(R.id.registration_propose_text)
-    public void changeAuthentication(){
+    @OnClick(R.id.tv_registration_propose)
+    public void changeAuthentication() {
         mListener.changeAuthenticationForm();
     }
 

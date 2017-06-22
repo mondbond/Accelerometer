@@ -1,5 +1,4 @@
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,89 +6,89 @@
     tools:context="com.example.mond.accelerometer.view.fragments.AccelerometerDialogFragment">
 
     <CheckBox
-        android:id="@+id/activity_list_is_time_execution"
+        android:id="@+id/cb_time_execution"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/text_is_execute_on_time"
-        android:button="@null"
-        android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
-        android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
-        android:layout_below="@+id/activity_list_time_value"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="26dp"/>
+        android:layout_below="@+id/et_time"
+        android:layout_marginTop="26dp"
+        android:button="@null"
+        android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
+        android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
+        android:text="@string/text_is_execute_on_time" />
 
     <Button
-        android:id="@+id/activity_list_time_execution_btn"
+        android:id="@+id/btn_pick_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Time execution :"
-        android:textSize="8sp"
-        android:layout_marginTop="28dp"
-        android:layout_below="@+id/activity_list_is_time_execution"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/cb_time_execution"
+        android:layout_marginTop="28dp"
+        android:text="Time execution :"
+        android:textSize="8sp" />
 
     <TextView
-        android:id="@+id/activity_list_time_execution_value"
+        android:id="@+id/tv_time_execution"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
-        tools:text="05.12"
-        android:layout_alignTop="@+id/activity_list_time_execution_btn"
-        android:layout_toRightOf="@+id/activity_list_time_execution_btn"
-        android:layout_toEndOf="@+id/activity_list_time_execution_btn"
+        android:layout_alignTop="@+id/btn_pick_time"
         android:layout_marginLeft="20dp"
-        android:layout_marginStart="20dp"/>
+        android:layout_marginStart="20dp"
+        android:layout_toEndOf="@+id/btn_pick_time"
+        android:layout_toRightOf="@+id/btn_pick_time"
+        android:textSize="20sp"
+        tools:text="05.12" />
 
     <EditText
-        android:id="@+id/activity_list_interval_value"
+        android:id="@+id/et_interval"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="number"
-        android:textSize="10sp"
+        android:layout_alignParentTop="true"
         android:layout_marginLeft="14dp"
         android:layout_marginStart="14dp"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/activity_list_interval_text"
-        android:layout_toEndOf="@+id/activity_list_interval_text"/>
-
-    <TextView
-        android:id="@+id/activity_list_interval_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/text_interval"
-        android:layout_alignTop="@+id/activity_list_interval_value"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
-
-    <Button
-        android:id="@+id/activity_list_start_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Start"
-        android:layout_below="@+id/activity_list_time_execution_btn"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
-
-    <TextView
-        android:id="@+id/activity_list_time_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/text_session_interval"
-        android:layout_below="@+id/activity_list_interval_value"
-        android:layout_alignRight="@+id/activity_list_interval_text"
-        android:layout_alignEnd="@+id/activity_list_interval_text"/>
-
-    <EditText
-        android:id="@+id/activity_list_time_value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/tv_text"
+        android:layout_toRightOf="@+id/tv_text"
         android:ems="10"
         android:inputType="number"
-        android:textSize="10sp"
-        android:layout_below="@+id/activity_list_interval_value"
-        android:layout_alignLeft="@+id/activity_list_interval_value"
-        android:layout_alignStart="@+id/activity_list_interval_value"/>
+        android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/tv_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/et_interval"
+        android:text="@string/text_interval" />
+
+    <Button
+        android:id="@+id/btn_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/btn_pick_time"
+        android:text="Start" />
+
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/tv_text"
+        android:layout_alignRight="@+id/tv_text"
+        android:layout_below="@+id/et_interval"
+        android:text="@string/text_session_interval" />
+
+    <EditText
+        android:id="@+id/et_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/et_interval"
+        android:layout_alignStart="@+id/et_interval"
+        android:layout_below="@+id/et_interval"
+        android:ems="10"
+        android:inputType="number"
+        android:textSize="10sp" />
 </RelativeLayout>

@@ -21,7 +21,7 @@ public class FirebaseUtil {
     public static void pushAccelerometerData(AccelerometerData accelerometerData, long sessionId,
                                              String uid){
         mDb.getReference().child(FirebaseUtil.FIREBASE_ACCELEROMETER_DATA_NODE).child(uid)
-                .child(String.valueOf(sessionId)).child(Util.makeCurrentTimeStampToDate())
+                .child(String.valueOf(sessionId)).child(DataUtil.makeCurrentTimeStampToDate())
                 .setValue(accelerometerData).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {

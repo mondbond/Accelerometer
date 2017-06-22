@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.example.mond.accelerometer.R;
 import com.example.mond.accelerometer.model.Session;
-import com.example.mond.accelerometer.util.Util;
+import com.example.mond.accelerometer.util.DataUtil;
 
 import java.util.List;
 
@@ -61,7 +61,8 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.session_time) TextView sessionItem;
+        @BindView(R.id.tv_session_time)
+        TextView sessionItem;
         private Session mSession;
 
         ViewHolder(View view) {
@@ -69,14 +70,14 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
             ButterKnife.bind(this, view);
         }
 
-        @OnClick(R.id.session_time)
-        public void sessionItemClicked(){
-                mListener.onItemClick(mSession);
+        @OnClick(R.id.tv_session_time)
+        public void sessionItemClicked() {
+            mListener.onItemClick(mSession);
         }
 
         public void bind(Session session) {
             mSession = session;
-            sessionItem.setText(Util.makeTimeStampToDate(session.getSessionId()));
+            sessionItem.setText(DataUtil.makeTimeStampToDate(session.getSessionId()));
         }
     }
 }

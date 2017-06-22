@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import butterknife.ButterKnife;
 
 public class SessionActivity extends AppCompatActivity implements SessionFragment.OnSessionFragmentInteractionListener,
-        AccelerometerDialogFragment.AccelerometerDialogInteractionListener, GoogleApiClient.OnConnectionFailedListener{
+        AccelerometerDialogFragment.AccelerometerDialogInteractionListener, GoogleApiClient.OnConnectionFailedListener {
 
     public static final String UID = "uid";
     public static final String ACCELEROMETER_DIALOG_FRAGMENT_TAG = "accelerometerDialogFragmentTag";
@@ -60,9 +60,6 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
     private MenuItem mTurnOff;
     private boolean mIsRunning;
 
-
-    // TODO: 19.06.17 Too much stuff is going on in this method. It would be better to split logic into separated methods (e.g. initGoogleSignIn)
-    // Don`t forget to use format code (ctrl + alt + L)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,18 +68,23 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
 
         FragmentManager fm = getSupportFragmentManager();
 
-        if(fm.findFragmentByTag(SessionFragment.SESSION_FRAGMENT_TAG) == null){
+        if (fm.findFragmentByTag(SessionFragment.SESSION_FRAGMENT_TAG) == null) {
             mSessionFragment = SessionFragment.newInstance();
             FragmentTransaction ft = fm.beginTransaction();
-            ft.replace(R.id.sessionListContainer, mSessionFragment, SessionFragment.SESSION_FRAGMENT_TAG);
+            ft.replace(R.id.fl_session_list_container, mSessionFragment, SessionFragment.SESSION_FRAGMENT_TAG);
             ft.commit();
-        }else {
+        } else {
             mSessionFragment = (SessionFragment) fm.findFragmentByTag(SessionFragment.SESSION_FRAGMENT_TAG);
         }
 
         Bundle bundle = getIntent().getExtras();
         mUID = bundle.getString(UID);
 
+        initGoogleSignIn();
+        initFirebaseDb();
+    }
+
+    private void initGoogleSignIn() {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -92,8 +94,6 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
-
-        initFirebaseDb();
     }
 
     @Override
@@ -122,19 +122,19 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
         mSessionFragment.setNewAccelerometerValues(mSessions);
     }
 
-    public void initFirebaseDb(){
+    private void initFirebaseDb() {
         mDatabase = FirebaseDatabase.getInstance();
         mDbRef = mDatabase.getReference().child(FirebaseUtil.FIREBASE_SESSIONS_NODE).child(mUID);
         mDbRef.addValueEventListener(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(mSessions != null){
+                if (mSessions != null) {
                     mSessions.clear();
                 }
 
-                for(DataSnapshot data : dataSnapshot.getChildren()){
-                    if(data.child(FirebaseUtil.FIREBASE_SESSION_ID).getValue() != null) {
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    if (data.child(FirebaseUtil.FIREBASE_SESSION_ID).getValue() != null) {
                         mSessions.add(data.getValue(Session.class));
                     }
                 }
@@ -142,7 +142,8 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {}
+            public void onCancelled(DatabaseError databaseError) {
+            }
         });
     }
 
@@ -157,42 +158,50 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
         startActivity(detailSessionIntent);
     }
 
-    // TODO: 19.06.17 Separated methods for different 'case' action (e.g. logout())
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.log_out:
-                if(Util.isNetworkAvailable(this)){
-                    mGoogleApiClient.clearDefaultAccountAndReconnect();
-                    FirebaseAuth.getInstance().signOut();
-                    // TODO: ? 13/06/17 google+ logout wanted
-                    Intent logOutIntent = new Intent(this, AuthenticationActivity.class);
-                    logOutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(logOutIntent);
-
-                    finish();
-                }
+                logOut();
+                finish();
                 break;
             case R.id.turn_on_accelerometer:
-                if(mAccelerometerDialogFragment == null){
-                    mAccelerometerDialogFragment = AccelerometerDialogFragment.newInstance(mUID);
-                }
-                mAccelerometerDialogFragment.show(getSupportFragmentManager(), ACCELEROMETER_DIALOG_FRAGMENT_TAG);
+                turnOnAccelerometer();
                 break;
             case R.id.turn_off_accelerometer:
-                mIsRunning = false;
-                mTurnOff.setVisible(false);
-                mTurnOn.setVisible(true);
-
-                mService.stopAccelerometer();
-                if (mBound) {
-                    unbindService(mConnection);
-                    mBound = false;
-                }
+                turnOffAccelerometer();
                 break;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void logOut() {
+        if (Util.isNetworkAvailable(this)) {
+            mGoogleApiClient.clearDefaultAccountAndReconnect();
+            FirebaseAuth.getInstance().signOut();
+            Intent logOutIntent = new Intent(this, AuthenticationActivity.class);
+            logOutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(logOutIntent);
+        }
+    }
+    private void turnOnAccelerometer() {
+        if (mAccelerometerDialogFragment == null) {
+            mAccelerometerDialogFragment = AccelerometerDialogFragment.newInstance(mUID);
+        }
+        mAccelerometerDialogFragment.show(getSupportFragmentManager(), ACCELEROMETER_DIALOG_FRAGMENT_TAG);
+    }
+
+    private void turnOffAccelerometer() {
+        mIsRunning = false;
+        mTurnOff.setVisible(false);
+        mTurnOn.setVisible(true);
+
+        mService.stopAccelerometer();
+        if (mBound) {
+            unbindService(mConnection);
+            mBound = false;
+        }
     }
 
     @Override
@@ -202,7 +211,7 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
         mTurnOn = menu.findItem(R.id.turn_on_accelerometer);
         mTurnOff = menu.findItem(R.id.turn_off_accelerometer);
 
-        if(mIsRunning){
+        if (mIsRunning) {
             mTurnOn.setVisible(false);
             mTurnOff.setVisible(true);
         }
@@ -247,5 +256,6 @@ public class SessionActivity extends AppCompatActivity implements SessionFragmen
     };
 
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {}
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+    }
 }

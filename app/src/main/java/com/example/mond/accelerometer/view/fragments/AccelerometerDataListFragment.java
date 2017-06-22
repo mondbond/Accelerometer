@@ -4,13 +4,19 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.mond.accelerometer.R;
+import com.example.mond.accelerometer.events.AccelerometerDataChangeEvent;
 import com.example.mond.accelerometer.model.AccelerometerData;
 import com.example.mond.accelerometer.view.adapter.AccelerometerDataAdapter;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 
@@ -20,11 +26,11 @@ import butterknife.ButterKnife;
 public class AccelerometerDataListFragment extends Fragment {
     public static final String SESSION = "session";
 
-    // TODO: 19.06.17 variable name code style. (Datas? Mb it would be better to call it mAccelerometerDataList)?
-    private ArrayList<AccelerometerData> accelerometerDatas;
+    private ArrayList<AccelerometerData> accelerometerDataList;
     private AccelerometerDataAdapter mAdapter;
 
-    @BindView(R.id.accelerometer_data_fragment_recycler) RecyclerView mRecycler;
+    @BindView(R.id.rv_accelerometer_items)
+    RecyclerView mRecycler;
 
     public static AccelerometerDataListFragment newInstance() {
         return new AccelerometerDataListFragment();
@@ -36,7 +42,7 @@ public class AccelerometerDataListFragment extends Fragment {
         setRetainInstance(true);
 
         if (getArguments() != null) {
-            accelerometerDatas = getArguments().getParcelable(SESSION);
+            accelerometerDataList = getArguments().getParcelable(SESSION);
         }
     }
 
@@ -53,8 +59,26 @@ public class AccelerometerDataListFragment extends Fragment {
         return v;
     }
 
-    public void setNewSessionValue(ArrayList<AccelerometerData> accelerometerDatas){
-        this.accelerometerDatas = accelerometerDatas;
-        mAdapter.setNewSessionValue(this.accelerometerDatas);
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    public void setNewSessionValue(ArrayList<AccelerometerData> accelerometerDatas) {
+        this.accelerometerDataList = accelerometerDatas;
+        mAdapter.setNewSessionValue(this.accelerometerDataList);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void setNewSessionValue(AccelerometerDataChangeEvent event) {
+        this.accelerometerDataList = event.getAccelerometerDataList();
+        mAdapter.setNewSessionValue(this.accelerometerDataList);
     }
 }

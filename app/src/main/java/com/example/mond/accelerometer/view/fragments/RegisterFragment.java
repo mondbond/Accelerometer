@@ -22,11 +22,14 @@ public class RegisterFragment extends Fragment {
 
     public static final String REGISTER_FRAGMENT_TAG = "registerFragmentTag";
 
-    // TODO: 19.06.17 Check the id/variable naming convention in code style.
-    @BindView(R.id.field_email) EditText mEmailInput;
-    @BindView(R.id.field_password) EditText mPasswordInput;
-    @BindView(R.id.register_button) Button mRegisterBtn;
-    @BindView(R.id.sign_in_propose_text) TextView mSignInProposeText;
+    @BindView(R.id.et_user_email)
+    EditText mEmailInput;
+    @BindView(R.id.et_user_password)
+    EditText mPasswordInput;
+    @BindView(R.id.btn_register)
+    Button mRegisterBtn;
+    @BindView(R.id.tv_sign_in_propose)
+    TextView mSignInProposeText;
 
     private AuthenticationInteractionListener mListener;
 
@@ -48,16 +51,16 @@ public class RegisterFragment extends Fragment {
         return v;
     }
 
-    @OnClick(R.id.register_button)
-    public void registration(){
-        if(Util.isFieldsNotEmpty(mEmailInput.getText().toString(),
+    @OnClick(R.id.btn_register)
+    public void registration() {
+        if (Util.isFieldsNotEmpty(mEmailInput.getText().toString(),
                 mPasswordInput.getText().toString())) {
             mListener.onRegister(mEmailInput.getText().toString(), mPasswordInput.getText().toString());
         }
     }
 
-    @OnClick(R.id.sign_in_propose_text)
-    public void changeAuthentication(){
+    @OnClick(R.id.tv_sign_in_propose)
+    public void changeAuthentication() {
         mListener.changeAuthenticationForm();
     }
 

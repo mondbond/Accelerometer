@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.example.mond.accelerometer.R;
 import com.example.mond.accelerometer.model.AccelerometerData;
-import com.example.mond.accelerometer.util.Util;
+import com.example.mond.accelerometer.util.DataUtil;
 
 import java.util.ArrayList;
 
@@ -26,11 +26,11 @@ public class AccelerometerDataAdapter extends RecyclerView.Adapter<Accelerometer
 
     @Override
     public AccelerometerDataAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                   int viewType) {
+                                                                  int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.accelerometer_data_item, parent, false);
 
-        return  new ViewHolder(itemView);
+        return new ViewHolder(itemView);
     }
 
     @Override
@@ -47,16 +47,20 @@ public class AccelerometerDataAdapter extends RecyclerView.Adapter<Accelerometer
         }
     }
 
-    public void setNewSessionValue(ArrayList<AccelerometerData> accelerometerDatas){
+    public void setNewSessionValue(ArrayList<AccelerometerData> accelerometerDatas) {
         mAccelerometerData = accelerometerDatas;
         notifyDataSetChanged();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.accelerometer_data_time) TextView time;
-        @BindView(R.id.accelerometer_data_x) TextView x;
-        @BindView(R.id.accelerometer_data_y) TextView y;
-        @BindView(R.id.accelerometer_data_z) TextView z;
+        @BindView(R.id.tv_accelerometer_item_time)
+        TextView time;
+        @BindView(R.id.tv_accelerometer_item_x)
+        TextView x;
+        @BindView(R.id.tv_accelerometer_item_y)
+        TextView y;
+        @BindView(R.id.tv_accelerometer_item_z)
+        TextView z;
 
         ViewHolder(View view) {
             super(view);
@@ -64,7 +68,7 @@ public class AccelerometerDataAdapter extends RecyclerView.Adapter<Accelerometer
         }
 
         public void bind(AccelerometerData accelerometerData) {
-            time.setText(Util.makeTimeStampToDate(accelerometerData.getId()));
+            time.setText(DataUtil.makeTimeStampToDate(accelerometerData.getId()));
             x.setText(String.valueOf(accelerometerData.getX()));
             y.setText(String.valueOf(accelerometerData.getY()));
             z.setText(String.valueOf(accelerometerData.getZ()));

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.mond.accelerometer.R;
+import com.example.mond.accelerometer.events.AccelerometerDataChangeEvent;
 import com.example.mond.accelerometer.model.AccelerometerData;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.YAxis;
@@ -17,6 +18,10 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +44,8 @@ public class LineGraphFragment extends Fragment {
     private LineDataSet mZLine;
     private LineData mLineData;
 
-    @BindView(R.id.graph_fragment_graph) LineChart mGraph;
+    @BindView(R.id.line_chart_graph)
+    LineChart mGraph;
 
     public static LineGraphFragment newInstance() {
         return new LineGraphFragment();
@@ -61,7 +67,13 @@ public class LineGraphFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_line_graph, container, false);
         ButterKnife.bind(this, v);
 
-        return  v;
+        return v;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -70,24 +82,31 @@ public class LineGraphFragment extends Fragment {
         mGraph.invalidate();
     }
 
-    // TODO: 19.06.17 One method should do one thing. Optimize
-    private void setNewAccelerometerData(List<AccelerometerData> accelerometerDatas){
-        if(mXEntries == null || mZEntries == null || mYEntries == null  ) {
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    private void initEntries(List<AccelerometerData> accelerometerDatas) {
+        if (mXEntries == null || mZEntries == null || mYEntries == null) {
             mXEntries = new ArrayList<>();
             mYEntries = new ArrayList<>();
             mZEntries = new ArrayList<>();
-        }else {
+        } else {
             mXEntries.clear();
             mYEntries.clear();
             mZEntries.clear();
         }
 
-        for(int i = 0; i != accelerometerDatas.size(); i++){
+        for (int i = 0; i != accelerometerDatas.size(); i++) {
             mXEntries.add(new Entry(i, ((float) accelerometerDatas.get(i).getX())));
             mYEntries.add(new Entry(i, ((float) accelerometerDatas.get(i).getY())));
             mZEntries.add(new Entry(i, ((float) accelerometerDatas.get(i).getZ())));
         }
+    }
 
+    private void showGraph() {
         mXLine = new LineDataSet(mXEntries, "X");
         mXLine.setColor(Color.RED);
 
@@ -109,8 +128,10 @@ public class LineGraphFragment extends Fragment {
         mGraph.invalidate();
     }
 
-    public void setNewSessionValue(ArrayList<AccelerometerData> accelerometerDatas){
-        this.accelerometerDatas = accelerometerDatas;
-        setNewAccelerometerData(this.accelerometerDatas);
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void setNewSessionValue(AccelerometerDataChangeEvent event) {
+        this.accelerometerDatas = event.getAccelerometerDataList();
+        initEntries(this.accelerometerDatas);
+        showGraph();
     }
 }

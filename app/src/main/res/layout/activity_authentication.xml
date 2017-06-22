@@ -7,24 +7,23 @@
     android:orientation="vertical">
 
     <FrameLayout
-        android:id="@+id/log_in_fragment_container"
+        android:id="@+id/fl_log_in_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
     </FrameLayout>
 
     <FrameLayout
-        android:id="@+id/register_fragment_container"
+        android:id="@+id/fl_registration_fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </FrameLayout>
+        android:layout_height="wrap_content"></FrameLayout>
 
     <com.google.android.gms.common.SignInButton
-        android:id="@+id/sign_in_with_google"
+        android:id="@+id/sign_in_btn_google_auth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true">
 
     </com.google.android.gms.common.SignInButton>
 

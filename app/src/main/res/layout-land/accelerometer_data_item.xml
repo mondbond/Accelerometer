@@ -1,53 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/accelerometer_data_time"
+        android:id="@+id/tv_accelerometer_item_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        tools:text="12.05.2011"/>
+        tools:text="12.05.2011" />
 
     <TextView
-        android:id="@+id/accelerometer_data_x"
+        android:id="@+id/tv_accelerometer_item_x"
         android:layout_width="80dp"
         android:layout_height="20dp"
-        tools:text="0.82374235642835"
-        android:layout_alignBottom="@+id/accelerometer_data_time"
-        android:layout_toRightOf="@+id/accelerometer_data_time"
-        android:layout_toEndOf="@+id/accelerometer_data_time"
+        android:layout_alignBottom="@+id/tv_accelerometer_item_time"
         android:layout_marginLeft="35dp"
-        android:layout_marginStart="35dp"/>
+        android:layout_marginStart="35dp"
+        android:layout_toEndOf="@+id/tv_accelerometer_item_time"
+        android:layout_toRightOf="@+id/tv_accelerometer_item_time"
+        tools:text="0.82374235642835" />
 
     <TextView
-        android:id="@+id/accelerometer_data_y"
+        android:id="@+id/tv_accelerometer_item_y"
         android:layout_width="80dp"
         android:layout_height="20dp"
-        tools:text="0.82374235642835"
-        android:layout_alignBaseline="@+id/accelerometer_data_x"
-        android:layout_alignBottom="@+id/accelerometer_data_x"
-        android:layout_toRightOf="@+id/accelerometer_data_x"
-        android:layout_toEndOf="@+id/accelerometer_data_x"
+        android:layout_alignBaseline="@+id/tv_accelerometer_item_x"
+        android:layout_alignBottom="@+id/tv_accelerometer_item_x"
         android:layout_marginLeft="21dp"
-        android:layout_marginStart="21dp"/>
+        android:layout_marginStart="21dp"
+        android:layout_toEndOf="@+id/tv_accelerometer_item_x"
+        android:layout_toRightOf="@+id/tv_accelerometer_item_x"
+        tools:text="0.82374235642835" />
 
     <TextView
-        android:id="@+id/accelerometer_data_z"
+        android:id="@+id/tv_accelerometer_item_z"
         android:layout_width="80dp"
         android:layout_height="20dp"
-        tools:text="0.82374235642835"
-        android:layout_alignBaseline="@+id/accelerometer_data_y"
-        android:layout_alignBottom="@+id/accelerometer_data_y"
-        android:layout_toRightOf="@+id/accelerometer_data_y"
-        android:layout_toEndOf="@+id/accelerometer_data_y"
+        android:layout_alignBaseline="@+id/tv_accelerometer_item_y"
+        android:layout_alignBottom="@+id/tv_accelerometer_item_y"
         android:layout_marginLeft="26dp"
-        android:layout_marginStart="26dp"/>
+        android:layout_marginStart="26dp"
+        android:layout_toEndOf="@+id/tv_accelerometer_item_y"
+        android:layout_toRightOf="@+id/tv_accelerometer_item_y"
+        tools:text="0.82374235642835" />
 
 </RelativeLayout>

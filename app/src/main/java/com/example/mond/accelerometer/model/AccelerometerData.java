@@ -3,7 +3,7 @@ package com.example.mond.accelerometer.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.mond.accelerometer.util.Util;
+import com.example.mond.accelerometer.util.DataUtil;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
@@ -22,7 +22,7 @@ public class AccelerometerData implements Parcelable {
     public AccelerometerData() {}
 
     public AccelerometerData(double x, double y, double z) {
-        this.id = Util.getLocalTimeStamp();
+        this.id = DataUtil.getLocalTimeStamp();
         this.x = x;
         this.y = y;
         this.z = z;

@@ -8,54 +8,7 @@ import android.widget.Toast;
 
 import com.example.mond.accelerometer.R;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
-import java.util.concurrent.TimeUnit;
-
-// TODO: 19.06.17 Different Util classes for different purposes (e.g. DateUtils)
 public class Util {
-
-    static private final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd hh-mm-ss";
-
-    private static SimpleDateFormat mDateFormat;
-    private static TimeZone timeZone = TimeZone.getDefault();
-
-    public static String makeCurrentTimeStampToDate(){
-            mDateFormat = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
-
-        return mDateFormat.format(new Date(Util.getLocalTimeStamp()));
-    }
-
-    public static String makeTimeStampToDate(long timeStamp){
-        mDateFormat = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
-
-        return mDateFormat.format(new Date(timeStamp));
-    }
-
-    public static boolean isOutOfTime(int hour, int minute){
-        if(getLocalTimeStamp() % TimeUnit.DAYS.toMillis(1)  <= getTimeOfDayInMl(hour, minute)){
-            return false;
-        }else {
-            return true;
-        }
-    }
-
-    public static boolean isTimeToStart(int startTime){
-        if(getLocalTimeStamp() % TimeUnit.DAYS.toMillis(1) <= startTime){
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    public static int getTimeOfDayInMl(int hour, int minute){
-        return ((int) TimeUnit.HOURS.toMillis(hour)) + ((int) TimeUnit.MINUTES.toMillis(minute)) - timeZone.getOffset(System.currentTimeMillis());
-    }
-
-    public static long getLocalTimeStamp(){
-        return System.currentTimeMillis();
-    }
 
     public static boolean isNetworkAvailable(Context context) {
         ConnectivityManager connectivityManager

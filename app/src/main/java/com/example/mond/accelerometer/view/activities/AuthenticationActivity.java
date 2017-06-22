@@ -32,7 +32,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class AuthenticationActivity extends AppCompatActivity implements AuthenticationInteractionListener,
-        GoogleApiClient.OnConnectionFailedListener{
+        GoogleApiClient.OnConnectionFailedListener {
 
     private final int RC_SIGN_IN = 4004;
 
@@ -44,7 +44,8 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
 
     private GoogleApiClient mGoogleApiClient;
 
-    @BindView(R.id.sign_in_with_google) SignInButton mSignInText;
+    @BindView(R.id.sign_in_btn_google_auth)
+    SignInButton mSignInText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,39 +54,40 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
         ButterKnife.bind(this);
 
         mAuth = FirebaseAuth.getInstance();
-        // TODO: 19.06.17 DRY. Don't repeat yourself.
-        // TODO: 19.06.17 too much code in single method
 
-        mFm = getSupportFragmentManager();
-        if(mFm.findFragmentByTag(LogInFragment.LOG_IN_FRAGMENT_TAG) == null){
-            mLogInFragment = LogInFragment.newInstance();
-            FragmentTransaction ft = mFm.beginTransaction();
-            ft.replace(R.id.log_in_fragment_container, mLogInFragment, LogInFragment.LOG_IN_FRAGMENT_TAG);
-            ft.commit();
-        }else {
-            mLogInFragment = (LogInFragment) mFm.findFragmentByTag(LogInFragment.LOG_IN_FRAGMENT_TAG);
-        }
-
-        if(mFm.findFragmentByTag(RegisterFragment.REGISTER_FRAGMENT_TAG) == null){
-            mRegisterFragment = RegisterFragment.newInstance();
-            FragmentTransaction ft = mFm.beginTransaction();
-            ft.replace(R.id.register_fragment_container, mRegisterFragment, RegisterFragment.REGISTER_FRAGMENT_TAG);
-            ft.hide(mRegisterFragment);
-            ft.commit();
-        }else {
-            mRegisterFragment = (RegisterFragment) mFm.findFragmentByTag(RegisterFragment.REGISTER_FRAGMENT_TAG);
-        }
-
+        initFragments();
         googleAuthInit();
     }
 
-    @OnClick(R.id.sign_in_with_google)
+    private void initFragments() {
+        mFm = getSupportFragmentManager();
+        FragmentTransaction ft = mFm.beginTransaction();
+
+        if (mFm.findFragmentByTag(LogInFragment.LOG_IN_FRAGMENT_TAG) == null) {
+            mLogInFragment = LogInFragment.newInstance();
+            ft.replace(R.id.fl_log_in_fragment_container, mLogInFragment, LogInFragment.LOG_IN_FRAGMENT_TAG);
+        } else {
+            mLogInFragment = (LogInFragment) mFm.findFragmentByTag(LogInFragment.LOG_IN_FRAGMENT_TAG);
+        }
+
+        if (mFm.findFragmentByTag(RegisterFragment.REGISTER_FRAGMENT_TAG) == null) {
+            mRegisterFragment = RegisterFragment.newInstance();
+            ft.replace(R.id.fl_registration_fragment_container, mRegisterFragment, RegisterFragment.REGISTER_FRAGMENT_TAG);
+            ft.hide(mRegisterFragment);
+        } else {
+            mRegisterFragment = (RegisterFragment) mFm.findFragmentByTag(RegisterFragment.REGISTER_FRAGMENT_TAG);
+        }
+
+        ft.commit();
+    }
+
+    @OnClick(R.id.sign_in_btn_google_auth)
     void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
-    private void googleAuthInit(){
+    private void googleAuthInit() {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -115,15 +117,14 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
                 Toast.LENGTH_SHORT).show();
     }
 
-    // TODO: 19.06.17 Why all methods are public?
-    public void signInWithGoogle(GoogleSignInAccount account){
+    private void signInWithGoogle(GoogleSignInAccount account) {
         AuthCredential authCredential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         mAuth.signInWithCredential(authCredential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     startSessionActivity();
-                }else {
+                } else {
                     Toast.makeText(AuthenticationActivity.this, getResources().getString(R.string.error_log_in_filed),
                             Toast.LENGTH_SHORT).show();
                 }
@@ -131,39 +132,39 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
         });
     }
 
-    public void createAccount(final String email, final String pswd){
+    private void createAccount(final String email, final String pswd) {
         mAuth.createUserWithEmailAndPassword(email, pswd)
-            .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                if (!task.isSuccessful()) {
-                    Toast.makeText(AuthenticationActivity.this, getResources().getString(R.string.error_create_account_filed),
-                            Toast.LENGTH_SHORT).show();
-                } else {
-                    logIn(email, pswd);
-                }
-                }
-            });
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (!task.isSuccessful()) {
+                            Toast.makeText(AuthenticationActivity.this, getResources().getString(R.string.error_create_account_filed),
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            logIn(email, pswd);
+                        }
+                    }
+                });
     }
 
-    public void logIn(final String email, String pswd) {
+    private void logIn(final String email, String pswd) {
         mAuth.signInWithEmailAndPassword(email, pswd)
-            .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                if (!task.isSuccessful()) {
-                    Toast.makeText(AuthenticationActivity.this, getResources().getString(R.string.error_log_in_filed),
-                            Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(AuthenticationActivity.this, getResources().getString(R.string.message_logged),
-                            Toast.LENGTH_SHORT).show();
-                    startSessionActivity();
-                }
-                }
-            });
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (!task.isSuccessful()) {
+                            Toast.makeText(AuthenticationActivity.this, getResources().getString(R.string.error_log_in_filed),
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(AuthenticationActivity.this, getResources().getString(R.string.message_logged),
+                                    Toast.LENGTH_SHORT).show();
+                            startSessionActivity();
+                        }
+                    }
+                });
     }
 
-    public void startSessionActivity(){
+    private void startSessionActivity() {
         Intent intent = new Intent(AuthenticationActivity.this, SessionActivity.class);
         intent.putExtra(SessionActivity.UID, mAuth.getCurrentUser().getUid());
         startActivity(intent);
@@ -174,11 +175,11 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
     @Override
     public void changeAuthenticationForm() {
         FragmentTransaction ft = mFm.beginTransaction();
-        if(mRegisterFragment.isHidden()){
+        if (mRegisterFragment.isHidden()) {
             ft.show(mRegisterFragment);
             ft.hide(mLogInFragment);
             ft.commit();
-        }else {
+        } else {
             ft.show(mLogInFragment);
             ft.hide(mRegisterFragment);
             ft.commit();
@@ -187,14 +188,14 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
 
     @Override
     public void onLogIn(String email, String pswd) {
-        if(Util.isNetworkAvailable(AuthenticationActivity.this)) {
+        if (Util.isNetworkAvailable(AuthenticationActivity.this)) {
             logIn(email, pswd);
         }
     }
 
     @Override
     public void onRegister(String email, String pswd) {
-        if(Util.isNetworkAvailable(AuthenticationActivity.this)) {
+        if (Util.isNetworkAvailable(AuthenticationActivity.this)) {
             createAccount(email, pswd);
         }
     }

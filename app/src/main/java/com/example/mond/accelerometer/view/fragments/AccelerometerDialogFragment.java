@@ -2,7 +2,6 @@ package com.example.mond.accelerometer.view.fragments;
 
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -21,26 +20,31 @@ import android.widget.Toast;
 
 import com.example.mond.accelerometer.Constants;
 import com.example.mond.accelerometer.R;
-import com.example.mond.accelerometer.service.AccelerometerService;
-import com.example.mond.accelerometer.util.Util;
+import com.example.mond.accelerometer.util.DataUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 
-public class AccelerometerDialogFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener{
+public class AccelerometerDialogFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
 
     public static final String UID = "uid";
 
     private int mDayTimeExecuting;
 
-    @BindView(R.id.activity_list_start_btn) Button mStartButton;
-    @BindView(R.id.activity_list_interval_value) EditText mIntervalValue;
-    @BindView(R.id.activity_list_time_value) EditText mActionTimeValue;
-    @BindView(R.id.activity_list_time_execution_btn) Button mTimeExecutionSetterBtn;
-    @BindView(R.id.activity_list_time_execution_value) TextView mTimeExecutionValue;
-    @BindView(R.id.activity_list_is_time_execution) CheckBox mIsExecutingOnTime;
+    @BindView(R.id.btn_start)
+    Button mStartButton;
+    @BindView(R.id.et_interval)
+    EditText mIntervalValue;
+    @BindView(R.id.et_time)
+    EditText mActionTimeValue;
+    @BindView(R.id.btn_pick_time)
+    Button mTimeExecutionSetterBtn;
+    @BindView(R.id.tv_time_execution)
+    TextView mTimeExecutionValue;
+    @BindView(R.id.cb_time_execution)
+    CheckBox mIsExecutingOnTime;
 
     private String mUID;
     private TimePickerDialog mTimePickerDialog;
@@ -64,6 +68,8 @@ public class AccelerometerDialogFragment extends DialogFragment implements TimeP
         }
     }
 
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -71,19 +77,18 @@ public class AccelerometerDialogFragment extends DialogFragment implements TimeP
         ButterKnife.bind(this, v);
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
-        // TODO: 19.06.17 Butterknife has @OnCheckedChanged annotation
-        mIsExecutingOnTime.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            if(mTimeExecutionValue.getText().toString().equals("")){
-                buttonView.setChecked(false);
-                Toast.makeText(getActivity(), getResources().getString(R.string.error_empty_fields), Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
         return v;
     }
+
+    @OnCheckedChanged(R.id.cb_time_execution)
+    public void validateOnEmptyFields(CompoundButton buttonView, boolean isChecked) {
+        if (mTimeExecutionValue.getText().toString().equals("")) {
+            buttonView.setChecked(false);
+            Toast.makeText(getActivity(), getResources().getString(R.string.error_empty_fields), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
 
     @Override
     public void onAttach(Context context) {
@@ -102,17 +107,17 @@ public class AccelerometerDialogFragment extends DialogFragment implements TimeP
         mListener = null;
     }
 
-    @OnClick(R.id.activity_list_time_execution_btn)
-    public void showTimePicker(){
-        if(mTimePickerDialog == null){
+    @OnClick(R.id.btn_pick_time)
+    public void showTimePicker() {
+        if (mTimePickerDialog == null) {
             mTimePickerDialog = new TimePickerDialog(getActivity(),
                     AccelerometerDialogFragment.this, 0, 0, true);
         }
         mTimePickerDialog.show();
     }
 
-    @OnClick(R.id.activity_list_start_btn)
-    public void initParametersAndStart(){
+    @OnClick(R.id.btn_start)
+    public void initParametersAndStart() {
         saveConfiguration();
         mListener.onAccelerometerStart();
 
@@ -121,26 +126,26 @@ public class AccelerometerDialogFragment extends DialogFragment implements TimeP
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        if(Util.isOutOfTime(hourOfDay, minute)) {
+        if (DataUtil.isOutOfTime(hourOfDay, minute)) {
             Toast.makeText(getActivity(), getResources().getString(R.string.error_out_of_time), Toast.LENGTH_SHORT).show();
-        }else {
-            mDayTimeExecuting = Util.getTimeOfDayInMl(hourOfDay, minute);
+        } else {
+            mDayTimeExecuting = DataUtil.getTimeOfDayInMl(hourOfDay, minute);
             mTimeExecutionValue.setText(String.valueOf(hourOfDay) + " : " + String.valueOf(minute));
         }
     }
 
-    private void saveConfiguration(){
+    private void saveConfiguration() {
 
         int interval = 0;
         int sessionTime = 0;
 
-        if(!TextUtils.isEmpty(mIntervalValue.getText().toString())){
+        if (!TextUtils.isEmpty(mIntervalValue.getText().toString())) {
             interval = Integer.parseInt(mIntervalValue.getText().toString());
         }
 
-        if(!mActionTimeValue.getText().toString().equals("")){
+        if (!mActionTimeValue.getText().toString().equals("")) {
             sessionTime = Integer.parseInt(mActionTimeValue.getText().toString());
-        }else {
+        } else {
 //                    0 marked as infinite
             sessionTime = 0;
         }

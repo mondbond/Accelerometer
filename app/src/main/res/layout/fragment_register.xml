@@ -4,33 +4,34 @@
     android:layout_height="match_parent"
     tools:context="com.example.mond.accelerometer.view.fragments.RegisterFragment">
 
-    <include layout="@layout/email_password_form"
-        android:id="@+id/include" />
+    <include
+        android:id="@+id/include"
+        layout="@layout/email_password_form" />
 
     <LinearLayout
-        android:id="@+id/register_form"
+        android:id="@+id/ll_register_form"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/include"
         android:orientation="horizontal"
         android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:layout_below="@+id/include"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:paddingRight="16dp">
 
         <Button
-            android:id="@+id/register_button"
+            android:id="@+id/btn_register"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/text_create_account" />
 
         <TextView
-            android:id="@+id/sign_in_propose_text"
+            android:id="@+id/tv_sign_in_propose"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/text_log_in_propose"/>
+            android:text="@string/text_log_in_propose" />
     </LinearLayout>
 
 </RelativeLayout>
